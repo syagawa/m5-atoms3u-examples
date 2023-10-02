@@ -229,8 +229,6 @@ void overWriteContentsOnMemory( const char *contents){
 static int32_t onWrite(uint32_t lba, uint32_t offset, uint8_t* buffer, uint32_t bufsize){
   USBSerial.printf("1MSC WRITE: lba: %u, offset: %u, bufsize: %u\n", lba, offset, bufsize);
   USBSerial.printf("2MSC WRITE buffer: %u\n", buffer);
-  // Serial.printf("S1MSC WRITE: lba: %u, offset: %u, bufsize: %u\n", lba, offset, bufsize);
-  // Serial.printf("S2MSC WRITE buffer: %u\n", buffer);
 
   // memcpy(buf1, buf2, n)
   // void *buf1　：　コピー先のメモリブロック
@@ -249,8 +247,6 @@ static int32_t onWrite(uint32_t lba, uint32_t offset, uint8_t* buffer, uint32_t 
 static int32_t onRead(uint32_t lba, uint32_t offset, void* buffer, uint32_t bufsize){
   USBSerial.printf("1MSC READ: lba: %u, offset: %u, bufsize: %u\n", lba, offset, bufsize);
   USBSerial.printf("2MSC READ buffer: %u\n", buffer);
-  // Serial.printf("S1MSC READ: lba: %u, offset: %u, bufsize: %u\n", lba, offset, bufsize);
-  // Serial2.printf("S2MSC READ buffer: %u\n", buffer);
 
   // memcpy(buf1, buf2, n)
   // void *buf1　：　コピー先のメモリブロック
@@ -312,23 +308,6 @@ void writeToFile(String str){
 }
 
 DynamicJsonDocument getJsonDocumentFromFile(String fileName){
-  // DynamicJsonDocument doc(512);
-  // try{
-  //   File file = SPIFFS.open(fileName, "r");
-  //   size_t size = file.size();
-  //   std::unique_ptr<char[]> buf(new char[size]);
-  //   file.readBytes(buf.get(), size);
-  //   file.close();
-  //   DeserializationError error = deserializeJson(doc, buf.get());
-  //   if(error){
-  //     USBSerial.printf("doc file error %s \n", error.c_str());
-  //   }
-  // }catch(Exception& ex){
-  //     USBSerial.printf("json error %s \n", ex.Message());
-  // }
-  // return doc;
-
-
   DynamicJsonDocument doc(512);
   try{
     File file = SPIFFS.open(fileName, "r");
@@ -341,40 +320,6 @@ DynamicJsonDocument getJsonDocumentFromFile(String fileName){
       USBSerial.printf("json error %s \n", ex.Message());
   }
   return doc;
-
-  // DynamicJsonDocument doc3(512);
-  // DynamicJsonDocument doc5(512);
-
-  // File file = SPIFFS.open(fileName, "r");
-  // String readStr1 = file.readString();
-  // char json3[512];
-  // readStr1.toCharArray(json3, DISK_SECTOR_SIZE);
-  // DeserializationError error3 = deserializeJson(doc3, F(json3));
-  // if(error3){
-  //   USBSerial.printf("doc3 error %s \n", error3.c_str());
-  // }
-  // USBSerial.printf("doc3 containskey mode: %s \n", doc3.containsKey("mode") ? "true" : "false");
-  // USBSerial.printf("doc3 mode: %s \n", doc3["mode"]);
-  // auto mode3 = doc3["mode"].as<const char*>();
-  // USBSerial.printf("doc3 mode: %s \n", mode3);
-
-
-  // char json5[20];
-  // for(int i = 0; i < 20; i++){
-  //   char c = json3[i];
-  //   json5[i] = c;
-  //   USBSerial.printf("injson: %u %c \n", i, c);
-  // }
-
-  // DeserializationError error5 = deserializeJson(doc5, json5);
-  // if(error5){
-  //   USBSerial.printf("doc5 error %s \n", error5.c_str());
-  // }
-  // USBSerial.printf("doc5 containskey mode: %s \n", doc5.containsKey("mode") ? "true" : "false");
-  // USBSerial.printf("doc5 mode: %s \n", doc5["mode"]);
-  // auto mode5 = doc5["mode"].as<const char*>();
-  // USBSerial.printf("doc5 mode: %s \n", mode5);
-
 
 }
 
@@ -486,26 +431,6 @@ void loop() {
     if(writeFlg == 1){
 
       int targetSize = sizeof(msc_disk[3]);
-      // String strTest = "";
-      // try{
-      //   for(int i = 0; i < 20; i++){
-      //     uint8_t ui = msc_disk[3][i];
-      //     char *c = (char *) msc_disk[3][i];
-      //     char c2 = (char) msc_disk[3][i];
-
-      //     // String s = (char *) msc_disk[3][i]; //なぜかこれがあるとうまく認識しない
-      //     USBSerial.printf("5loop WRITE: msc_disk contents uint?: %u %u %u %c %c \n", i, msc_disk[3][i], ui, c, c2);
-
-      //     String str = String(c2);
-      //     strTest.concat(str);
-
-      //     delay(10);
-      //   }
-      // }catch(Exception& ex){
-      //   USBSerial.printf("5loop error %s \n", ex.Message());
-      // }
-      // USBSerial.printf("6loop string %s %i \n", strTest, strTest.length());
-
       String str = (char *) msc_disk[3];
       int strsize = str.length();
       USBSerial.printf("7loop WRITE: msc_disk targetSize: %u, contents strsize: %u, str: %s \n", targetSize, strsize, str);
