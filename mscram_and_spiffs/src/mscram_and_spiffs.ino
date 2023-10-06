@@ -1,4 +1,4 @@
-// https://github.com/espressif/arduino-esp32/blob/master/libraries/USB/examples/USBMSC/USBMSC.ino
+// # This code is created with reference to https://github.com/espressif/arduino-esp32/blob/master/libraries/USB/examples/USBMSC/USBMSC.ino . 
 #if ARDUINO_USB_MODE
 #warning This sketch should be used when USB is in OTG mode
 void setup(){}
