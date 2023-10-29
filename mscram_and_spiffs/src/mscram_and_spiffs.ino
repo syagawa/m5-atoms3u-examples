@@ -298,7 +298,7 @@ static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t eve
 
 
 char * initialContents = R"({"color": "red"})";
-String fileName = "/ATOMS3U/settings.txt";
+String fileName = "/ATOMS3U/SETTINGS.TXT";
 bool SPIFFS_FORMAT = true;
 
 void writeToFile(String str){
@@ -349,6 +349,9 @@ void removeAllFiles(){
 // 1: Settings Mode(USB Flash)
 int bootmode = 0;
 DynamicJsonDocument settingsDoc(512);
+
+// btn pressed count in settigns mode
+int pressedBtnCountInSettingsMode = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -444,6 +447,12 @@ void loop() {
     if(readFlg == 1){
       readFlg = 0;
     }
+
+    if(readFlg != 1 && writeFlg != 1 && M5.BtnA.wasPressed()){
+      pressedBtnCountInSettingsMode = pressedBtnCountInSettingsMode + 1;
+      USBSerial.printf("pressedBtnCountInSettingsMode: %u \n", pressedBtnCountInSettingsMode);
+    }
+
   }
 
 

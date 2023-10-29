@@ -298,8 +298,8 @@ static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t eve
 }
 
 
-char * initialContents = R"({"color": "red"})";
-String fileName = "/ATOMS3U/settings.txt";
+char * initialContents = R"({"defaultMode": 0})";
+String fileName = "/ATOMS3U/SETTINGS.TXT";
 bool SPIFFS_FORMAT = true;
 
 void writeToFile(String str){
