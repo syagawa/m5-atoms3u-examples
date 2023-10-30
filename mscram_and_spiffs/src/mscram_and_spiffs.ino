@@ -317,7 +317,7 @@ DynamicJsonDocument getJsonDocumentFromFile(String fileName){
       USBSerial.printf("doc file error %s \n", error.c_str());
     }
   }catch(Exception& ex){
-      USBSerial.printf("json error %s \n", ex.Message());
+    USBSerial.printf("json error %s \n", ex.Message());
   }
   return doc;
 
@@ -350,8 +350,50 @@ void removeAllFiles(){
 int bootmode = 0;
 DynamicJsonDocument settingsDoc(512);
 
-// btn pressed count in settigns mode
-int pressedBtnCountInSettingsMode = 0;
+// btn pressed count
+int pressedBtnCount = 0;
+
+bool timerIsEnabled = false;
+long startMillis = 0;
+bool checkTimerIsEnabled(int waitSeconds) {
+
+  long waitMillis = waitSeconds * 1000;
+
+  float current = millis();
+
+  if(!timerIsEnabled){
+    timerIsEnabled = true;
+    startMillis = current;
+  }
+
+  float elapsedMillis = current - startMillis;
+  float leftMillis = waitMillis - elapsedMillis;
+  float leftSeconds = leftMillis / 1000;
+  
+  USBSerial.printf("leftSeconds: %g \n", leftSeconds);
+
+  if(leftSeconds < 0){
+    timerIsEnabled = false;
+  }
+  return timerIsEnabled;
+}
+
+bool pressAndCheckBtnPressedXTimesWithinYSedonds(int x, int y){
+  pressedBtnCount = pressedBtnCount + 1;
+  USBSerial.printf("pressedBtnCount: %u \n", pressedBtnCount);
+  bool b = false;
+  if(checkTimerIsEnabled(x)){
+    if(pressedBtnCount >= y){
+      timerIsEnabled = false;
+      pressedBtnCount = 0;
+      b = true;
+    }
+  }else{
+    pressedBtnCount = 0;
+  }
+  return b;
+}
+
 
 void setup() {
   Serial.begin(115200);
@@ -428,6 +470,10 @@ void loop() {
       }else{
         flickLed(2, "black");
       }
+
+      if(pressAndCheckBtnPressedXTimesWithinYSedonds(5, 5)){
+        USBSerial.printf("successs!!!!!");
+      }
     }
 
   }else if(bootmode == 1){// 2. USB Flash モード
@@ -449,8 +495,9 @@ void loop() {
     }
 
     if(readFlg != 1 && writeFlg != 1 && M5.BtnA.wasPressed()){
-      pressedBtnCountInSettingsMode = pressedBtnCountInSettingsMode + 1;
-      USBSerial.printf("pressedBtnCountInSettingsMode: %u \n", pressedBtnCountInSettingsMode);
+      // pressedBtnCount = pressedBtnCount + 1;
+      // USBSerial.printf("pressedBtnCount: %u \n", pressedBtnCount);
+      // timer();
     }
 
   }
