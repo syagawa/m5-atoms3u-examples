@@ -231,14 +231,13 @@ static int32_t onWrite(uint32_t lba, uint32_t offset, uint8_t* buffer, uint32_t 
   USBSerial.printf("2MSC WRITE buffer: %u\n", buffer);
 
   // memcpy(buf1, buf2, n)
-  // void *buf1　：　コピー先のメモリブロック
-  // const void *buf2　：　コピー元のメモリブロック
-  // size_t n　：　コピーバイト数
-  // このmemcpyは動いていない？ この行が無くてもREADME.txtは表示されるし、データの更新もできる(電源が入ってる限り)
+  // void *buf1: Copy Destination Memory Block
+  // const void *buf2: Copy Source Memory Block
+  // size_t n: Number of Bytes to Copy
+  // Is this memcpy not working? Even without this line, SETTINGS.TXT is displayed and data can be updated as long as the power is on.
   memcpy(msc_disk[lba] + offset, buffer, bufsize);
 
   flickLed(2, "red");
-
 
   writeFlg = 1;
   return bufsize;
@@ -249,10 +248,10 @@ static int32_t onRead(uint32_t lba, uint32_t offset, void* buffer, uint32_t bufs
   USBSerial.printf("2MSC READ buffer: %u\n", buffer);
 
   // memcpy(buf1, buf2, n)
-  // void *buf1　：　コピー先のメモリブロック
-  // const void *buf2　：　コピー元のメモリブロック
-  // size_t n　：　コピーバイト数
-  // このmemcpyは動いている この行が無いとREADME.txtファイルもストレージも表示されない
+  // void *buf1: Copy Destination Memory Block
+  // const void *buf2: Copy Source Memory Block
+  // size_t n: Number of Bytes to Copy
+  // This memcpy is working. Without this line, SETTINGS.TXT file and storage won't be displayed
   memcpy(buffer, msc_disk[lba] + offset, bufsize);
 
   flickLed(2, "yellow");
@@ -344,8 +343,16 @@ void removeAllFiles(){
   }
 }
 
+void resetAndRestart(){
+  removeAllFiles();
+  delay(100);
+  MSC.end();
+  delay(100);
+  ESP.restart();
+}
+
 // bootmode
-// 0: Normal
+// 0: Regular Mode
 // 1: Settings Mode(USB Flash)
 int bootmode = 0;
 DynamicJsonDocument settingsDoc(512);
@@ -394,6 +401,11 @@ bool pressAndCheckBtnPressedXTimesWithinYSedonds(int x, int y){
   return b;
 }
 
+// write regular code in setup
+void regularInSetup(){
+  USBSerial.begin();
+  USB.begin();
+}
 
 void setup() {
   Serial.begin(115200);
@@ -404,15 +416,13 @@ void setup() {
   rgbled = new EspEasyLED(GPIO_NUM_35, 1, 20);
   M5.Power.setLed(0);
 
-
   if (M5.BtnA.wasPressed()) {
     bootmode = 1;
   }
 
-  // 0. ROM領域の初期化 
+  // 0. initialize Rom area 
   if(SPIFFS.begin()){
     File dataFile;
-    // removeAllFiles();
     if(!SPIFFS.exists(fileName)){
       dataFile = SPIFFS.open(fileName, "w");
       dataFile.print(initialContents);
@@ -430,10 +440,9 @@ void setup() {
 
   overWriteContentsOnMemory(initialContents);
 
-  if(bootmode == 0){// 1. normal モード
-    USBSerial.begin();
-    USB.begin();
-  }else if(bootmode == 1){// 2. USB Flash モード
+  if(bootmode == 0){// 1. Regular Mode
+    regularInSetup();
+  }else if(bootmode == 1){// 2. Settings Mode(USB Flash)
     USB.onEvent(usbEventCallback);
     MSC.vendorID("ESP32");//max 8 chars
     MSC.productID("USB_MSC");//max 16 chars
@@ -448,35 +457,35 @@ void setup() {
   }
 }
 
+// write regular code in loop
+void regularInLoop(){
+  if (M5.BtnA.wasPressed()) {
+    USBSerial.println("pressed!!");
+    DynamicJsonDocument doc = getJsonDocumentFromFile(fileName);
+    if(doc.containsKey("color")){
+      auto color1 = doc["color"].as<const char*>();
+      USBSerial.printf("doc color1: %s \n", color1);
+    }
+
+    if(settingsDoc.containsKey("color")){
+      String color_1 = settingsDoc["color"].as<String>();
+      USBSerial.printf("color_1: %s %c \n", color_1, color_1);
+      flickLed(2, color_1);
+    
+    }else{
+      flickLed(2, "black");
+    }
+  }
+}
 
 void loop() {
 
   M5.update();
 
-  if(bootmode == 0){// 1. normal モード
-    if (M5.BtnA.wasPressed()) {
-      USBSerial.println("pressed!!");
-      DynamicJsonDocument doc = getJsonDocumentFromFile(fileName);
-      if(doc.containsKey("color")){
-        auto color1 = doc["color"].as<const char*>();
-        USBSerial.printf("doc color1: %s \n", color1);
-      }
 
-      if(settingsDoc.containsKey("color")){
-        String color_1 = settingsDoc["color"].as<String>();
-        USBSerial.printf("color_1: %s %c \n", color_1, color_1);
-        flickLed(2, color_1);
-      
-      }else{
-        flickLed(2, "black");
-      }
-
-      if(pressAndCheckBtnPressedXTimesWithinYSedonds(5, 5)){
-        USBSerial.printf("successs!!!!!");
-      }
-    }
-
-  }else if(bootmode == 1){// 2. USB Flash モード
+  if(bootmode == 0){// 1. Regular Mode
+    regularInLoop();
+  }else if(bootmode == 1){// 2. Settings Mode(USB Flash)
     if(writeFlg == 1){
 
       int targetSize = sizeof(msc_disk[3]);
@@ -495,9 +504,10 @@ void loop() {
     }
 
     if(readFlg != 1 && writeFlg != 1 && M5.BtnA.wasPressed()){
-      // pressedBtnCount = pressedBtnCount + 1;
-      // USBSerial.printf("pressedBtnCount: %u \n", pressedBtnCount);
-      // timer();
+      // If you press the button five times within 5 seconds, it will delete the files in the ROM area and restart. The configuration JSON will be reset to its initial state.
+      if(pressAndCheckBtnPressedXTimesWithinYSedonds(5, 5)){
+        resetAndRestart();
+      }
     }
 
   }
