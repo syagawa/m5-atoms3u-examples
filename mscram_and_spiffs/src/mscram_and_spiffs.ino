@@ -296,7 +296,6 @@ static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t eve
 }
 
 
-char * initialContents = R"({"color": "red"})";
 String fileName = "/ATOMS3U/SETTINGS.TXT";
 bool SPIFFS_FORMAT = true;
 
@@ -401,11 +400,40 @@ bool pressAndCheckBtnPressedXTimesWithinYSedonds(int x, int y){
   return b;
 }
 
-// write regular code in setup
+
+// regular mode settings >>
+
+//// initial settings
+char * initialContents = R"({"color": "red"})";
+
+//// write regular code in setup
 void regularInSetup(){
   USBSerial.begin();
   USB.begin();
 }
+
+//// write regular code in loop
+void regularInLoop(){
+  if (M5.BtnA.wasPressed()) {
+    USBSerial.println("pressed!!");
+    DynamicJsonDocument doc = getJsonDocumentFromFile(fileName);
+    if(doc.containsKey("color")){
+      auto color1 = doc["color"].as<const char*>();
+      USBSerial.printf("doc color1: %s \n", color1);
+    }
+
+    if(settingsDoc.containsKey("color")){
+      String color_1 = settingsDoc["color"].as<String>();
+      USBSerial.printf("color_1: %s %c \n", color_1, color_1);
+      flickLed(2, color_1);
+    
+    }else{
+      flickLed(2, "black");
+    }
+  }
+}
+
+// regular mode settings <<
 
 void setup() {
   Serial.begin(115200);
@@ -454,27 +482,6 @@ void setup() {
     MSC.begin(DISK_SECTOR_COUNT, DISK_SECTOR_SIZE);
     USBSerial.begin();
     USB.begin();
-  }
-}
-
-// write regular code in loop
-void regularInLoop(){
-  if (M5.BtnA.wasPressed()) {
-    USBSerial.println("pressed!!");
-    DynamicJsonDocument doc = getJsonDocumentFromFile(fileName);
-    if(doc.containsKey("color")){
-      auto color1 = doc["color"].as<const char*>();
-      USBSerial.printf("doc color1: %s \n", color1);
-    }
-
-    if(settingsDoc.containsKey("color")){
-      String color_1 = settingsDoc["color"].as<String>();
-      USBSerial.printf("color_1: %s %c \n", color_1, color_1);
-      flickLed(2, color_1);
-    
-    }else{
-      flickLed(2, "black");
-    }
   }
 }
 
