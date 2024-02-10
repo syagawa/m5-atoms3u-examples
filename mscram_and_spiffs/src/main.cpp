@@ -1,9 +1,4 @@
 // # This code is created with reference to https://github.com/espressif/arduino-esp32/blob/master/libraries/USB/examples/USBMSC/USBMSC.ino . 
-#if ARDUINO_USB_MODE
-#warning This sketch should be used when USB is in OTG mode
-void setup(){}
-void loop(){}
-#else
 #include "USB.h"
 #include "USBMSC.h"
 
@@ -14,14 +9,10 @@ EspEasyLED *rgbled;
 
 #include <EEPROM.h>
 
-#if ARDUINO_USB_CDC_ON_BOOT
-#define HWSerial Serial0
-#define USBSerial Serial
-#else
 // #define HWSerial Serial
 #define HWSerial Serial(2)
 USBCDC USBSerial;
-#endif
+
 
 USBMSC MSC;
 
@@ -36,6 +27,9 @@ USBMSC MSC;
 
 // space * 511
 #define DEFAULT_CONTENTS "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               "
+
+
+
 
 static const uint32_t DISK_SECTOR_COUNT = 2 * 8; // 8KB is the smallest size that windows allow to mount
 static const uint16_t DISK_SECTOR_SIZE = 512;    // Should be 512
@@ -521,4 +515,4 @@ void loop() {
 
 
 }
-#endif /* ARDUINO_USB_MODE */
+
