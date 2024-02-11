@@ -101,7 +101,7 @@ static bool onStartStop(uint8_t power_condition, bool start, bool load_eject){
   USBSerial.printf("MSC START/STOP: power: %u, start: %u, eject: %u\n", power_condition, start, load_eject);
 
   delay(500);
-  flickLed(2, "magenta");
+  flickLed(5, "magenta");
   return true;
 }
 
@@ -162,11 +162,9 @@ void listAllFiles(){
   File root = SPIFFS.open("/");
   File file = root.openNextFile();
   while(file){
- 
-      USBSerial.print("FILE: ");
-      USBSerial.println(file.path());
-
-      file = root.openNextFile();
+    USBSerial.print("FILE: ");
+    USBSerial.println(file.path());
+    file = root.openNextFile();
   }
 }
 
@@ -243,14 +241,13 @@ bool pressAndCheckBtnPressedXTimesWithinYSedonds(int x, int y){
 //// initial settings
 char * initialContents = R"({"color": "red"})";
 
-//// write regular code in setup
-void regularInSetup(){
+//// regular code in setup
+void setupInRegularMode(){
   USBSerial.begin();
   USB.begin();
 }
-
 //// write regular code in loop
-void regularInLoop(){
+void loopInRegularMode(){
   if (M5.BtnA.wasPressed()) {
     USBSerial.println("pressed!!");
     DynamicJsonDocument doc = getJsonDocumentFromFile(fileName);
@@ -262,8 +259,9 @@ void regularInLoop(){
     if(settingsDoc.containsKey("color")){
       String color_1 = settingsDoc["color"].as<String>();
       USBSerial.printf("color_1: %s %c \n", color_1, color_1);
-      flickLed(2, color_1);
-    
+      offLed();
+      delay(10);
+      liteLed(color_1);
     }else{
       flickLed(2, "black");
     }
@@ -271,6 +269,46 @@ void regularInLoop(){
 }
 
 // regular mode settings <<
+
+void setupInSettingsMode(){
+    USB.onEvent(usbEventCallback);
+    MSC.vendorID("ESP32");//max 8 chars
+    MSC.productID("USB_MSC");//max 16 chars
+    MSC.productRevision("1.0");//max 4 chars
+    MSC.onStartStop(onStartStop);
+    MSC.onRead(onRead);
+    MSC.onWrite(onWrite);
+    MSC.mediaPresent(true);
+    MSC.begin(DISK_SECTOR_COUNT, DISK_SECTOR_SIZE);
+    USBSerial.begin();
+    USB.begin();
+}
+
+void loopInSettingsMode(){
+  if(writeFlg == 1){
+    int targetSize = sizeof(msc_disk[3]);
+    String str = (char *) msc_disk[3];
+    int strsize = str.length();
+    USBSerial.printf("7loop WRITE: msc_disk targetSize: %u, contents strsize: %u, str: %s \n", targetSize, strsize, str);
+    delay(100);
+
+    writeToFile(str);
+    delay(100);
+
+    writeFlg = 0;
+  }
+  if(readFlg == 1){
+    readFlg = 0;
+  }
+
+  if(readFlg != 1 && writeFlg != 1 && M5.BtnA.wasPressed()){
+    // If you press the button five times within 5 seconds, it will delete the files in the ROM area and restart. The configuration JSON will be reset to its initial state.
+    if(pressAndCheckBtnPressedXTimesWithinYSedonds(5, 5)){
+      resetAndRestart();
+    }
+  }
+}
+
 
 void setup() {
   Serial.begin(115200);
@@ -306,19 +344,9 @@ void setup() {
   overWriteContentsOnMemory(initialContents);
 
   if(bootmode == 0){// 1. Regular Mode
-    regularInSetup();
+    setupInRegularMode();
   }else if(bootmode == 1){// 2. Settings Mode(USB Flash)
-    USB.onEvent(usbEventCallback);
-    MSC.vendorID("ESP32");//max 8 chars
-    MSC.productID("USB_MSC");//max 16 chars
-    MSC.productRevision("1.0");//max 4 chars
-    MSC.onStartStop(onStartStop);
-    MSC.onRead(onRead);
-    MSC.onWrite(onWrite);
-    MSC.mediaPresent(true);
-    MSC.begin(DISK_SECTOR_COUNT, DISK_SECTOR_SIZE);
-    USBSerial.begin();
-    USB.begin();
+    setupInSettingsMode();
   }
 }
 
@@ -326,34 +354,10 @@ void loop() {
 
   M5.update();
 
-
   if(bootmode == 0){// 1. Regular Mode
-    regularInLoop();
+    loopInRegularMode();
   }else if(bootmode == 1){// 2. Settings Mode(USB Flash)
-    if(writeFlg == 1){
-
-      int targetSize = sizeof(msc_disk[3]);
-      String str = (char *) msc_disk[3];
-      int strsize = str.length();
-      USBSerial.printf("7loop WRITE: msc_disk targetSize: %u, contents strsize: %u, str: %s \n", targetSize, strsize, str);
-      delay(100);
-
-      writeToFile(str);
-      delay(100);
-
-      writeFlg = 0;
-    }
-    if(readFlg == 1){
-      readFlg = 0;
-    }
-
-    if(readFlg != 1 && writeFlg != 1 && M5.BtnA.wasPressed()){
-      // If you press the button five times within 5 seconds, it will delete the files in the ROM area and restart. The configuration JSON will be reset to its initial state.
-      if(pressAndCheckBtnPressedXTimesWithinYSedonds(5, 5)){
-        resetAndRestart();
-      }
-    }
-
+    loopInSettingsMode();
   }
 
 
