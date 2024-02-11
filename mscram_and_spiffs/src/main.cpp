@@ -73,6 +73,8 @@ static int32_t onWrite(uint32_t lba, uint32_t offset, uint8_t* buffer, uint32_t 
 
   flickLed(2, "red");
 
+  delay(500);
+
   writeFlg = 1;
   return bufsize;
 }
@@ -98,6 +100,7 @@ static int32_t onRead(uint32_t lba, uint32_t offset, void* buffer, uint32_t bufs
 static bool onStartStop(uint8_t power_condition, bool start, bool load_eject){
   USBSerial.printf("MSC START/STOP: power: %u, start: %u, eject: %u\n", power_condition, start, load_eject);
 
+  delay(500);
   flickLed(2, "magenta");
   return true;
 }
