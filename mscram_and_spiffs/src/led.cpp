@@ -69,7 +69,7 @@ void changeColor(String c){
   }else if(c == "VIOLET" || c == "violet"){
     rgbled->showColor(180, 46, 226);
   }else{
-    rgbled->showColor(16, 16, 16);
+    rgbled->showColor(255, 255, 255);
   }
 }
 
@@ -83,7 +83,7 @@ void flickLed(int num, String c){
   onLed();
   for(int i = 0; i < num; i++){
     changeColor(c);
-    delay(10);
+    delay(40);
     changeColor("white");
     delay(10);
   }
