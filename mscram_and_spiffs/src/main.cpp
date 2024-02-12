@@ -31,19 +31,19 @@ class Exception
   }
 };
 
-// Adafruit_USBD_WebUSB usb_web;
-// WEBUSB_URL_DEF(landingPage, 1 /*https*/, "example.tinyusb.org/webusb-serial/index.html");
-// void line_state_callback(bool connected)
-// {
-//   // digitalWrite(led_pin, connected);
-//   flickLed(2, "lime");
+Adafruit_USBD_WebUSB usb_web;
+WEBUSB_URL_DEF(landingPage, 1 /*https*/, "example.tinyusb.org/webusb-serial/index.html");
+void line_state_callback(bool connected)
+{
+  // digitalWrite(led_pin, connected);
+  flickLed(2, "lime");
 
-//   if ( connected )
-//   {
-//     usb_web.println("WebUSB interface connected !!");
-//     usb_web.flush();
-//   }
-// }
+  if ( connected )
+  {
+    usb_web.println("WebUSB interface connected !!");
+    usb_web.flush();
+  }
+}
 
 
 
@@ -294,6 +294,8 @@ bool pressAndCheckBtnPressedXTimesWithinYSedonds(int x, int y){
 
 //// initial settings
 char * initialContents = R"({"settings_mode": "storage", "color": "red"})";
+String settings_mode = "storage";
+int requiresResetInSettingsMode = 0;
 
 //// regular code in setup
 void setupInRegularMode(){
@@ -324,17 +326,78 @@ void loopInRegularMode(){
   }
 }
 
+String receivedString = "";
+void echo_all(uint8_t buf[], uint32_t count)
+{
+  flickLed(2, "yellow");
+
+  if (usb_web.connected()){
+    receivedString += String((char*)buf);
+    int entered = 0;
+    usb_web.write(buf, count);
+    for(uint32_t i=0; i<count; i++){
+      if ( buf[i] == '\r' || buf[i] == '\n'){
+        usb_web.flush();
+        entered = 1;
+      }
+    }
+    if(entered == 1){
+      if(receivedString == "get mode\r" || receivedString == "get mode\n"){
+        usb_web.println(settings_mode);
+      }else if(receivedString == "get initial\r" || receivedString == "get initial\n"){
+        usb_web.println(initialContents);
+      }else{
+        usb_web.println(receivedString);
+      }
+      usb_web.flush();
+
+      if(receivedString == "reset\r" || receivedString == "reset\n"){
+        requiresResetInSettingsMode = 1;
+      }
+
+      receivedString = "";
+    }
+  }
+
+  // if ( Serial )
+  // {
+  //   int entered = 0;
+  //   for(uint32_t i=0; i<count; i++){
+  //     // Serial.write(buf[i]);
+  //     if ( buf[i] == '\r' ){
+  //       entered = 1;
+  //     }
+  //   }
+    
+  //   if(entered == 1){
+  //     if(receivedString == "get"){
+  //       Serial.write("AAAA");
+  //     }else{
+  //       Serial.write(initialContents);
+  //     }
+
+  //     Serial.write('\n');
+  //     receivedString = "";
+  //     Serial.flush();
+  //     entered = 0;
+  //   }
+  // }
+
+
+}
+
 // regular mode settings <<
+
 void setupInSettingsMode(){
-    String settings_mode = "storage";
     if(settingsDoc.containsKey("settings_mode")){
       settings_mode = settingsDoc["settings_mode"].as<String>();
-      USBSerial.printf("color_1: %s \n", settings_mode);
+      // USBSerial.printf("color_1: %s \n", settings_mode);
     }
 
     if(settings_mode == "storage"){
+      // storage
       USB.onEvent(usbEventCallback);
-     
+
       MSC.setID("M5AtomS3U", "USBD_MSC", "1.0");
       MSC.setCapacity(DISK_SECTOR_COUNT, DISK_SECTOR_SIZE);
       MSC.setReadyCallback(msc_ready_cb);
@@ -345,37 +408,82 @@ void setupInSettingsMode(){
 
       USBSerial.begin();
       USB.begin();
+    }else if(settings_mode == "web"){
+      // webserial
+      USB.begin();
+      usb_web.setLandingPage(&landingPage);
+      usb_web.setLineStateCallback(line_state_callback);
+      while(!usb_web.begin()){
+        // USBSerial.println("waiting...");
+        flickLed(2, "magenta");
+        delay(1);
+      }
+
+      // wait until device mounted
+      while( !TinyUSBDevice.mounted() ){
+        flickLed(2, "red");
+        // USBSerial.println("not mounted 2");
+        delay(1);
+      }
+
+      if( TinyUSBDevice.mounted() ){
+        // USBSerial.println("mounted 2");
+        flickLed(2, "cyan");
+      }
     }
 }
 
 void loopInSettingsMode(){
-  if(writeFlg == 1){
-    int targetSize = sizeof(msc_disk[3]);
-    String str = (char *) msc_disk[3];
-    int strsize = str.length();
-    USBSerial.printf("7loop WRITE: msc_disk targetSize: %u, contents strsize: %u, str: %s \n", targetSize, strsize, str);
-    delay(100);
+  if(settings_mode == "storage"){
+    if(writeFlg == 1){
+      int targetSize = sizeof(msc_disk[3]);
+      String str = (char *) msc_disk[3];
+      int strsize = str.length();
+      USBSerial.printf("7loop WRITE: msc_disk targetSize: %u, contents strsize: %u, str: %s \n", targetSize, strsize, str);
+      delay(100);
 
-    writeToFile(str);
-    delay(100);
+      writeToFile(str);
+      delay(100);
 
-    writeFlg = 0;
-  }
-  if(readFlg == 1){
-    readFlg = 0;
-  }
-
-  if(setLedStr != ""){
-    liteLed(setLedStr);
-    setLedStr = "";
-  }
-
-  if(readFlg != 1 && writeFlg != 1 && M5.BtnA.wasPressed()){
-    // If you press the button five times within 5 seconds, it will delete the files in the ROM area and restart. The configuration JSON will be reset to its initial state.
-
-    if(pressAndCheckBtnPressedXTimesWithinYSedonds(5, 5)){
-      resetAndRestart();
+      writeFlg = 0;
     }
+    if(readFlg == 1){
+      readFlg = 0;
+    }
+
+    if(setLedStr != ""){
+      liteLed(setLedStr);
+      setLedStr = "";
+    }
+
+    if(readFlg != 1 && writeFlg != 1 && M5.BtnA.wasPressed()){
+      // If you press the button five times within 5 seconds, it will delete the files in the ROM area and restart. The configuration JSON will be reset to its initial state.
+
+      if(pressAndCheckBtnPressedXTimesWithinYSedonds(5, 5)){
+        requiresResetInSettingsMode = 1;
+      }
+    }
+  }else if(settings_mode == "web"){
+    uint8_t buf[64];
+    uint32_t count;
+    if (Serial.available())
+    {
+      count = Serial.read(buf, 64);
+      flickLed(2, "red");
+      echo_all(buf, count);
+    }
+
+    // from WebUSB to both Serial & webUSB
+    if (usb_web.available())
+    {
+      flickLed(2, "green");
+      count = usb_web.read(buf, 64);
+      echo_all(buf, count);
+    }
+  }
+
+  if(requiresResetInSettingsMode == 1){
+    resetAndRestart();
   }
 }
 
