@@ -40,8 +40,6 @@ Adafruit_USBD_WebUSB usb_web;
 WEBUSB_URL_DEF(landingPage, 1 /*https*/, "example.tinyusb.org/webusb-serial/index.html");
 
 
-int led_pin = LED_BUILTIN;
-
 void offLed(){
   rgbled->setBrightness(0);
   rgbled->show();
@@ -82,9 +80,7 @@ void flickLed(int num, String c){
 
 void line_state_callback(bool connected)
 {
-  // digitalWrite(led_pin, connected);
   flickLed(2, "lime");
-
   if ( connected )
   {
     usb_web.println("WebUSB interface connected !!");
@@ -178,11 +174,6 @@ void loop(){
     }else{
       flickLed(2, "magenta");
     }
-
-
-    usb_web.setLandingPage(&landingPage);
-    usb_web.setLineStateCallback(line_state_callback);
-    usb_web.begin();
 
   }
 
