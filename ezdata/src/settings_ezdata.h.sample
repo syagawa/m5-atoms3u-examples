@@ -1,0 +1,4 @@
+// rename this file to settings_ezdata.h
+char* ezdata_ssid = "enter ssid";
+char* ezdata_password = "enter password";
+char* ezdata_token = "enter ezdata token"; //get http://docs.m5stack.com/en/arduino/iotservice/ezdata
