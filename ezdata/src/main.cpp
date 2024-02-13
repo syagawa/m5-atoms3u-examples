@@ -63,12 +63,4 @@ void loop(){
   if(M5.BtnA.wasPressed()){
     flickLed(2, "lime");
     ezAddToList("testkey", millis());
-
-    // get all data
-    // https://ezdata.m5stack.com/api/store/keys/<your token>
-
-    // get testkey
-    // https://ezdata.m5stack.com/api/store/<your token>/testkey
-
-  }
 }
