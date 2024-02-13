@@ -9,6 +9,11 @@
 #include <ArduinoJson.h>
 
 
+#ifdef EZDATA_ENABLE
+#include "settings_ezdata.h"
+#include "ezdata.h"
+#endif
+
 // #define HWSerial Serial
 #define HWSerial Serial(2)
 USBCDC USBSerial;
@@ -150,6 +155,10 @@ bool msc_ready_cb(void){
 }
 
 String setLedStr = "";
+String usbStartedStr = "";
+String usbStoppedStr = "";
+String usbSuspendStr = "";
+String usbResumeStr = "";
 
 static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data){
   if(event_base == ARDUINO_USB_EVENTS){
@@ -160,24 +169,28 @@ static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t eve
         // flickLed(2, 4);
         // liteLed("darkgreen");
         setLedStr = "orange";
+        usbStartedStr = "A";
         break;
       case ARDUINO_USB_STOPPED_EVENT:
         USBSerial.println("USB UNPLUGGED");
         // flickLed(2, 5);
         // liteLed("pink");
         setLedStr = "cyan";
+        usbStoppedStr = "A";
         break;
       case ARDUINO_USB_SUSPEND_EVENT:
         USBSerial.printf("USB SUSPENDED: remote_wakeup_en: %u\n", data->suspend.remote_wakeup_en);
         // liteLed("purple");
         // flickLed(2, 6);
         setLedStr = "white";
+        usbSuspendStr = "A";
         break;
       case ARDUINO_USB_RESUME_EVENT:
         USBSerial.println("USB RESUMED");
         // flickLed(2, 7);
         // liteLed("darkcyan");
         setLedStr = "darkgreen";
+        usbResumeStr = "A";
         break;
       
       default:
@@ -485,6 +498,26 @@ void loopInSettingsMode(){
   if(requiresResetInSettingsMode == 1){
     resetAndRestart();
   }
+  
+#ifdef EZDATA_ENABLE
+  if(usbStartedStr != ""){
+    ezAddToList("usbStartedStr", millis());
+    usbStartedStr = "";
+  }
+  if(usbStoppedStr != ""){
+    ezAddToList("usbStoppedStr", millis());
+    usbStoppedStr = "";
+  }
+  if(usbSuspendStr != ""){
+    ezAddToList("usbSuspendStr", millis());
+    usbSuspendStr = "";
+  }
+  if(usbResumeStr != ""){
+    ezAddToList("usbResumeStr", millis());
+    usbResumeStr = "";
+  }
+#endif
+
 }
 
 void initRomArea(char * initialContents){
@@ -513,10 +546,17 @@ void setup() {
   Serial.begin(115200);
   Serial.setDebugOutput(true);
 
+
   auto cfg = M5.config();
   M5.begin(cfg);
   initLed();
   M5.Power.setLed(0);
+
+#ifdef EZDATA_ENABLE
+  setupEzData(ezdata_ssid, ezdata_password, ezdata_token);
+  ezAddToList("mscram_start", millis());
+#endif
+
 
   if (M5.BtnA.wasPressed()) {
     bootmode = 1;

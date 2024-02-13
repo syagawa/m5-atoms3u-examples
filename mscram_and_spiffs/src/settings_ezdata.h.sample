@@ -1,0 +1,21 @@
+// rename this file to settings_ezdata.h
+char* ezdata_ssid = "enter ssid";
+char* ezdata_password = "enter password";
+char* ezdata_token = "enter ezdata token"; //get http://docs.m5stack.com/en/arduino/iotservice/ezdata
+
+
+// get all data
+// https://ezdata.m5stack.com/api/store/keys/<your token>
+
+// get testkey
+// https://ezdata.m5stack.com/api/store/<your token>/testkey
+
+// delete testkey
+// fetch("https://ezdata.m5stack.com/api/store/<your token>/delete/testkey",{
+//    method: "POST",
+//    headers: {
+//    "Content-Type": "application/json",
+//    },
+// })
+//  .catch(err => err)
+//  .then(res => {console.log(res)});
