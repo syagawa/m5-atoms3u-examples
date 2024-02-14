@@ -159,6 +159,7 @@ String usbStartedStr = "";
 String usbStoppedStr = "";
 String usbSuspendStr = "";
 String usbResumeStr = "";
+String defaultEventStr = "";
 
 static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data){
   if(event_base == ARDUINO_USB_EVENTS){
@@ -194,6 +195,7 @@ static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t eve
         break;
       
       default:
+        defaultEventStr = "A";
         break;
     }
   }
@@ -465,9 +467,15 @@ void loopInSettingsMode(){
     }
 
     if(setLedStr != ""){
+      char result[10];
+      setLedStr.toCharArray(result, 10);
+      ezAddToList(result, millis());
       liteLed(setLedStr);
       setLedStr = "";
     }
+
+    // ezAddToList("inLoopSettingsMode0", millis());
+
 
     if(readFlg != 1 && writeFlg != 1 && M5.BtnA.wasPressed()){
       // If you press the button five times within 5 seconds, it will delete the files in the ROM area and restart. The configuration JSON will be reset to its initial state.
@@ -515,6 +523,11 @@ void loopInSettingsMode(){
   if(usbResumeStr != ""){
     ezAddToList("usbResumeStr", millis());
     usbResumeStr = "";
+  }
+  
+  if(defaultEventStr != ""){
+    ezAddToList("defaultEventStr", millis());
+    defaultEventStr = "";
   }
 #endif
 
