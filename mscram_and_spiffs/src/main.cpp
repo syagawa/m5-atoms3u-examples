@@ -19,6 +19,18 @@
 USBCDC USBSerial;
 Adafruit_USBD_MSC  MSC;
 
+void setupLog(){
+#ifdef EZDATA_ENABLE
+  setupEzData(ezdata_ssid, ezdata_password, ezdata_token);
+#endif
+}
+
+void addLog(char * key, int i){
+#ifdef EZDATA_ENABLE
+    ezAddToList(key, i);
+#endif
+}
+
 
 class Exception
 {
@@ -72,6 +84,7 @@ void overWriteContentsOnMemory( const char *contents){
     msc_disk[3][i] = u[i];
   }
 }
+
 
 
 
@@ -151,6 +164,7 @@ void flush_cb(){
 }
 
 bool msc_ready_cb(void){
+  addLog("ready", millis());
   return true;
 }
 
@@ -336,8 +350,6 @@ void loopInRegularMode(){
     }else{
       flickLed(2, "white");
     }
-
-
   }
 }
 
@@ -421,7 +433,11 @@ void setupInSettingsMode(){
       MSC.setUnitReady(true);
       MSC.begin();
 
+      // いらない？
       USBSerial.begin();
+      // いらない？
+
+
       USB.begin();
     }else if(settings_mode == "web"){
       // webserial
@@ -450,6 +466,7 @@ void setupInSettingsMode(){
 
 void loopInSettingsMode(){
   if(settings_mode == "storage"){
+    // addLog("loopInSettingsModeStorage", millis());
     if(writeFlg == 1){
       int targetSize = sizeof(msc_disk[3]);
       String str = (char *) msc_disk[3];
@@ -469,12 +486,11 @@ void loopInSettingsMode(){
     if(setLedStr != ""){
       char result[10];
       setLedStr.toCharArray(result, 10);
-      ezAddToList(result, millis());
+      addLog(result, millis());
+
       liteLed(setLedStr);
       setLedStr = "";
     }
-
-    // ezAddToList("inLoopSettingsMode0", millis());
 
 
     if(readFlg != 1 && writeFlg != 1 && M5.BtnA.wasPressed()){
@@ -485,6 +501,8 @@ void loopInSettingsMode(){
       }
     }
   }else if(settings_mode == "web"){
+    // addLog("loopInSettingsModeWeb", millis());
+
     uint8_t buf[64];
     uint32_t count;
     if (Serial.available())
@@ -507,29 +525,29 @@ void loopInSettingsMode(){
     resetAndRestart();
   }
   
-#ifdef EZDATA_ENABLE
+
   if(usbStartedStr != ""){
-    ezAddToList("usbStartedStr", millis());
+    // addLog("usbStartedStr", millis());
     usbStartedStr = "";
   }
   if(usbStoppedStr != ""){
-    ezAddToList("usbStoppedStr", millis());
+    // addLog("usbStoppedStr", millis());
     usbStoppedStr = "";
   }
   if(usbSuspendStr != ""){
-    ezAddToList("usbSuspendStr", millis());
+    // addLog("usbSuspendStr", millis());
     usbSuspendStr = "";
   }
   if(usbResumeStr != ""){
-    ezAddToList("usbResumeStr", millis());
+    // addLog("usbResumeStr", millis());
     usbResumeStr = "";
   }
   
   if(defaultEventStr != ""){
-    ezAddToList("defaultEventStr", millis());
+    // addLog("defaultEventStr", millis());
     defaultEventStr = "";
   }
-#endif
+
 
 }
 
@@ -551,6 +569,9 @@ void initRomArea(char * initialContents){
     settingsDoc = getJsonDocumentFromFile(fileName);
   }
 
+  // delay(100);
+  // addLog("initRomArea", millis());
+
   overWriteContentsOnMemory(initialContents);
 
 }
@@ -565,10 +586,13 @@ void setup() {
   initLed();
   M5.Power.setLed(0);
 
+  int beforeSetupWiFiMilli = millis();
 #ifdef EZDATA_ENABLE
-  setupEzData(ezdata_ssid, ezdata_password, ezdata_token);
-  ezAddToList("mscram_start", millis());
+  setupLog();
 #endif
+  // addLog("mscram_start0", beforeSetupWiFiMilli);
+  // addLog("mscram_start1", millis());
+
 
 
   if (M5.BtnA.wasPressed()) {
@@ -577,11 +601,18 @@ void setup() {
 
   initRomArea(initialContents);
 
+  // addLog("setup0bootmode", bootmode);
+
   if(bootmode == 0){// 1. Regular Mode
     setupInRegularMode();
   }else if(bootmode == 1){// 2. Settings Mode(USB Flash)
     setupInSettingsMode();
   }
+
+
+  // addLog("setup1bootmode", bootmode);
+
+
 }
 
 void loop() {
