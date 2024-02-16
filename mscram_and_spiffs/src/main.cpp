@@ -8,6 +8,8 @@
 #include <SPIFFS.h>
 #include <ArduinoJson.h>
 
+#include "json.h"
+
 
 #ifdef EZDATA_ENABLE
 #include "settings_ezdata.h"
@@ -32,21 +34,30 @@ void addLog(char * key, int i){
 }
 
 
-class Exception
-{
-  private:
-  const char* _msg;
-  public:
-  Exception(const char* msg)
-  {
-    _msg = msg;
-  }
 
-  const char* Message() const
-  {
-    return _msg;
-  }
-};
+DynamicJsonDocument settingsDoc(512);
+
+// DynamicJsonDocument getJsonDocumentFromFile(String fileName){
+//   DynamicJsonDocument doc(512);
+//   try{
+//     File file = SPIFFS.open(fileName, "r");
+//     DeserializationError error = deserializeJson(doc, file);
+//     file.close();
+//     if(error){
+//       // USBSerial.printf("doc file error %s \n", error.c_str());
+//     }
+//   }catch(Exception& ex){
+//     // USBSerial.printf("json error %s \n", ex.Message());
+//   }
+//   return doc;
+// }
+
+// String getJsonString(DynamicJsonDocument doc){
+//   String output;
+//   serializeJson(doc, output);
+//   // String str = String(output);
+//   return output;
+// }
 
 Adafruit_USBD_WebUSB usb_web;
 WEBUSB_URL_DEF(landingPage, 1 /*https*/, "example.tinyusb.org/webusb-serial/index.html");
@@ -225,22 +236,6 @@ void writeToFile(String str){
   file.close();
 }
 
-DynamicJsonDocument getJsonDocumentFromFile(String fileName){
-  DynamicJsonDocument doc(512);
-  try{
-    File file = SPIFFS.open(fileName, "r");
-    DeserializationError error = deserializeJson(doc, file);
-    file.close();
-    if(error){
-      // USBSerial.printf("doc file error %s \n", error.c_str());
-    }
-  }catch(Exception& ex){
-    // USBSerial.printf("json error %s \n", ex.Message());
-  }
-  return doc;
-
-}
-
 void listAllFiles(){
   File root = SPIFFS.open("/");
   File file = root.openNextFile();
@@ -272,7 +267,6 @@ void resetAndRestart(){
 // 0: Regular Mode
 // 1: Settings Mode(USB Flash)
 int bootmode = 0;
-DynamicJsonDocument settingsDoc(512);
 
 // btn pressed count
 int pressedBtnCount = 0;
@@ -373,6 +367,9 @@ void echo_all(uint8_t buf[], uint32_t count)
         usb_web.println(settings_mode);
       }else if(receivedString == "get initial\r" || receivedString == "get initial\n"){
         usb_web.println(initialContents);
+      }else if(receivedString == "get settings\r" || receivedString == "get settings\n"){
+        String settings_str = getJsonString(settingsDoc);
+        usb_web.println(settings_str);
       }else{
         usb_web.println(receivedString);
       }
