@@ -34,30 +34,7 @@ void addLog(char * key, int i){
 }
 
 
-
 DynamicJsonDocument settingsDoc(512);
-
-// DynamicJsonDocument getJsonDocumentFromFile(String fileName){
-//   DynamicJsonDocument doc(512);
-//   try{
-//     File file = SPIFFS.open(fileName, "r");
-//     DeserializationError error = deserializeJson(doc, file);
-//     file.close();
-//     if(error){
-//       // USBSerial.printf("doc file error %s \n", error.c_str());
-//     }
-//   }catch(Exception& ex){
-//     // USBSerial.printf("json error %s \n", ex.Message());
-//   }
-//   return doc;
-// }
-
-// String getJsonString(DynamicJsonDocument doc){
-//   String output;
-//   serializeJson(doc, output);
-//   // String str = String(output);
-//   return output;
-// }
 
 Adafruit_USBD_WebUSB usb_web;
 WEBUSB_URL_DEF(landingPage, 1 /*https*/, "example.tinyusb.org/webusb-serial/index.html");
@@ -144,7 +121,7 @@ static bool onStartStop(uint8_t power_condition, bool start, bool load_eject){
   return true;
 }
 
-int32_t msc_write_callback (uint32_t lba, uint8_t* buffer, uint32_t bufsize)
+int32_t mscWriteCallback (uint32_t lba, uint8_t* buffer, uint32_t bufsize)
 {
   uint8_t* addr = msc_disk[lba];
   memcpy(addr, buffer, bufsize);
@@ -158,7 +135,7 @@ int32_t msc_write_callback (uint32_t lba, uint8_t* buffer, uint32_t bufsize)
 }
 
 
-int32_t msc_read_callback (uint32_t lba, void* buffer, uint32_t bufsize)
+int32_t mscReadCallback (uint32_t lba, void* buffer, uint32_t bufsize)
 {
   uint8_t const* addr = msc_disk[lba];
   memcpy(buffer, addr, bufsize);
@@ -424,9 +401,9 @@ void setupInSettingsMode(){
 
       MSC.setID("M5AtomS3U", "USBD_MSC", "1.0");
       MSC.setCapacity(DISK_SECTOR_COUNT, DISK_SECTOR_SIZE);
-      MSC.setReadyCallback(msc_ready_cb);
+      // MSC.setReadyCallback(msc_ready_cb);
       MSC.setStartStopCallback(onStartStop);
-      MSC.setReadWriteCallback(msc_read_callback, msc_write_callback, flush_cb);
+      MSC.setReadWriteCallback(mscReadCallback, mscWriteCallback, flush_cb);
       MSC.setUnitReady(true);
       MSC.begin();
 
