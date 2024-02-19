@@ -325,6 +325,9 @@ void loopInRegularMode(){
 }
 
 String receivedString = "";
+String setMode = "";// "", "key", "value"
+String setKey = "";
+String setValue = "";
 void echo_all(uint8_t buf[], uint32_t count)
 {
   flickLed(2, "yellow");
@@ -340,6 +343,25 @@ void echo_all(uint8_t buf[], uint32_t count)
       }
     }
     if(entered == 1){
+      if(setMode == "key"){
+        receivedString.remove(receivedString.length() - 1);
+        setKey = receivedString;
+        setMode = "value";
+        usb_web.println("set mode please type value");
+      }else if(setMode == "value"){
+        receivedString.remove(receivedString.length() - 1);
+        setValue = receivedString;
+        
+        setKeyValueToJson(settingsDoc, setKey, setValue);
+        
+        setMode = "";
+        setKey = "";
+        setValue = "";
+
+        String settings_str = getJsonString(settingsDoc);
+        usb_web.println(settings_str);
+      }
+
       if(receivedString == "get mode\r" || receivedString == "get mode\n"){
         usb_web.println(settings_mode);
       }else if(receivedString == "get initial\r" || receivedString == "get initial\n"){
@@ -347,6 +369,9 @@ void echo_all(uint8_t buf[], uint32_t count)
       }else if(receivedString == "get settings\r" || receivedString == "get settings\n"){
         String settings_str = getJsonString(settingsDoc);
         usb_web.println(settings_str);
+      }else if(receivedString == "set\r" || receivedString == "set\n"){
+        setMode = "key";
+        usb_web.println("set mode please type key");
       }else{
         usb_web.println(receivedString);
       }
