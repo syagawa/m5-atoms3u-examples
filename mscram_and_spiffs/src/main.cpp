@@ -359,6 +359,9 @@ void echo_all(uint8_t buf[], uint32_t count)
         setValue = "";
 
         String settings_str = getJsonString(settingsDoc);
+
+        writeToFile(settings_str);
+        
         usb_web.println(settings_str);
       }
 
