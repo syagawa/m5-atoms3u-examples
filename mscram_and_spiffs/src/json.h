@@ -39,6 +39,8 @@ String getJsonString(DynamicJsonDocument doc){
   return output;
 }
 
-void setKeyValueToJson(DynamicJsonDocument doc, String key, String value){
+
+DynamicJsonDocument setKeyValueToJson(DynamicJsonDocument doc, String key, String value){
   doc[key] = value;
+  return doc;
 }

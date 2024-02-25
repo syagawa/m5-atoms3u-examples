@@ -352,7 +352,7 @@ void echo_all(uint8_t buf[], uint32_t count)
         receivedString.remove(receivedString.length() - 1);
         setValue = receivedString;
         
-        setKeyValueToJson(settingsDoc, setKey, setValue);
+        settingsDoc = setKeyValueToJson(settingsDoc, setKey, setValue);
         
         setMode = "";
         setKey = "";
