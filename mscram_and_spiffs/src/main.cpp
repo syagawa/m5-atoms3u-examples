@@ -16,9 +16,8 @@
 #include "ezdata.h"
 #endif
 
-// #define HWSerial Serial
-#define HWSerial Serial(2)
-USBCDC USBSerial;
+// #define HWSerial Serial(2)
+
 Adafruit_USBD_MSC  MSC;
 
 void setupLog(){
@@ -77,8 +76,6 @@ void overWriteContentsOnMemory( const char *contents){
 
 
 // static int32_t onWrite(uint32_t lba, uint32_t offset, uint8_t* buffer, uint32_t bufsize){
-//   USBSerial.printf("1MSC WRITE: lba: %u, offset: %u, bufsize: %u\n", lba, offset, bufsize);
-//   USBSerial.printf("2MSC WRITE buffer: %u\n", buffer);
 
 //   // memcpy(buf1, buf2, n)
 //   // void *buf1: Copy Destination Memory Block
@@ -96,8 +93,6 @@ void overWriteContentsOnMemory( const char *contents){
 // }
 
 // static int32_t onRead(uint32_t lba, uint32_t offset, void* buffer, uint32_t bufsize){
-//   USBSerial.printf("1MSC READ: lba: %u, offset: %u, bufsize: %u\n", lba, offset, bufsize);
-//   USBSerial.printf("2MSC READ buffer: %u\n", buffer);
 
 //   // memcpy(buf1, buf2, n)
 //   // void *buf1: Copy Destination Memory Block
@@ -114,7 +109,6 @@ void overWriteContentsOnMemory( const char *contents){
 // }
 
 static bool onStartStop(uint8_t power_condition, bool start, bool load_eject){
-  USBSerial.printf("MSC START/STOP: power: %u, start: %u, eject: %u\n", power_condition, start, load_eject);
 
   flickLed(2, "green");
   delay(500);
@@ -168,28 +162,24 @@ static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t eve
     arduino_usb_event_data_t * data = (arduino_usb_event_data_t*)event_data;
     switch (event_id){
       case ARDUINO_USB_STARTED_EVENT:
-        // USBSerial.println("USB PLUGGED");
         // flickLed(2, 4);
         // liteLed("darkgreen");
         setLedStr = "orange";
         usbStartedStr = "A";
         break;
       case ARDUINO_USB_STOPPED_EVENT:
-        // USBSerial.println("USB UNPLUGGED");
         // flickLed(2, 5);
         // liteLed("pink");
         setLedStr = "cyan";
         usbStoppedStr = "A";
         break;
       case ARDUINO_USB_SUSPEND_EVENT:
-        // USBSerial.printf("USB SUSPENDED: remote_wakeup_en: %u\n", data->suspend.remote_wakeup_en);
         // liteLed("purple");
         // flickLed(2, 6);
         setLedStr = "white";
         usbSuspendStr = "A";
         break;
       case ARDUINO_USB_RESUME_EVENT:
-        // USBSerial.println("USB RESUMED");
         // flickLed(2, 7);
         // liteLed("darkcyan");
         setLedStr = "darkgreen";
@@ -217,8 +207,6 @@ void listAllFiles(){
   File root = SPIFFS.open("/");
   File file = root.openNextFile();
   while(file){
-    // USBSerial.print("FILE: ");
-    // USBSerial.println(file.path());
     file = root.openNextFile();
   }
 }
@@ -265,7 +253,6 @@ bool checkTimerIsEnabled(int waitSeconds) {
   float leftMillis = waitMillis - elapsedMillis;
   float leftSeconds = leftMillis / 1000;
   
-  // USBSerial.printf("leftSeconds: %g \n", leftSeconds);
 
   if(leftSeconds < 0){
     timerIsEnabled = false;
@@ -275,7 +262,6 @@ bool checkTimerIsEnabled(int waitSeconds) {
 
 bool pressAndCheckBtnPressedXTimesWithinYSedonds(int x, int y){
   pressedBtnCount = pressedBtnCount + 1;
-  // USBSerial.printf("pressedBtnCount: %u \n", pressedBtnCount);
   bool b = false;
   if(checkTimerIsEnabled(x)){
     if(pressedBtnCount >= y){
@@ -299,22 +285,18 @@ int requiresResetInSettingsMode = 0;
 
 //// regular code in setup
 void setupInRegularMode(){
-  // USBSerial.begin();
   USB.begin();
 }
 //// write regular code in loop
 void loopInRegularMode(){
   if (M5.BtnA.wasPressed()) {
-    // USBSerial.println("pressed!!");
     DynamicJsonDocument doc = getJsonDocumentFromFile(fileName);
     if(doc.containsKey("color")){
       auto color1 = doc["color"].as<const char*>();
-      // USBSerial.printf("doc color1: %s \n", color1);
     }
 
     if(settingsDoc.containsKey("color")){
       String color_1 = settingsDoc["color"].as<String>();
-      // USBSerial.printf("color_1: %s %c \n", color_1, color_1);
       offLed();
       delay(10);
       liteLed(color_1);
@@ -420,7 +402,6 @@ void echo_all(uint8_t buf[], uint32_t count)
 void setupInSettingsMode(){
     if(settingsDoc.containsKey("settings_mode")){
       settings_mode = settingsDoc["settings_mode"].as<String>();
-      // USBSerial.printf("color_1: %s \n", settings_mode);
     }
 
     if(settings_mode == "storage"){
@@ -435,11 +416,6 @@ void setupInSettingsMode(){
       MSC.setUnitReady(true);
       MSC.begin();
 
-      // いらない？
-      // USBSerial.begin();
-      // いらない？
-
-
       USB.begin();
     }else if(settings_mode == "web"){
       // webserial
@@ -447,7 +423,6 @@ void setupInSettingsMode(){
       usb_web.setLandingPage(&landingPage);
       usb_web.setLineStateCallback(line_state_callback);
       while(!usb_web.begin()){
-        // USBSerial.println("waiting...");
         flickLed(2, "magenta");
         delay(1);
       }
@@ -455,12 +430,10 @@ void setupInSettingsMode(){
       // wait until device mounted
       while( !TinyUSBDevice.mounted() ){
         flickLed(2, "red");
-        // USBSerial.println("not mounted 2");
         delay(1);
       }
 
       if( TinyUSBDevice.mounted() ){
-        // USBSerial.println("mounted 2");
         flickLed(2, "cyan");
       }
     }
@@ -473,7 +446,6 @@ void loopInSettingsMode(){
       int targetSize = sizeof(msc_disk[3]);
       String str = (char *) msc_disk[3];
       int strsize = str.length();
-      // USBSerial.printf("7loop WRITE: msc_disk targetSize: %u, contents strsize: %u, str: %s \n", targetSize, strsize, str);
       delay(100);
 
       writeToFile(str);
