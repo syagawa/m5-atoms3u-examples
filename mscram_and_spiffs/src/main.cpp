@@ -5,8 +5,9 @@
 #include "led.h"
 #include "Adafruit_TinyUSB.h"
 #include "storage.h"
-#include <SPIFFS.h>
 #include <ArduinoJson.h>
+
+#include "file.h"
 
 #include "json.h"
 
@@ -15,8 +16,6 @@
 #include "settings_ezdata.h"
 #include "ezdata.h"
 #endif
-
-// #define HWSerial Serial(2)
 
 Adafruit_USBD_MSC  MSC;
 
@@ -73,40 +72,6 @@ void overWriteContentsOnMemory( const char *contents){
 }
 
 
-
-
-// static int32_t onWrite(uint32_t lba, uint32_t offset, uint8_t* buffer, uint32_t bufsize){
-
-//   // memcpy(buf1, buf2, n)
-//   // void *buf1: Copy Destination Memory Block
-//   // const void *buf2: Copy Source Memory Block
-//   // size_t n: Number of Bytes to Copy
-//   // Is this memcpy not working? Even without this line, SETTINGS.TXT is displayed and data can be updated as long as the power is on.
-//   memcpy(msc_disk[lba] + offset, buffer, bufsize);
-
-//   flickLed(5, "orange");
-
-//   delay(500);
-
-//   writeFlg = 1;
-//   return bufsize;
-// }
-
-// static int32_t onRead(uint32_t lba, uint32_t offset, void* buffer, uint32_t bufsize){
-
-//   // memcpy(buf1, buf2, n)
-//   // void *buf1: Copy Destination Memory Block
-//   // const void *buf2: Copy Source Memory Block
-//   // size_t n: Number of Bytes to Copy
-//   // This memcpy is working. Without this line, SETTINGS.TXT file and storage won't be displayed
-//   memcpy(buffer, msc_disk[lba] + offset, bufsize);
-
-//   flickLed(5, "green");
-
-//   readFlg = 1;
-
-//   return bufsize;
-// }
 
 static bool onStartStop(uint8_t power_condition, bool start, bool load_eject){
 
@@ -194,31 +159,7 @@ static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t eve
 }
 
 
-String fileName = "/ATOMS3U/SETTINGS.TXT";
-bool SPIFFS_FORMAT = true;
 
-void writeToFile(String str){
-  File file = SPIFFS.open(fileName, "w");
-  file.print(str);
-  file.close();
-}
-
-void listAllFiles(){
-  File root = SPIFFS.open("/");
-  File file = root.openNextFile();
-  while(file){
-    file = root.openNextFile();
-  }
-}
-
-void removeAllFiles(){
-  File root = SPIFFS.open("/");
-  File file = root.openNextFile();
-  while(file){
-      SPIFFS.remove(file.path());
-      file = root.openNextFile();
-  }
-}
 
 void resetAndRestart(){
   removeAllFiles();
@@ -526,22 +467,14 @@ void loopInSettingsMode(){
 }
 
 void initRomArea(char * initialContents){
-  if(SPIFFS.begin()){
-    File dataFile;
-    if(!SPIFFS.exists(fileName)){
-      dataFile = SPIFFS.open(fileName, "w");
-      dataFile.print(initialContents);
-      dataFile.close();
-    }
 
-    dataFile = SPIFFS.open(fileName, "r");
-    String readStr = dataFile.readString();
-    char Buf[DISK_SECTOR_SIZE];
-    readStr.toCharArray(Buf, DISK_SECTOR_SIZE);
-    initialContents = Buf;
-    dataFile.close();
-    settingsDoc = getJsonDocumentFromFile(fileName);
-  }
+  File dataFile = initAndGetDataFile(initialContents, fileName);
+  String readStr = dataFile.readString();
+  char Buf[DISK_SECTOR_SIZE];
+  readStr.toCharArray(Buf, DISK_SECTOR_SIZE);
+  initialContents = Buf;
+  dataFile.close();
+  settingsDoc = getJsonDocumentFromFile(fileName);
 
   // delay(100);
   // addLog("initRomArea", millis());
