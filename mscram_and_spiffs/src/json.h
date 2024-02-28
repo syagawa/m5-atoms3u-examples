@@ -1,3 +1,6 @@
+#ifndef JSON_H
+#define JSON_H
+
 #include <ArduinoJson.h>
 #include <SPIFFS.h>
 
@@ -44,3 +47,5 @@ DynamicJsonDocument setKeyValueToJson(DynamicJsonDocument doc, String key, Strin
   doc[key] = value;
   return doc;
 }
+
+#endif //JSON_H

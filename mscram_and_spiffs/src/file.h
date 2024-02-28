@@ -1,3 +1,6 @@
+#ifndef FILE_H
+#define FILE_H
+
 #include <SPIFFS.h>
 
 String fileName = "/ATOMS3U/SETTINGS.TXT";
@@ -38,3 +41,4 @@ File initAndGetDataFile(char * initialContents, String filename){
   }
   return dataFile;
 }
+#endif //FILE_H

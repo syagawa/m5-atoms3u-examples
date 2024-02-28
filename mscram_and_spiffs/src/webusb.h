@@ -1,3 +1,6 @@
+#ifndef WEBUSB_H
+#define WEBUSB_H
+
 #include "Adafruit_TinyUSB.h"
 #include "led.h"
 
@@ -81,3 +84,4 @@ bool msc_ready_cb(void){
   addLog("ready", millis());
   return true;
 }
+#endif //WEBUSB_H
