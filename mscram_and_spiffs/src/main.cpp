@@ -8,9 +8,8 @@
 #include <ArduinoJson.h>
 
 #include "file.h"
-
 #include "json.h"
-
+#include "button.h"
 
 #ifdef EZDATA_ENABLE
 #include "settings_ezdata.h"
@@ -175,46 +174,46 @@ void resetAndRestart(){
 int bootmode = 0;
 
 // btn pressed count
-int pressedBtnCount = 0;
+// int pressedBtnCount = 0;
 
-bool timerIsEnabled = false;
-long startMillis = 0;
-bool checkTimerIsEnabled(int waitSeconds) {
+// bool timerIsEnabled = false;
+// long startMillis = 0;
+// bool checkTimerIsEnabled(int waitSeconds) {
 
-  long waitMillis = waitSeconds * 1000;
+//   long waitMillis = waitSeconds * 1000;
 
-  float current = millis();
+//   float current = millis();
 
-  if(!timerIsEnabled){
-    timerIsEnabled = true;
-    startMillis = current;
-  }
+//   if(!timerIsEnabled){
+//     timerIsEnabled = true;
+//     startMillis = current;
+//   }
 
-  float elapsedMillis = current - startMillis;
-  float leftMillis = waitMillis - elapsedMillis;
-  float leftSeconds = leftMillis / 1000;
+//   float elapsedMillis = current - startMillis;
+//   float leftMillis = waitMillis - elapsedMillis;
+//   float leftSeconds = leftMillis / 1000;
   
 
-  if(leftSeconds < 0){
-    timerIsEnabled = false;
-  }
-  return timerIsEnabled;
-}
+//   if(leftSeconds < 0){
+//     timerIsEnabled = false;
+//   }
+//   return timerIsEnabled;
+// }
 
-bool pressAndCheckBtnPressedXTimesWithinYSedonds(int x, int y){
-  pressedBtnCount = pressedBtnCount + 1;
-  bool b = false;
-  if(checkTimerIsEnabled(x)){
-    if(pressedBtnCount >= y){
-      timerIsEnabled = false;
-      pressedBtnCount = 0;
-      b = true;
-    }
-  }else{
-    pressedBtnCount = 0;
-  }
-  return b;
-}
+// bool pressAndCheckBtnPressedXTimesWithinYSedonds(int x, int y){
+//   pressedBtnCount = pressedBtnCount + 1;
+//   bool b = false;
+//   if(checkTimerIsEnabled(x)){
+//     if(pressedBtnCount >= y){
+//       timerIsEnabled = false;
+//       pressedBtnCount = 0;
+//       b = true;
+//     }
+//   }else{
+//     pressedBtnCount = 0;
+//   }
+//   return b;
+// }
 
 
 // regular mode settings >>

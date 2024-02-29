@@ -1,6 +1,9 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
+#include "Adafruit_TinyUSB.h"
+
+int pressedBtnCount = 0;
 bool timerIsEnabled = false;
 long startMillis = 0;
 bool checkTimerIsEnabled(int waitSeconds) {
