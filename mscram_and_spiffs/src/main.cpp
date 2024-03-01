@@ -4,6 +4,7 @@
 #include <M5Unified.h>
 #include "led.h"
 #include "Adafruit_TinyUSB.h"
+
 #include "storage.h"
 #include <ArduinoJson.h>
 
@@ -465,22 +466,22 @@ void loopInSettingsMode(){
 
 }
 
-void initRomArea(char * initialContents){
+// void initRomArea(char * initialContents){
 
-  File dataFile = initAndGetDataFile(initialContents, fileName);
-  String readStr = dataFile.readString();
-  char Buf[DISK_SECTOR_SIZE];
-  readStr.toCharArray(Buf, DISK_SECTOR_SIZE);
-  initialContents = Buf;
-  dataFile.close();
-  settingsDoc = getJsonDocumentFromFile(fileName);
+//   File dataFile = initAndGetDataFile(initialContents, fileName);
+//   String readStr = dataFile.readString();
+//   char Buf[DISK_SECTOR_SIZE];
+//   readStr.toCharArray(Buf, DISK_SECTOR_SIZE);
+//   initialContents = Buf;
+//   dataFile.close();
+//   settingsDoc = getJsonDocumentFromFile(fileName);
 
-  // delay(100);
-  // addLog("initRomArea", millis());
+//   // delay(100);
+//   // addLog("initRomArea", millis());
 
-  overWriteContentsOnMemory(initialContents);
+//   overWriteContentsOnMemory(initialContents);
 
-}
+// }
 
 void setup() {
   Serial.begin(115200);
