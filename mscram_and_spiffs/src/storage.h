@@ -118,7 +118,7 @@ static uint8_t msc_disk[DISK_SECTOR_COUNT][DISK_SECTOR_SIZE] =
     FAT_YMD2B(2020,11,5), //last_access_ymd
     FAT_U16(0),           //extended_attributes
     FAT_HMS2B(13,44,16),  //last_modified_hms
-    FAT_YMD2B(2019,11,5), //last_modified_ymd
+    FAT_YMD2B(2021,11,5), //last_modified_ymd
     FAT_U16(2),           //start of file in cluster
     // FAT_U32(sizeof(DEFAULT_CONTENTS) - 1) //file size
     FAT_U32(sizeof(DEFAULT_CONTENTS) - 1) //file size

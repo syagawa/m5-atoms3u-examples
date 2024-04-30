@@ -28,6 +28,13 @@ void removeAllFiles(){
   }
 }
 
+void overWriteContentsOnMemory( const char *contents){
+  uint8_t * u = (uint8_t *)contents;
+  int len = strlen(contents);
+  for(int i = 0; i < len; i++){
+    msc_disk[3][i] = u[i];
+  }
+}
 
 File initAndGetDataFile(char * initialContents, String filename){
   File dataFile;

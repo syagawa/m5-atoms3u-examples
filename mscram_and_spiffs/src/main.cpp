@@ -5,11 +5,14 @@
 #include "led.h"
 #include "Adafruit_TinyUSB.h"
 
+#include "json.h"
+
+DynamicJsonDocument settingsDoc(512);
+
 #include "storage.h"
 #include <ArduinoJson.h>
 
 #include "file.h"
-#include "json.h"
 #include "button.h"
 
 #ifdef EZDATA_ENABLE
@@ -32,20 +35,10 @@ void addLog(char * key, int i){
 }
 
 
-DynamicJsonDocument settingsDoc(512);
-
-Adafruit_USBD_WebUSB usb_web;
-WEBUSB_URL_DEF(landingPage, 1 /*https*/, "example.tinyusb.org/webusb-serial/index.html");
 void line_state_callback(bool connected)
 {
   // digitalWrite(led_pin, connected);
   flickLed(2, "lime");
-
-  if ( connected )
-  {
-    usb_web.println("WebUSB interface connected !!");
-    usb_web.flush();
-  }
 }
 
 
@@ -62,14 +55,6 @@ String getContentsStr(){
 
 int charas_length = 0;
 int u_length = 0;
-
-void overWriteContentsOnMemory( const char *contents){
-  uint8_t * u = (uint8_t *)contents;
-  int len = strlen(contents);
-  for(int i = 0; i < len; i++){
-    msc_disk[3][i] = u[i];
-  }
-}
 
 
 
@@ -174,48 +159,6 @@ void resetAndRestart(){
 // 1: Settings Mode(USB Flash)
 int bootmode = 0;
 
-// btn pressed count
-// int pressedBtnCount = 0;
-
-// bool timerIsEnabled = false;
-// long startMillis = 0;
-// bool checkTimerIsEnabled(int waitSeconds) {
-
-//   long waitMillis = waitSeconds * 1000;
-
-//   float current = millis();
-
-//   if(!timerIsEnabled){
-//     timerIsEnabled = true;
-//     startMillis = current;
-//   }
-
-//   float elapsedMillis = current - startMillis;
-//   float leftMillis = waitMillis - elapsedMillis;
-//   float leftSeconds = leftMillis / 1000;
-  
-
-//   if(leftSeconds < 0){
-//     timerIsEnabled = false;
-//   }
-//   return timerIsEnabled;
-// }
-
-// bool pressAndCheckBtnPressedXTimesWithinYSedonds(int x, int y){
-//   pressedBtnCount = pressedBtnCount + 1;
-//   bool b = false;
-//   if(checkTimerIsEnabled(x)){
-//     if(pressedBtnCount >= y){
-//       timerIsEnabled = false;
-//       pressedBtnCount = 0;
-//       b = true;
-//     }
-//   }else{
-//     pressedBtnCount = 0;
-//   }
-//   return b;
-// }
-
 
 // regular mode settings >>
 
@@ -251,91 +194,8 @@ String receivedString = "";
 String setMode = "";// "", "key", "value"
 String setKey = "";
 String setValue = "";
-void echo_all(uint8_t buf[], uint32_t count)
-{
+void echo_all(uint8_t buf[], uint32_t count){
   flickLed(2, "yellow");
-
-  if (usb_web.connected()){
-    receivedString += String((char*)buf);
-    int entered = 0;
-    usb_web.write(buf, count);
-    for(uint32_t i=0; i<count; i++){
-      if ( buf[i] == '\r' || buf[i] == '\n'){
-        usb_web.flush();
-        entered = 1;
-      }
-    }
-    if(entered == 1){
-      if(setMode == "key"){
-        receivedString.remove(receivedString.length() - 1);
-        setKey = receivedString;
-        setMode = "value";
-        usb_web.println("set mode please type value");
-      }else if(setMode == "value"){
-        receivedString.remove(receivedString.length() - 1);
-        setValue = receivedString;
-        
-        settingsDoc = setKeyValueToJson(settingsDoc, setKey, setValue);
-        
-        setMode = "";
-        setKey = "";
-        setValue = "";
-
-        String settings_str = getJsonString(settingsDoc);
-
-        writeToFile(settings_str);
-        
-        usb_web.println(settings_str);
-      }
-
-      if(receivedString == "get mode\r" || receivedString == "get mode\n"){
-        usb_web.println(settings_mode);
-      }else if(receivedString == "get initial\r" || receivedString == "get initial\n"){
-        usb_web.println(initialContents);
-      }else if(receivedString == "get settings\r" || receivedString == "get settings\n"){
-        String settings_str = getJsonString(settingsDoc);
-        usb_web.println(settings_str);
-      }else if(receivedString == "set\r" || receivedString == "set\n"){
-        setMode = "key";
-        usb_web.println("set mode please type key");
-      }else{
-        usb_web.println(receivedString);
-      }
-      usb_web.flush();
-
-      if(receivedString == "reset\r" || receivedString == "reset\n"){
-        requiresResetInSettingsMode = 1;
-      }
-
-      receivedString = "";
-    }
-  }
-
-  // if ( Serial )
-  // {
-  //   int entered = 0;
-  //   for(uint32_t i=0; i<count; i++){
-  //     // Serial.write(buf[i]);
-  //     if ( buf[i] == '\r' ){
-  //       entered = 1;
-  //     }
-  //   }
-    
-  //   if(entered == 1){
-  //     if(receivedString == "get"){
-  //       Serial.write("AAAA");
-  //     }else{
-  //       Serial.write(initialContents);
-  //     }
-
-  //     Serial.write('\n');
-  //     receivedString = "";
-  //     Serial.flush();
-  //     entered = 0;
-  //   }
-  // }
-
-
 }
 
 // regular mode settings <<
@@ -358,25 +218,6 @@ void setupInSettingsMode(){
       MSC.begin();
 
       USB.begin();
-    }else if(settings_mode == "web"){
-      // webserial
-      USB.begin();
-      usb_web.setLandingPage(&landingPage);
-      usb_web.setLineStateCallback(line_state_callback);
-      while(!usb_web.begin()){
-        flickLed(2, "magenta");
-        delay(1);
-      }
-
-      // wait until device mounted
-      while( !TinyUSBDevice.mounted() ){
-        flickLed(2, "red");
-        delay(1);
-      }
-
-      if( TinyUSBDevice.mounted() ){
-        flickLed(2, "cyan");
-      }
     }
 }
 
@@ -414,25 +255,6 @@ void loopInSettingsMode(){
       if(pressAndCheckBtnPressedXTimesWithinYSedonds(5, 5)){
         requiresResetInSettingsMode = 1;
       }
-    }
-  }else if(settings_mode == "web"){
-    // addLog("loopInSettingsModeWeb", millis());
-
-    uint8_t buf[64];
-    uint32_t count;
-    if (Serial.available())
-    {
-      count = Serial.read(buf, 64);
-      flickLed(2, "red");
-      echo_all(buf, count);
-    }
-
-    // from WebUSB to both Serial & webUSB
-    if (usb_web.available())
-    {
-      flickLed(2, "green");
-      count = usb_web.read(buf, 64);
-      echo_all(buf, count);
     }
   }
 
