@@ -1,0 +1,31 @@
+Processing m5stack-atoms3 (platform: espressif32@6.6.0; board: m5stack-atoms3; framework: arduino)
+---------------------------------------------------------------------------------------------------------------------------Verbose mode can be enabled via `-v, --verbose` option
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/m5stack-atoms3.html
+PLATFORM: Espressif 32 (6.6.0) > M5Stack AtomS3
+HARDWARE: ESP32S3 240MHz, 320KB RAM, 8MB Flash
+DEBUG: Current (cmsis-dap) External (cmsis-dap, esp-bridge, esp-builtin, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES:
+ - framework-arduinoespressif32 @ 3.20015.0 (2.0.15)
+ - tool-esptoolpy @ 1.40501.0 (4.5.1)
+ - tool-mkfatfs @ 2.0.1
+ - tool-mklittlefs @ 1.203.210628 (2.3)
+ - tool-mkspiffs @ 2.230.0 (2.30)
+ - toolchain-riscv32-esp @ 8.4.0+2021r2-patch5
+ - toolchain-xtensa-esp32s3 @ 8.4.0+2021r2-patch5
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 37 compatible libraries
+Scanning dependencies...
+Dependency Graph
+|-- M5Unified @ 0.1.14  
+|-- EspEasyUtils @ 1.0.8
+|-- ArduinoJson @ 6.21.5
+|-- EEPROM @ 2.0.0      
+|-- SPIFFS @ 2.0.0      
+Building in release mode
+Retrieving maximum program size .pio\build\m5stack-atoms3\firmware.elf
+Checking size .pio\build\m5stack-atoms3\firmware.elf
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [=         ]  12.9% (used 42356 bytes from 327680 bytes)
+Flash: [==        ]  15.8% (used 527353 bytes from 3342336 bytes)
+Configuring upload protocol...
