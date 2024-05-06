@@ -12,7 +12,6 @@
 #define HWSerial Serial(2)
 USBCDC USBSerial;
 
-
 USBMSC MSC;
 
 #include "storage.h"
@@ -49,6 +48,8 @@ String getContentsStr(){
 
 int charas_length = 0;
 int u_length = 0;
+
+int counter = 0;
 
 void overWriteContentsOnMemory( const char *contents){
   uint8_t * u = (uint8_t *)contents;
@@ -146,6 +147,7 @@ DynamicJsonDocument getJsonDocumentFromFile(String fileName){
   DynamicJsonDocument doc(512);
   try{
     File file = SPIFFS.open(fileName, "r");
+    USBSerial.printf("filename1 %s \n", fileName);
     DeserializationError error = deserializeJson(doc, file);
     file.close();
     if(error){
@@ -250,11 +252,15 @@ void setupInRegularMode(){
 void loopInRegularMode(){
   if (M5.BtnA.wasPressed()) {
     USBSerial.println("pressed!!");
+    USBSerial.printf("counter %d \n", counter);
     DynamicJsonDocument doc = getJsonDocumentFromFile(fileName);
     if(doc.containsKey("color")){
       auto color1 = doc["color"].as<const char*>();
       USBSerial.printf("doc color1: %s \n", color1);
     }
+
+    serializeJsonPretty(doc, USBSerial);
+    serializeJsonPretty(settingsDoc, USBSerial);
 
     if(settingsDoc.containsKey("color")){
       String color_1 = settingsDoc["color"].as<String>();
@@ -323,10 +329,15 @@ void setup() {
     bootmode = 1;
   }
 
+  USBSerial.printf("filename0 %s \n", fileName);
+  counter = 1;
+
   // 0. initialize Rom area 
-  if(SPIFFS.begin()){
+  if(SPIFFS.begin(true)){
+    counter = 2;
     File dataFile;
     if(!SPIFFS.exists(fileName)){
+      counter = 3;
       dataFile = SPIFFS.open(fileName, "w");
       dataFile.print(initialContents);
       dataFile.close();
