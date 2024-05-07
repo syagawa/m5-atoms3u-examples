@@ -38,7 +38,7 @@ void overWriteContentsOnMemory( const char *contents){
 
 File initAndGetDataFile(char * initialContents, String filename){
   File dataFile;
-  if(SPIFFS.begin()){
+  if(SPIFFS.begin(true)){
     if(!SPIFFS.exists(filename)){
       dataFile = SPIFFS.open(filename, "w");
       dataFile.print(initialContents);
