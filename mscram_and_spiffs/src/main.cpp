@@ -171,6 +171,8 @@ int requiresResetInSettingsMode = 0;
 void setupInRegularMode(){
   USB.begin();
 }
+
+int brightness = 100;
 //// write regular code in loop
 void loopInRegularMode(){
   if (M5.BtnA.wasPressed()) {
@@ -183,7 +185,11 @@ void loopInRegularMode(){
       String color_1 = settingsDoc["color"].as<String>();
       offLed();
       delay(10);
-      liteLed(color_1);
+      liteLed(color_1, brightness);
+      brightness = brightness - 10;
+      if(brightness < 0){
+        brightness = 100;
+      }
     }else{
       flickLed(2, "white");
     }
