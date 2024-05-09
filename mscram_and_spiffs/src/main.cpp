@@ -35,31 +35,10 @@ void addLog(char * key, int i){
 }
 
 
-void line_state_callback(bool connected)
-{
-  // digitalWrite(led_pin, connected);
-  flickLed(2, "lime");
-}
-
-
-
 int writeFlg = 0;
 int readFlg = 0;
 
-int contentsIndex = 3;
-String getContentsStr(){
-  String str = (char *) msc_disk[contentsIndex];
-  return str;
-}
-
-
-int charas_length = 0;
-int u_length = 0;
-
-
-
 static bool onStartStop(uint8_t power_condition, bool start, bool load_eject){
-
   flickLed(2, "green");
   delay(500);
   return true;
@@ -112,30 +91,21 @@ static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t eve
     arduino_usb_event_data_t * data = (arduino_usb_event_data_t*)event_data;
     switch (event_id){
       case ARDUINO_USB_STARTED_EVENT:
-        // flickLed(2, 4);
-        // liteLed("darkgreen");
         setLedStr = "orange";
         usbStartedStr = "A";
         break;
       case ARDUINO_USB_STOPPED_EVENT:
-        // flickLed(2, 5);
-        // liteLed("pink");
         setLedStr = "cyan";
         usbStoppedStr = "A";
         break;
       case ARDUINO_USB_SUSPEND_EVENT:
-        // liteLed("purple");
-        // flickLed(2, 6);
         setLedStr = "white";
         usbSuspendStr = "A";
         break;
       case ARDUINO_USB_RESUME_EVENT:
-        // flickLed(2, 7);
-        // liteLed("darkcyan");
         setLedStr = "darkgreen";
         usbResumeStr = "A";
         break;
-      
       default:
         defaultEventStr = "A";
         break;
