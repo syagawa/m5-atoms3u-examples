@@ -57,7 +57,6 @@ int32_t mscWriteCallback (uint32_t lba, uint8_t* buffer, uint32_t bufsize)
   return bufsize;
 }
 
-
 int32_t mscReadCallback (uint32_t lba, void* buffer, uint32_t bufsize)
 {
   uint8_t const* addr = msc_disk[lba];
@@ -68,7 +67,6 @@ int32_t mscReadCallback (uint32_t lba, void* buffer, uint32_t bufsize)
   readFlg = 1;
   return bufsize;
 }
-
 
 void flush_cb(){
   flickLed(2, "green");
@@ -114,12 +112,9 @@ static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t eve
 }
 
 
-
-
 void resetAndRestart(){
   removeAllFiles();
   delay(100);
-  // MSC.end();
   delay(100);
   ESP.restart();
 }
@@ -166,13 +161,6 @@ void loopInRegularMode(){
   }
 }
 
-String receivedString = "";
-String setMode = "";// "", "key", "value"
-String setKey = "";
-String setValue = "";
-void echo_all(uint8_t buf[], uint32_t count){
-  flickLed(2, "yellow");
-}
 
 // regular mode settings <<
 
@@ -199,7 +187,6 @@ void setupInSettingsMode(){
 
 void loopInSettingsMode(){
   if(settings_mode == "storage"){
-    // addLog("loopInSettingsModeStorage", millis());
     if(writeFlg == 1){
       int targetSize = sizeof(msc_disk[3]);
       String str = (char *) msc_disk[3];
@@ -227,7 +214,6 @@ void loopInSettingsMode(){
 
     if(readFlg != 1 && writeFlg != 1 && M5.BtnA.wasPressed()){
       // If you press the button five times within 5 seconds, it will delete the files in the ROM area and restart. The configuration JSON will be reset to its initial state.
-
       if(pressAndCheckBtnPressedXTimesWithinYSedonds(5, 5)){
         requiresResetInSettingsMode = 1;
       }
@@ -264,22 +250,7 @@ void loopInSettingsMode(){
 
 }
 
-// void initRomArea(char * initialContents){
 
-//   File dataFile = initAndGetDataFile(initialContents, fileName);
-//   String readStr = dataFile.readString();
-//   char Buf[DISK_SECTOR_SIZE];
-//   readStr.toCharArray(Buf, DISK_SECTOR_SIZE);
-//   initialContents = Buf;
-//   dataFile.close();
-//   settingsDoc = getJsonDocumentFromFile(fileName);
-
-//   // delay(100);
-//   // addLog("initRomArea", millis());
-
-//   overWriteContentsOnMemory(initialContents);
-
-// }
 
 void setup() {
   Serial.begin(115200);
@@ -313,9 +284,6 @@ void setup() {
   }else if(bootmode == 1){// 2. Settings Mode(USB Flash)
     setupInSettingsMode();
   }
-
-
-  // addLog("setup1bootmode", bootmode);
 
 
 }

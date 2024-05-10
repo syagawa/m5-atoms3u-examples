@@ -84,7 +84,6 @@ void liteLed(String c, int brightness = 100){
 }
 
 void flickLed(int num, String c){
-
   onLed();
   for(int i = 0; i < num; i++){
     changeColor(c);
@@ -93,10 +92,6 @@ void flickLed(int num, String c){
     delay(10);
   }
   offLed();
-
 }
-
-
-
 
 #endif //LED_H

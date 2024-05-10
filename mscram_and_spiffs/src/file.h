@@ -59,9 +59,6 @@ void initRomArea(char * initialContents){
   dataFile.close();
   settingsDoc = getJsonDocumentFromFile(fileName);
 
-  // delay(100);
-  // addLog("initRomArea", millis());
-
   overWriteContentsOnMemory(initialContents);
 
 }
