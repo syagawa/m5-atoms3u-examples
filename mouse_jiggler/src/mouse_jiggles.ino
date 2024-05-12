@@ -383,7 +383,7 @@ void setup() {
   }
 
   // 0. ROM領域の初期化 
-  if(SPIFFS.begin()){
+  if(SPIFFS.begin(true)){
     File dataFile;
     // removeAllFiles();
     if(!SPIFFS.exists(fileName)){
