@@ -505,7 +505,8 @@ void loop() {
       delay(inputWait);
       Keyboard.print("PrintPrint ");
       uint8_t * buf = reinterpret_cast<uint8_t *>(keyboardStr);
-      Keyboard.write(*buf);
+      size_t length = strlen(keyboardStr);
+      Keyboard.write(buf, length);
       Keyboard.write('\n');
       delay(inputWait);
 
