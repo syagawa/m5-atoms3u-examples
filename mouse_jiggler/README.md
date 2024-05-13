@@ -1,0 +1,1 @@
+通常モードではvscodeを閉じていないとmouse jiggler等は動かない
