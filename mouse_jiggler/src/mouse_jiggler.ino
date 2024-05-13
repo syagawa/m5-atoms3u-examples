@@ -7,7 +7,7 @@ void loop(){}
 #include "USB.h"
 #include "USBMSC.h"
 #include "USBHIDMouse.h"
-#include "Keyboard.h"
+#include "USBHIDKeyboard.h"
 
 #include <M5Unified.h>
 #include <EspEasyLED.h>
@@ -367,6 +367,7 @@ int wheel_dist = 3;
 bool isAction = false;
 
 USBHIDMouse Mouse;
+USBHIDKeyboard Keyboard;
 
 
 void setup() {
