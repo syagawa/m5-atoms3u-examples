@@ -7,6 +7,7 @@ void loop(){}
 #include "USB.h"
 #include "USBMSC.h"
 #include "USBHIDMouse.h"
+#include "Keyboard.h"
 
 #include <M5Unified.h>
 #include <EspEasyLED.h>
@@ -406,6 +407,7 @@ void setup() {
   if(bootmode == 0){// 1. normal モード
     USBSerial.begin();
     Mouse.begin();
+    Keyboard.begin();
     USB.begin();
   }else if(bootmode == 1){// 2. USB Flash モード
     USB.onEvent(usbEventCallback);
@@ -438,6 +440,9 @@ void loop() {
           mode = 2;
           break;
         case 2:
+          mode = 3;
+          break;
+        case 3:
           mode = 0;
           break;
         default:
@@ -487,6 +492,15 @@ void loop() {
       Mouse.move(0, 0, wheel_dist);
       delay(inputWait);
       Mouse.move(0, 0, -1 * wheel_dist);
+    }else if (mode == 3){
+      if (rgbled) {
+          rgbled->showColor(255, 255, 0);
+      }
+      delay(inputWait);
+      Keyboard.print("PrintPrint ");
+      Keyboard.write('AAAAAA'); //
+      Keyboard.write('\n');
+      delay(inputWait);
 
     } else {
       if (rgbled) {
