@@ -300,6 +300,7 @@ static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t eve
 
 
 char * initialContents = R"({"defaultMode": 0})";
+char * keyboardStr = "BBB";
 String fileName = "/ATOMS3U/SETTINGS.TXT";
 bool SPIFFS_FORMAT = true;
 
@@ -401,6 +402,10 @@ void setup() {
     initialContents = Buf;
     dataFile.close();
     settingsDoc = getJsonDocumentFromFile(fileName);
+    // if(settingsDoc.containsKey("key")){
+    //   // keyboardStr = settingsDoc["key"].as<const char*>();
+    //   keyboardStr = settingsDoc["key"];
+    // }
   }
 
   overWriteContentsOnMemory(initialContents);
@@ -499,7 +504,8 @@ void loop() {
       }
       delay(inputWait);
       Keyboard.print("PrintPrint ");
-      Keyboard.write('AAAAAA'); //
+      uint8_t * buf = reinterpret_cast<uint8_t *>(keyboardStr);
+      Keyboard.write(*buf);
       Keyboard.write('\n');
       delay(inputWait);
 
