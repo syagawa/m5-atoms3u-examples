@@ -16,14 +16,14 @@ EspEasyLED *rgbled;
 
 #include <EEPROM.h>
 
-#if ARDUINO_USB_CDC_ON_BOOT
-#define HWSerial Serial0
-#define USBSerial Serial
-#else
-// #define HWSerial Serial
-#define HWSerial Serial(2)
-USBCDC USBSerial;
-#endif
+// #if ARDUINO_USB_CDC_ON_BOOT
+// #define HWSerial Serial0
+// #define USBSerial Serial
+// #else
+// // #define HWSerial Serial
+// #define HWSerial Serial(2)
+// USBCDC USBSerial;
+// #endif
 
 USBMSC MSC;
 
@@ -229,8 +229,8 @@ void overWriteContentsOnMemory( const char *contents){
 
 
 static int32_t onWrite(uint32_t lba, uint32_t offset, uint8_t* buffer, uint32_t bufsize){
-  USBSerial.printf("1MSC WRITE: lba: %u, offset: %u, bufsize: %u\n", lba, offset, bufsize);
-  USBSerial.printf("2MSC WRITE buffer: %u\n", buffer);
+  // USBSerial.printf("1MSC WRITE: lba: %u, offset: %u, bufsize: %u\n", lba, offset, bufsize);
+  // USBSerial.printf("2MSC WRITE buffer: %u\n", buffer);
 
   // memcpy(buf1, buf2, n)
   // void *buf1　：　コピー先のメモリブロック
@@ -247,8 +247,8 @@ static int32_t onWrite(uint32_t lba, uint32_t offset, uint8_t* buffer, uint32_t 
 }
 
 static int32_t onRead(uint32_t lba, uint32_t offset, void* buffer, uint32_t bufsize){
-  USBSerial.printf("1MSC READ: lba: %u, offset: %u, bufsize: %u\n", lba, offset, bufsize);
-  USBSerial.printf("2MSC READ buffer: %u\n", buffer);
+  // USBSerial.printf("1MSC READ: lba: %u, offset: %u, bufsize: %u\n", lba, offset, bufsize);
+  // USBSerial.printf("2MSC READ buffer: %u\n", buffer);
 
   // memcpy(buf1, buf2, n)
   // void *buf1　：　コピー先のメモリブロック
@@ -265,7 +265,7 @@ static int32_t onRead(uint32_t lba, uint32_t offset, void* buffer, uint32_t bufs
 }
 
 static bool onStartStop(uint8_t power_condition, bool start, bool load_eject){
-  USBSerial.printf("MSC START/STOP: power: %u, start: %u, eject: %u\n", power_condition, start, load_eject);
+  // USBSerial.printf("MSC START/STOP: power: %u, start: %u, eject: %u\n", power_condition, start, load_eject);
 
   flickLed(2, "magenta");
   return true;
@@ -276,19 +276,19 @@ static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t eve
     arduino_usb_event_data_t * data = (arduino_usb_event_data_t*)event_data;
     switch (event_id){
       case ARDUINO_USB_STARTED_EVENT:
-        USBSerial.println("USB PLUGGED");
+        // USBSerial.println("USB PLUGGED");
         // flickLed(2, 4);
         break;
       case ARDUINO_USB_STOPPED_EVENT:
-        USBSerial.println("USB UNPLUGGED");
+        // USBSerial.println("USB UNPLUGGED");
         // flickLed(2, 5);
         break;
       case ARDUINO_USB_SUSPEND_EVENT:
-        USBSerial.printf("USB SUSPENDED: remote_wakeup_en: %u\n", data->suspend.remote_wakeup_en);
+        // USBSerial.printf("USB SUSPENDED: remote_wakeup_en: %u\n", data->suspend.remote_wakeup_en);
         // flickLed(2, 6);
         break;
       case ARDUINO_USB_RESUME_EVENT:
-        USBSerial.println("USB RESUMED");
+        // USBSerial.println("USB RESUMED");
         // flickLed(2, 7);
         break;
       
@@ -317,10 +317,10 @@ DynamicJsonDocument getJsonDocumentFromFile(String fileName){
     DeserializationError error = deserializeJson(doc, file);
     file.close();
     if(error){
-      USBSerial.printf("doc file error %s \n", error.c_str());
+      // USBSerial.printf("doc file error %s \n", error.c_str());
     }
   }catch(Exception& ex){
-      USBSerial.printf("json error %s \n", ex.Message());
+      // USBSerial.printf("json error %s \n", ex.Message());
   }
   return doc;
 
@@ -331,8 +331,8 @@ void listAllFiles(){
   File file = root.openNextFile();
   while(file){
  
-      USBSerial.print("FILE: ");
-      USBSerial.println(file.path());
+      // USBSerial.print("FILE: ");
+      // USBSerial.println(file.path());
 
       file = root.openNextFile();
   }
@@ -411,7 +411,7 @@ void setup() {
   overWriteContentsOnMemory(initialContents);
 
   if(bootmode == 0){// 1. normal モード
-    USBSerial.begin();
+    // USBSerial.begin();
     Mouse.begin();
     Keyboard.begin();
     USB.begin();
@@ -425,7 +425,7 @@ void setup() {
     MSC.onWrite(onWrite);
     MSC.mediaPresent(true);
     MSC.begin(DISK_SECTOR_COUNT, DISK_SECTOR_SIZE);
-    USBSerial.begin();
+    // USBSerial.begin();
     USB.begin();
   }
 }
@@ -533,7 +533,7 @@ void loop() {
       int targetSize = sizeof(msc_disk[3]);
       String str = (char *) msc_disk[3];
       int strsize = str.length();
-      USBSerial.printf("7loop WRITE: msc_disk targetSize: %u, contents strsize: %u, str: %s \n", targetSize, strsize, str);
+      // USBSerial.printf("7loop WRITE: msc_disk targetSize: %u, contents strsize: %u, str: %s \n", targetSize, strsize, str);
       delay(100);
 
       writeToFile(str);
