@@ -1,9 +1,10 @@
 // # This code is created with reference to https://github.com/espressif/arduino-esp32/blob/master/libraries/USB/examples/USBMSC/USBMSC.ino . 
 #include "USB.h"
+#include "USBMSC.h"
 
 #include <M5Unified.h>
 #include "led.h"
-#include "Adafruit_TinyUSB.h"
+// #include "Adafruit_TinyUSB.h"
 
 #include "json.h"
 
@@ -15,25 +16,15 @@ DynamicJsonDocument settingsDoc(512);
 #include "file.h"
 #include "button.h"
 
-#ifdef EZDATA_ENABLE
-#include "settings_ezdata.h"
-#include "ezdata.h"
-#endif
 
-Adafruit_USBD_MSC  MSC;
+// Adafruit_USBD_MSC  MSC;
+USBMSC MSC;
 
-void setupLog(){
-#ifdef EZDATA_ENABLE
-  setupEzData(ezdata_ssid, ezdata_password, ezdata_token);
-#endif
-}
 
-void addLog(char * key, int i){
-#ifdef EZDATA_ENABLE
-    ezAddToList(key, i);
-#endif
-}
-
+#include "USBHIDKeyboard.h"
+USBHIDKeyboard Keyboard;
+String keyboardStr = "";
+int existsKeyboardStr = 0;
 
 int writeFlg = 0;
 int readFlg = 0;
@@ -68,21 +59,51 @@ int32_t mscReadCallback (uint32_t lba, void* buffer, uint32_t bufsize)
   return bufsize;
 }
 
+static int32_t onWrite(uint32_t lba, uint32_t offset, uint8_t* buffer, uint32_t bufsize){
+  // USBSerial.printf("1MSC WRITE: lba: %u, offset: %u, bufsize: %u\n", lba, offset, bufsize);
+  // USBSerial.printf("2MSC WRITE buffer: %u\n", buffer);
+
+  // memcpy(buf1, buf2, n)
+  // void *buf1　：　コピー先のメモリブロック
+  // const void *buf2　：　コピー元のメモリブロック
+  // size_t n　：　コピーバイト数
+  // このmemcpyは動いていない？ この行が無くてもREADME.txtは表示されるし、データの更新もできる(電源が入ってる限り)
+  memcpy(msc_disk[lba] + offset, buffer, bufsize);
+
+  flickLed(2, "red");
+
+
+  writeFlg = 1;
+  return bufsize;
+}
+
+static int32_t onRead(uint32_t lba, uint32_t offset, void* buffer, uint32_t bufsize){
+  // USBSerial.printf("1MSC READ: lba: %u, offset: %u, bufsize: %u\n", lba, offset, bufsize);
+  // USBSerial.printf("2MSC READ buffer: %u\n", buffer);
+
+  // memcpy(buf1, buf2, n)
+  // void *buf1　：　コピー先のメモリブロック
+  // const void *buf2　：　コピー元のメモリブロック
+  // size_t n　：　コピーバイト数
+  // このmemcpyは動いている この行が無いとREADME.txtファイルもストレージも表示されない
+  memcpy(buffer, msc_disk[lba] + offset, bufsize);
+
+  flickLed(2, "yellow");
+
+  readFlg = 1;
+
+  return bufsize;
+}
+
 void flush_cb(){
   flickLed(2, "green");
 }
 
 bool msc_ready_cb(void){
-  addLog("ready", millis());
   return true;
 }
 
 String setLedStr = "";
-String usbStartedStr = "";
-String usbStoppedStr = "";
-String usbSuspendStr = "";
-String usbResumeStr = "";
-String defaultEventStr = "";
 
 static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data){
   if(event_base == ARDUINO_USB_EVENTS){
@@ -90,22 +111,17 @@ static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t eve
     switch (event_id){
       case ARDUINO_USB_STARTED_EVENT:
         setLedStr = "orange";
-        usbStartedStr = "A";
         break;
       case ARDUINO_USB_STOPPED_EVENT:
         setLedStr = "cyan";
-        usbStoppedStr = "A";
         break;
       case ARDUINO_USB_SUSPEND_EVENT:
         setLedStr = "white";
-        usbSuspendStr = "A";
         break;
       case ARDUINO_USB_RESUME_EVENT:
         setLedStr = "darkgreen";
-        usbResumeStr = "A";
         break;
       default:
-        defaultEventStr = "A";
         break;
     }
   }
@@ -128,12 +144,21 @@ int bootmode = 0;
 // regular mode settings >>
 
 //// initial settings
-char * initialContents = R"({"settings_mode": "storage", "color": "red"})";
+char * initialContents = R"({"settings_mode": "storage", "color": "red", "key": "abc"})";
 String settings_mode = "storage";
 int requiresResetInSettingsMode = 0;
 
+
+
 //// regular code in setup
 void setupInRegularMode(){
+
+  if(settingsDoc.containsKey("key")){
+    keyboardStr = settingsDoc["key"].as<String>();
+    existsKeyboardStr = 1;
+  }
+
+  Keyboard.begin();
   USB.begin();
 }
 
@@ -141,23 +166,25 @@ int brightness = 100;
 //// write regular code in loop
 void loopInRegularMode(){
   if (M5.BtnA.wasPressed()) {
-    DynamicJsonDocument doc = getJsonDocumentFromFile(fileName);
-    if(doc.containsKey("color")){
-      auto color1 = doc["color"].as<const char*>();
+
+    String color = "blue";
+    if(settingsDoc.containsKey("color")){
+      color = settingsDoc["color"].as<String>();
+    }
+    offLed();
+    delay(10);
+    liteLed(color, brightness);
+
+    if(existsKeyboardStr == 1){
+      const char* str = keyboardStr.c_str();
+      uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
+      size_t len = strlen(str);
+      Keyboard.write(buf, len);
     }
 
-    if(settingsDoc.containsKey("color")){
-      String color_1 = settingsDoc["color"].as<String>();
-      offLed();
-      delay(10);
-      liteLed(color_1, brightness);
-      brightness = brightness - 10;
-      if(brightness < 0){
-        brightness = 100;
-      }
-    }else{
-      flickLed(2, "white");
-    }
+    delay(10);
+    offLed();
+
   }
 }
 
@@ -173,13 +200,21 @@ void setupInSettingsMode(){
       // storage
       USB.onEvent(usbEventCallback);
 
-      MSC.setID("M5AtomS3U", "USBD_MSC", "1.0");
-      MSC.setCapacity(DISK_SECTOR_COUNT, DISK_SECTOR_SIZE);
-      // MSC.setReadyCallback(msc_ready_cb);
-      MSC.setStartStopCallback(onStartStop);
-      MSC.setReadWriteCallback(mscReadCallback, mscWriteCallback, flush_cb);
-      MSC.setUnitReady(true);
-      MSC.begin();
+      // MSC.setID("M5AtomS3U", "USBD_MSC", "1.0");
+      // MSC.setCapacity(DISK_SECTOR_COUNT, DISK_SECTOR_SIZE);
+      // // MSC.setReadyCallback(msc_ready_cb);
+      // MSC.setStartStopCallback(onStartStop);
+      // MSC.setReadWriteCallback(mscReadCallback, mscWriteCallback, flush_cb);
+      // MSC.setUnitReady(true);
+      // MSC.begin();
+      MSC.vendorID("M5AtomS3U");//max 8 chars
+      MSC.productID("USB_MSC");//max 16 chars
+      MSC.productRevision("1.0");//max 4 chars
+      MSC.onStartStop(onStartStop);
+      MSC.onRead(onRead);
+      MSC.onWrite(onWrite);
+      MSC.mediaPresent(true);
+      MSC.begin(DISK_SECTOR_COUNT, DISK_SECTOR_SIZE);
 
       USB.begin();
     }
@@ -205,7 +240,6 @@ void loopInSettingsMode(){
     if(setLedStr != ""){
       char result[10];
       setLedStr.toCharArray(result, 10);
-      addLog(result, millis());
 
       liteLed(setLedStr);
       setLedStr = "";
@@ -223,30 +257,6 @@ void loopInSettingsMode(){
   if(requiresResetInSettingsMode == 1){
     resetAndRestart();
   }
-  
-
-  if(usbStartedStr != ""){
-    // addLog("usbStartedStr", millis());
-    usbStartedStr = "";
-  }
-  if(usbStoppedStr != ""){
-    // addLog("usbStoppedStr", millis());
-    usbStoppedStr = "";
-  }
-  if(usbSuspendStr != ""){
-    // addLog("usbSuspendStr", millis());
-    usbSuspendStr = "";
-  }
-  if(usbResumeStr != ""){
-    // addLog("usbResumeStr", millis());
-    usbResumeStr = "";
-  }
-  
-  if(defaultEventStr != ""){
-    // addLog("defaultEventStr", millis());
-    defaultEventStr = "";
-  }
-
 
 }
 
@@ -263,13 +273,6 @@ void setup() {
   M5.Power.setLed(0);
 
   int beforeSetupWiFiMilli = millis();
-#ifdef EZDATA_ENABLE
-  setupLog();
-#endif
-  // addLog("mscram_start0", beforeSetupWiFiMilli);
-  // addLog("mscram_start1", millis());
-
-
 
   if (M5.BtnA.wasPressed()) {
     bootmode = 1;
@@ -277,7 +280,6 @@ void setup() {
 
   initRomArea(initialContents);
 
-  // addLog("setup0bootmode", bootmode);
 
   if(bootmode == 0){// 1. Regular Mode
     setupInRegularMode();
