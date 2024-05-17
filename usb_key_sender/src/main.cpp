@@ -23,8 +23,15 @@ USBMSC MSC;
 
 #include "USBHIDKeyboard.h"
 USBHIDKeyboard Keyboard;
-String keyboardStr = "";
-int existsKeyboardStr = 0;
+String keyStr = "";
+int existsKeyStr = 0;
+JsonArray keyArray;
+int existsKeyArray = 0;
+int arraySize = 0;
+int arraySizeMax = 10;
+int keyIndex = 0;
+
+
 
 int writeFlg = 0;
 int readFlg = 0;
@@ -154,9 +161,17 @@ int requiresResetInSettingsMode = 0;
 void setupInRegularMode(){
 
   if(settingsDoc.containsKey("key")){
-    keyboardStr = settingsDoc["key"].as<String>();
-    existsKeyboardStr = 1;
+    keyStr = settingsDoc["key"].as<String>();
+    existsKeyStr = 1;
+  }else if(settingsDoc.containsKey("keys")){
+    keyArray = settingsDoc["keys"];
+    arraySize = keyArray.size();
+    if(arraySize > arraySizeMax){
+      arraySize = arraySizeMax;
+    }
   }
+
+
 
   Keyboard.begin();
   USB.begin();
@@ -175,15 +190,30 @@ void loopInRegularMode(){
     delay(10);
     liteLed(color, brightness);
 
-    if(existsKeyboardStr == 1){
-      const char* str = keyboardStr.c_str();
+    int off = 1;
+    if(existsKeyStr == 1){
+      const char* str = keyStr.c_str();
       uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
       size_t len = strlen(str);
       Keyboard.write(buf, len);
+    }else if(arraySize > 0){
+      String s = keyArray[keyIndex];
+      const char* str = s.c_str();
+      uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
+      size_t len = strlen(str);
+      Keyboard.write(buf, len);
+      keyIndex = keyIndex + 1;
+      if(keyIndex >= arraySize){
+        keyIndex = 0;
+      }else{
+        off = 0;
+      }
     }
 
-    delay(10);
-    offLed();
+    if(off == 1){
+      delay(10);
+      offLed();
+    }
 
   }
 }
