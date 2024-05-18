@@ -20,7 +20,6 @@ bool checkTimerIsEnabled(int waitSeconds) {
   float elapsedMillis = current - startMillis;
   float leftMillis = waitMillis - elapsedMillis;
   float leftSeconds = leftMillis / 1000;
-  
 
   if(leftSeconds < 0){
     timerIsEnabled = false;

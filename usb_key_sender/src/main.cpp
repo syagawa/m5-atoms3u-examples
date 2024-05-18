@@ -142,11 +142,11 @@ void resetAndRestart(){
   ESP.restart();
 }
 
+
 // bootmode
 // 0: Regular Mode
 // 1: Settings Mode(USB Flash)
 int bootmode = 0;
-
 
 // regular mode settings >>
 
@@ -154,8 +154,6 @@ int bootmode = 0;
 char * initialContents = R"({"settings_mode": "storage", "color": "red", "key": "abc"})";
 String settings_mode = "storage";
 int requiresResetInSettingsMode = 0;
-
-
 
 //// regular code in setup
 void setupInRegularMode(){
@@ -171,13 +169,47 @@ void setupInRegularMode(){
     }
   }
 
-
-
   Keyboard.begin();
   USB.begin();
 }
 
+void keyboardWrite(String s){
+  const char* str = s.c_str();
+  uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
+  size_t len = strlen(str);
+  Keyboard.write(buf, len);
+}
+
 int brightness = 100;
+bool waitNext = false;
+long startMillisForWaitNext = 0;
+void startWaitNext(){
+  waitNext = true;
+  float current = millis();
+  startMillisForWaitNext = current;
+}
+void stopWaitNext(){
+  waitNext = false;
+}
+
+bool checkWaitNextIsEnabled(int waitSeconds) {
+  if(!waitNext){
+    return false;
+  }
+
+  long waitMillis = waitSeconds * 1000;
+  float current = millis();
+
+  float elapsedMillis = current - startMillisForWaitNext;
+  float leftMillis = waitMillis - elapsedMillis;
+  float leftSeconds = leftMillis / 1000;
+
+  if(leftSeconds < 0){
+    return false;
+  }
+  return true;
+}
+
 //// write regular code in loop
 void loopInRegularMode(){
   if (M5.BtnA.wasPressed()) {
@@ -189,33 +221,30 @@ void loopInRegularMode(){
     offLed();
     delay(10);
     liteLed(color, brightness);
-
-    int off = 1;
     if(existsKeyStr == 1){
-      const char* str = keyStr.c_str();
-      uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
-      size_t len = strlen(str);
-      Keyboard.write(buf, len);
+      keyboardWrite(keyStr);
+      stopWaitNext();
     }else if(arraySize > 0){
       String s = keyArray[keyIndex];
-      const char* str = s.c_str();
-      uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
-      size_t len = strlen(str);
-      Keyboard.write(buf, len);
+      keyboardWrite(s);
       keyIndex = keyIndex + 1;
       if(keyIndex >= arraySize){
         keyIndex = 0;
+        stopWaitNext();
       }else{
-        off = 0;
+        startWaitNext();
       }
     }
-
-    if(off == 1){
-      delay(10);
-      offLed();
-    }
-
   }
+
+  waitNext = checkWaitNextIsEnabled(5);
+
+  if(!waitNext){
+    delay(10);
+    offLed();
+    keyIndex = 0;
+  }
+
 }
 
 
