@@ -38,7 +38,6 @@ DynamicJsonDocument getJsonDocumentFromFile(String fileName){
 String getJsonString(DynamicJsonDocument doc){
   String output;
   serializeJson(doc, output);
-  // String str = String(output);
   return output;
 }
 

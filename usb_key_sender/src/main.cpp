@@ -4,22 +4,17 @@
 
 #include <M5Unified.h>
 #include "led.h"
-// #include "Adafruit_TinyUSB.h"
 
 #include "json.h"
 
 DynamicJsonDocument settingsDoc(512);
 
 #include "storage.h"
-#include <ArduinoJson.h>
 
 #include "file.h"
 #include "button.h"
 
-
-// Adafruit_USBD_MSC  MSC;
 USBMSC MSC;
-
 
 #include "USBHIDKeyboard.h"
 USBHIDKeyboard Keyboard;
@@ -30,8 +25,8 @@ int existsKeyArray = 0;
 int arraySize = 0;
 int arraySizeMax = 10;
 int keyIndex = 0;
-
-
+int waitNextSeconds = 5;
+String ledColor = "red";
 
 int writeFlg = 0;
 int readFlg = 0;
@@ -56,13 +51,7 @@ static int32_t onRead(uint32_t lba, uint32_t offset, void* buffer, uint32_t bufs
   return bufsize;
 }
 
-void flush_cb(){
-  flickLed(2, "green");
-}
 
-bool msc_ready_cb(void){
-  return true;
-}
 
 String setLedStr = "";
 
@@ -122,6 +111,16 @@ void setupInRegularMode(){
     }
   }
 
+
+  if(settingsDoc.containsKey("color")){
+    ledColor = settingsDoc["color"].as<String>();
+  }
+
+  if(settingsDoc.containsKey("waitSeconds")){
+    waitNextSeconds = settingsDoc["waitSeconds"].as<int>();
+  }
+
+
   Keyboard.begin();
   USB.begin();
 }
@@ -167,13 +166,9 @@ bool checkWaitNextIsEnabled(int waitSeconds) {
 void loopInRegularMode(){
   if (M5.BtnA.wasPressed()) {
 
-    String color = "blue";
-    if(settingsDoc.containsKey("color")){
-      color = settingsDoc["color"].as<String>();
-    }
     offLed();
     delay(10);
-    liteLed(color, brightness);
+    liteLed(ledColor, brightness);
     if(existsKeyStr == 1){
       keyboardWrite(keyStr);
       stopWaitNext();
@@ -190,7 +185,7 @@ void loopInRegularMode(){
     }
   }
 
-  waitNext = checkWaitNextIsEnabled(5);
+  waitNext = checkWaitNextIsEnabled(waitNextSeconds);
 
   if(!waitNext){
     delay(10);
@@ -279,26 +274,19 @@ void setup() {
 
   initRomArea(initialContents);
 
-
   if(bootmode == 0){// 1. Regular Mode
     setupInRegularMode();
   }else if(bootmode == 1){// 2. Settings Mode(USB Flash)
     setupInSettingsMode();
   }
-
-
 }
 
 void loop() {
-
   M5.update();
-
   if(bootmode == 0){// 1. Regular Mode
     loopInRegularMode();
   }else if(bootmode == 1){// 2. Settings Mode(USB Flash)
     loopInSettingsMode();
   }
-
-
 }
 
