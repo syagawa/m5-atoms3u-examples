@@ -7,7 +7,8 @@
 
 #include "json.h"
 
-DynamicJsonDocument settingsDoc(512);
+// DynamicJsonDocument settingsDoc(512);
+// String fileName = "/ATOMS3U/SETTINGS.TXT";
 
 #include "storage.h"
 
@@ -16,17 +17,8 @@ DynamicJsonDocument settingsDoc(512);
 
 USBMSC MSC;
 
-#include "USBHIDKeyboard.h"
-USBHIDKeyboard Keyboard;
-String keyStr = "";
-int existsKeyStr = 0;
-JsonArray keyArray;
-int existsKeyArray = 0;
-int arraySize = 0;
-int arraySizeMax = 10;
-int keyIndex = 0;
-int waitNextSeconds = 5;
-String ledColor = "red";
+#include "app.h"
+
 
 int writeFlg = 0;
 int readFlg = 0;
@@ -100,98 +92,18 @@ int requiresResetInSettingsMode = 0;
 //// regular code in setup
 void setupInRegularMode(){
 
-  if(settingsDoc.containsKey("key")){
-    keyStr = settingsDoc["key"].as<String>();
-    existsKeyStr = 1;
-  }else if(settingsDoc.containsKey("keys")){
-    keyArray = settingsDoc["keys"];
-    arraySize = keyArray.size();
-    if(arraySize > arraySizeMax){
-      arraySize = arraySizeMax;
-    }
-  }
-
-
-  if(settingsDoc.containsKey("color")){
-    ledColor = settingsDoc["color"].as<String>();
-  }
-
-  if(settingsDoc.containsKey("waitSeconds")){
-    waitNextSeconds = settingsDoc["waitSeconds"].as<int>();
-  }
-
+  settingsApp();
 
   Keyboard.begin();
   USB.begin();
 }
 
-void keyboardWrite(String s){
-  const char* str = s.c_str();
-  uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
-  size_t len = strlen(str);
-  Keyboard.write(buf, len);
-}
 
-int brightness = 100;
-bool waitNext = false;
-long startMillisForWaitNext = 0;
-void startWaitNext(){
-  waitNext = true;
-  float current = millis();
-  startMillisForWaitNext = current;
-}
-void stopWaitNext(){
-  waitNext = false;
-}
-
-bool checkWaitNextIsEnabled(int waitSeconds) {
-  if(!waitNext){
-    return false;
-  }
-
-  long waitMillis = waitSeconds * 1000;
-  float current = millis();
-
-  float elapsedMillis = current - startMillisForWaitNext;
-  float leftMillis = waitMillis - elapsedMillis;
-  float leftSeconds = leftMillis / 1000;
-
-  if(leftSeconds < 0){
-    return false;
-  }
-  return true;
-}
 
 //// write regular code in loop
 void loopInRegularMode(){
-  if (M5.BtnA.wasPressed()) {
 
-    offLed();
-    delay(10);
-    liteLed(ledColor, brightness);
-    if(existsKeyStr == 1){
-      keyboardWrite(keyStr);
-      stopWaitNext();
-    }else if(arraySize > 0){
-      String s = keyArray[keyIndex];
-      keyboardWrite(s);
-      keyIndex = keyIndex + 1;
-      if(keyIndex >= arraySize){
-        keyIndex = 0;
-        stopWaitNext();
-      }else{
-        startWaitNext();
-      }
-    }
-  }
-
-  waitNext = checkWaitNextIsEnabled(waitNextSeconds);
-
-  if(!waitNext){
-    delay(10);
-    offLed();
-    keyIndex = 0;
-  }
+  loopApp(M5.BtnA.wasPressed());
 
 }
 

@@ -57,7 +57,6 @@ void initRomArea(char * initialContents){
   readStr.toCharArray(Buf, DISK_SECTOR_SIZE);
   initialContents = Buf;
   dataFile.close();
-  settingsDoc = getJsonDocumentFromFile(fileName);
 
   overWriteContentsOnMemory(initialContents);
 
