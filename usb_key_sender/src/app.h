@@ -222,9 +222,10 @@ void keyboardWrite(String s){
         Keyboard.press(LED_COMPOSE);
       }else if(s1 == "LED_KANA"){
         Keyboard.press(LED_KANA);
+      }else{
+        Keyboard.press(s1[0]);
       }
 
-      
     }
   }else if(result[0] == "release"){
     Keyboard.releaseAll();
