@@ -84,9 +84,30 @@ long startMillisForWaitNext = 0;
 
 int brightness = 100;
 
+int splitString2(String data, char delimiter, String parts[], int maxParts) {
+  int partCount = 0;
+  int startIndex = 0;
+  int endIndex = 0;
 
-void splitString(String data, String* result) {
-  int index = data.indexOf(':');
+  while ((endIndex = data.indexOf(delimiter, startIndex)) >= 0) {
+    if (partCount < maxParts) {
+      parts[partCount++] = data.substring(startIndex, endIndex);
+      startIndex = endIndex + 1;
+    } else {
+      break;
+    }
+  }
+
+  // 最後の部分を追加します
+  if (startIndex < data.length() && partCount < maxParts) {
+    parts[partCount++] = data.substring(startIndex);
+  }
+
+  return partCount;
+}
+
+void splitString(String data, String* result, String divider) {
+  int index = data.indexOf(divider);
   if (index != -1) {
     result[0] = data.substring(0, index);
     result[1] = data.substring(index + 1);
@@ -96,13 +117,29 @@ void splitString(String data, String* result) {
   }
 }
 
-
 void keyboardWrite(String s){
-  String result[2];
-  splitString(s, result);
+  const char* str = s.c_str();
+  uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
+  size_t len = strlen(str);
+  Keyboard.write(buf, len);
+}
 
-  if(result[0] == "press"){
-    String s1 = result[1];
+void sendKeyboard(String s){
+  // String result[2];
+  // splitString(s, result, ":");
+  char delimiter1 = ':';
+  String parts1[2];
+  splitString2(s, delimiter1, parts1, 4);
+
+  if(parts1[0] == "press"){
+    String parts2[10];
+    char delimiter2 = ',';
+    splitString2(parts1[1], delimiter2, parts2, 4);
+    String s1 = parts2[0];
+    String s2 = parts2[1];
+    String s3 = parts2[2];
+    String s4 = parts2[3];
+
     if(s1.length() > 0){
       if(s1 == ""){
 
@@ -223,18 +260,18 @@ void keyboardWrite(String s){
       }else if(s1 == "LED_KANA"){
         Keyboard.press(LED_KANA);
       }else{
-        Keyboard.press(s1[0]);
+        keyboardWrite(parts1[1]);
       }
 
     }
-  }else if(result[0] == "release"){
+  }else if(parts1[0] == "release"){
     Keyboard.releaseAll();
-  }else if(result[0] == "open"){
+  }else if(parts1[0] == "open"){
     Keyboard.press(KEY_LEFT_GUI);
     Keyboard.press('r');
     delay(100);
     Keyboard.releaseAll();
-    const char* str = result[1].c_str();
+    const char* str = parts1[1].c_str();
     uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
     size_t len = strlen(str);
     Keyboard.write(buf, len);
@@ -339,7 +376,7 @@ void loopApp(bool pressed){
       stopWaitNext();
     }else if(arraySize > 0){
       String s = keyArray[keyIndex];
-      keyboardWrite(s);
+      sendKeyboard(s);
       keyIndex = keyIndex + 1;
       if(keyIndex >= arraySize){
         keyIndex = 0;
