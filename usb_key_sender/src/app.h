@@ -124,6 +124,131 @@ void keyboardWrite(String s){
   Keyboard.write(buf, len);
 }
 
+void keyboardPress(String s){
+  if(s == "KEY_LEFT_CTRL"){
+    Keyboard.press(KEY_LEFT_CTRL);
+  }else if(s == "KEY_LEFT_SHIFT"){
+    Keyboard.press(KEY_LEFT_SHIFT);
+  }else if(s == "KEY_LEFT_ALT"){
+    Keyboard.press(KEY_LEFT_ALT);
+  }else if(s == "KEY_LEFT_GUI"){
+    Keyboard.press(KEY_LEFT_GUI);
+  }else if(s == "KEY_RIGHT_CTRL"){
+    Keyboard.press(KEY_RIGHT_CTRL);
+  }else if(s == "KEY_RIGHT_SHIFT"){
+    Keyboard.press(KEY_RIGHT_SHIFT);
+  }else if(s == "KEY_RIGHT_ALT"){
+    Keyboard.press(KEY_RIGHT_ALT);
+  }else if(s == "KEY_RIGHT_GUI"){
+    Keyboard.press(KEY_RIGHT_GUI);
+  }else if(s == "KEY_UP_ARROW"){
+    Keyboard.press(KEY_UP_ARROW);
+  }else if(s == "KEY_DOWN_ARROW"){
+    Keyboard.press(KEY_DOWN_ARROW);
+  }else if(s == "KEY_LEFT_ARROW"){
+    Keyboard.press(KEY_LEFT_ARROW);
+  }else if(s == "KEY_RIGHT_ARROW"){
+    Keyboard.press(KEY_RIGHT_ARROW);
+  }else if(s == "KEY_MENU"){
+    Keyboard.press(KEY_MENU);
+  }else if(s == "KEY_SPACE"){
+    Keyboard.press(KEY_SPACE);
+  }else if(s == "KEY_BACKSPACE"){
+    Keyboard.press(KEY_BACKSPACE);
+  }else if(s == "KEY_TAB"){
+    Keyboard.press(KEY_TAB);
+  }else if(s == "KEY_RETURN"){
+    Keyboard.press(KEY_RETURN);
+  }else if(s == "KEY_ESC"){
+    Keyboard.press(KEY_ESC);
+  }else if(s == "KEY_INSERT"){
+    Keyboard.press(KEY_INSERT);
+  }else if(s == "KEY_DELETE"){
+    Keyboard.press(KEY_DELETE);
+  }else if(s == "KEY_PAGE_UP"){
+    Keyboard.press(KEY_PAGE_UP);
+  }else if(s == "KEY_PAGE_DOWN"){
+    Keyboard.press(KEY_PAGE_DOWN);
+  }else if(s == "KEY_HOME"){
+    Keyboard.press(KEY_HOME);
+  }else if(s == "KEY_END"){
+    Keyboard.press(KEY_END);
+  }else if(s == "KEY_NUM_LOCK"){
+    Keyboard.press(KEY_NUM_LOCK);
+  }else if(s == "KEY_CAPS_LOCK"){
+    Keyboard.press(KEY_CAPS_LOCK);
+  }else if(s == "KEY_F1"){
+    Keyboard.press(KEY_F1);
+  }else if(s == "KEY_F2"){
+    Keyboard.press(KEY_F2);
+  }else if(s == "KEY_F3"){
+    Keyboard.press(KEY_F3);
+  }else if(s == "KEY_F4"){
+    Keyboard.press(KEY_F4);
+  }else if(s == "KEY_F5"){
+    Keyboard.press(KEY_F5);
+  }else if(s == "KEY_F6"){
+    Keyboard.press(KEY_F6);
+  }else if(s == "KEY_F7"){
+    Keyboard.press(KEY_F7);
+  }else if(s == "KEY_F8"){
+    Keyboard.press(KEY_F8);
+  }else if(s == "KEY_F9"){
+    Keyboard.press(KEY_F9);
+  }else if(s == "KEY_F10"){
+    Keyboard.press(KEY_F10);
+  }else if(s == "KEY_F11"){
+    Keyboard.press(KEY_F11);
+  }else if(s == "KEY_F12"){
+    Keyboard.press(KEY_F12);
+  }else if(s == "KEY_F13"){
+    Keyboard.press(KEY_F13);
+  }else if(s == "KEY_F14"){
+    Keyboard.press(KEY_F14);
+  }else if(s == "KEY_F15"){
+    Keyboard.press(KEY_F15);
+  }else if(s == "KEY_F16"){
+    Keyboard.press(KEY_F16);
+  }else if(s == "KEY_F17"){
+    Keyboard.press(KEY_F17);
+  }else if(s == "KEY_F18"){
+    Keyboard.press(KEY_F18);
+  }else if(s == "KEY_F19"){
+    Keyboard.press(KEY_F19);
+  }else if(s == "KEY_F20"){
+    Keyboard.press(KEY_F20);
+  }else if(s == "KEY_F21"){
+    Keyboard.press(KEY_F21);
+  }else if(s == "KEY_F22"){
+    Keyboard.press(KEY_F22);
+  }else if(s == "KEY_F23"){
+    Keyboard.press(KEY_F23);
+  }else if(s == "KEY_F24"){
+    Keyboard.press(KEY_F24);
+  }else if(s == "KEY_PRINT_SCREEN"){
+    Keyboard.press(KEY_PRINT_SCREEN);
+  }else if(s == "KEY_SCROLL_LOCK"){
+    Keyboard.press(KEY_SCROLL_LOCK);
+  }else if(s == "KEY_PAUSE"){
+    Keyboard.press(KEY_PAUSE);
+  }else if(s == "LED_NUMLOCK"){
+    Keyboard.press(LED_NUMLOCK);
+  }else if(s == "LED_CAPSLOCK"){
+    Keyboard.press(LED_CAPSLOCK);
+  }else if(s == "LED_SCROLLLOCK"){
+    Keyboard.press(LED_SCROLLLOCK);
+  }else if(s == "LED_COMPOSE"){
+    Keyboard.press(LED_COMPOSE);
+  }else if(s == "LED_KANA"){
+    Keyboard.press(LED_KANA);
+  }else{
+    keyboard.press(s);
+  }
+}
+void keyboardReleaseAll(){
+  keyboard.releaseAll();
+}
+
 void sendKeyboard(String s){
   // String result[2];
   // splitString(s, result, ":");
@@ -132,7 +257,7 @@ void sendKeyboard(String s){
   splitString2(s, delimiter1, parts1, 4);
 
   if(parts1[0] == "press"){
-    String parts2[10];
+    String parts2[4];
     char delimiter2 = ',';
     splitString2(parts1[1], delimiter2, parts2, 4);
     String s1 = parts2[0];
@@ -141,129 +266,20 @@ void sendKeyboard(String s){
     String s4 = parts2[3];
 
     if(s1.length() > 0){
-      if(s1 == ""){
-
-      }else if(s1 == "KEY_LEFT_CTRL"){
-        Keyboard.press(KEY_LEFT_CTRL);
-      }else if(s1 == "KEY_LEFT_SHIFT"){
-        Keyboard.press(KEY_LEFT_SHIFT);
-      }else if(s1 == "KEY_LEFT_ALT"){
-        Keyboard.press(KEY_LEFT_ALT);
-      }else if(s1 == "KEY_LEFT_GUI"){
-        Keyboard.press(KEY_LEFT_GUI);
-      }else if(s1 == "KEY_RIGHT_CTRL"){
-        Keyboard.press(KEY_RIGHT_CTRL);
-      }else if(s1 == "KEY_RIGHT_SHIFT"){
-        Keyboard.press(KEY_RIGHT_SHIFT);
-      }else if(s1 == "KEY_RIGHT_ALT"){
-        Keyboard.press(KEY_RIGHT_ALT);
-      }else if(s1 == "KEY_RIGHT_GUI"){
-        Keyboard.press(KEY_RIGHT_GUI);
-      }else if(s1 == "KEY_UP_ARROW"){
-        Keyboard.press(KEY_UP_ARROW);
-      }else if(s1 == "KEY_DOWN_ARROW"){
-        Keyboard.press(KEY_DOWN_ARROW);
-      }else if(s1 == "KEY_LEFT_ARROW"){
-        Keyboard.press(KEY_LEFT_ARROW);
-      }else if(s1 == "KEY_RIGHT_ARROW"){
-        Keyboard.press(KEY_RIGHT_ARROW);
-      }else if(s1 == "KEY_MENU"){
-        Keyboard.press(KEY_MENU);
-      }else if(s1 == "KEY_SPACE"){
-        Keyboard.press(KEY_SPACE);
-      }else if(s1 == "KEY_BACKSPACE"){
-        Keyboard.press(KEY_BACKSPACE);
-      }else if(s1 == "KEY_TAB"){
-        Keyboard.press(KEY_TAB);
-      }else if(s1 == "KEY_RETURN"){
-        Keyboard.press(KEY_RETURN);
-      }else if(s1 == "KEY_ESC"){
-        Keyboard.press(KEY_ESC);
-      }else if(s1 == "KEY_INSERT"){
-        Keyboard.press(KEY_INSERT);
-      }else if(s1 == "KEY_DELETE"){
-        Keyboard.press(KEY_DELETE);
-      }else if(s1 == "KEY_PAGE_UP"){
-        Keyboard.press(KEY_PAGE_UP);
-      }else if(s1 == "KEY_PAGE_DOWN"){
-        Keyboard.press(KEY_PAGE_DOWN);
-      }else if(s1 == "KEY_HOME"){
-        Keyboard.press(KEY_HOME);
-      }else if(s1 == "KEY_END"){
-        Keyboard.press(KEY_END);
-      }else if(s1 == "KEY_NUM_LOCK"){
-        Keyboard.press(KEY_NUM_LOCK);
-      }else if(s1 == "KEY_CAPS_LOCK"){
-        Keyboard.press(KEY_CAPS_LOCK);
-      }else if(s1 == "KEY_F1"){
-        Keyboard.press(KEY_F1);
-      }else if(s1 == "KEY_F2"){
-        Keyboard.press(KEY_F2);
-      }else if(s1 == "KEY_F3"){
-        Keyboard.press(KEY_F3);
-      }else if(s1 == "KEY_F4"){
-        Keyboard.press(KEY_F4);
-      }else if(s1 == "KEY_F5"){
-        Keyboard.press(KEY_F5);
-      }else if(s1 == "KEY_F6"){
-        Keyboard.press(KEY_F6);
-      }else if(s1 == "KEY_F7"){
-        Keyboard.press(KEY_F7);
-      }else if(s1 == "KEY_F8"){
-        Keyboard.press(KEY_F8);
-      }else if(s1 == "KEY_F9"){
-        Keyboard.press(KEY_F9);
-      }else if(s1 == "KEY_F10"){
-        Keyboard.press(KEY_F10);
-      }else if(s1 == "KEY_F11"){
-        Keyboard.press(KEY_F11);
-      }else if(s1 == "KEY_F12"){
-        Keyboard.press(KEY_F12);
-      }else if(s1 == "KEY_F13"){
-        Keyboard.press(KEY_F13);
-      }else if(s1 == "KEY_F14"){
-        Keyboard.press(KEY_F14);
-      }else if(s1 == "KEY_F15"){
-        Keyboard.press(KEY_F15);
-      }else if(s1 == "KEY_F16"){
-        Keyboard.press(KEY_F16);
-      }else if(s1 == "KEY_F17"){
-        Keyboard.press(KEY_F17);
-      }else if(s1 == "KEY_F18"){
-        Keyboard.press(KEY_F18);
-      }else if(s1 == "KEY_F19"){
-        Keyboard.press(KEY_F19);
-      }else if(s1 == "KEY_F20"){
-        Keyboard.press(KEY_F20);
-      }else if(s1 == "KEY_F21"){
-        Keyboard.press(KEY_F21);
-      }else if(s1 == "KEY_F22"){
-        Keyboard.press(KEY_F22);
-      }else if(s1 == "KEY_F23"){
-        Keyboard.press(KEY_F23);
-      }else if(s1 == "KEY_F24"){
-        Keyboard.press(KEY_F24);
-      }else if(s1 == "KEY_PRINT_SCREEN"){
-        Keyboard.press(KEY_PRINT_SCREEN);
-      }else if(s1 == "KEY_SCROLL_LOCK"){
-        Keyboard.press(KEY_SCROLL_LOCK);
-      }else if(s1 == "KEY_PAUSE"){
-        Keyboard.press(KEY_PAUSE);
-      }else if(s1 == "LED_NUMLOCK"){
-        Keyboard.press(LED_NUMLOCK);
-      }else if(s1 == "LED_CAPSLOCK"){
-        Keyboard.press(LED_CAPSLOCK);
-      }else if(s1 == "LED_SCROLLLOCK"){
-        Keyboard.press(LED_SCROLLLOCK);
-      }else if(s1 == "LED_COMPOSE"){
-        Keyboard.press(LED_COMPOSE);
-      }else if(s1 == "LED_KANA"){
-        Keyboard.press(LED_KANA);
-      }else{
-        keyboardWrite(parts1[1]);
-      }
-
+      keyboardPress(s1);
     }
+    if(s2.length() > 0){
+      keyboardPress(s2);
+    }
+    if(s3.length() > 0){
+      keyboardPress(s3);
+    }
+    if(s4.length() > 0){
+      keyboardPress(s4);
+    }
+
+    keyboardReleaseAll();
+
   }else if(parts1[0] == "release"){
     Keyboard.releaseAll();
   }else if(parts1[0] == "open"){
