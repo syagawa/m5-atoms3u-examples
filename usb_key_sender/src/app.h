@@ -242,11 +242,13 @@ void keyboardPress(String s){
   }else if(s == "LED_KANA"){
     Keyboard.press(LED_KANA);
   }else{
-    keyboard.press(s);
+    char firstChar = s.charAt(0);
+    uint8_t firstCharAsUint8 = (uint8_t)firstChar; 
+    Keyboard.press(firstCharAsUint8);
   }
 }
 void keyboardReleaseAll(){
-  keyboard.releaseAll();
+  Keyboard.releaseAll();
 }
 
 void sendKeyboard(String s){
@@ -268,16 +270,19 @@ void sendKeyboard(String s){
     if(s1.length() > 0){
       keyboardPress(s1);
     }
+    delay(50);
     if(s2.length() > 0){
       keyboardPress(s2);
     }
+    delay(50);
     if(s3.length() > 0){
       keyboardPress(s3);
     }
+    delay(50);
     if(s4.length() > 0){
       keyboardPress(s4);
     }
-
+    delay(50);
     keyboardReleaseAll();
 
   }else if(parts1[0] == "release"){
