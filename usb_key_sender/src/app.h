@@ -84,7 +84,7 @@ long startMillisForWaitNext = 0;
 
 int brightness = 100;
 
-int splitString2(String data, char delimiter, String parts[], int maxParts) {
+int splitString(String data, char delimiter, String parts[], int maxParts) {
   int partCount = 0;
   int startIndex = 0;
   int endIndex = 0;
@@ -106,16 +106,7 @@ int splitString2(String data, char delimiter, String parts[], int maxParts) {
   return partCount;
 }
 
-void splitString(String data, String* result, String divider) {
-  int index = data.indexOf(divider);
-  if (index != -1) {
-    result[0] = data.substring(0, index);
-    result[1] = data.substring(index + 1);
-  } else {
-    result[0] = data;
-    result[1] = "";
-  }
-}
+
 
 void keyboardWrite(String s){
   const char* str = s.c_str();
@@ -254,12 +245,14 @@ void keyboardReleaseAll(){
 void sendKeyboard(String s){
   char delimiter1 = ':';
   String parts1[2];
-  splitString2(s, delimiter1, parts1, 4);
+  splitString(s, delimiter1, parts1, 4);
 
-  if(parts1[0] == "press"){
+  String str = parts1[0];
+
+  if(str == "press"){
     String parts2[4];
     char delimiter2 = ',';
-    splitString2(parts1[1], delimiter2, parts2, 4);
+    splitString(parts1[1], delimiter2, parts2, 4);
     String s1 = parts2[0];
     String s2 = parts2[1];
     String s3 = parts2[2];
@@ -283,9 +276,9 @@ void sendKeyboard(String s){
     delay(50);
     keyboardReleaseAll();
 
-  }else if(parts1[0] == "release"){
+  }else if(str == "release"){
     Keyboard.releaseAll();
-  }else if(parts1[0] == "open"){
+  }else if(str == "open"){
     Keyboard.press(KEY_LEFT_GUI);
     Keyboard.press('r');
     delay(100);
@@ -298,7 +291,6 @@ void sendKeyboard(String s){
     Keyboard.press(KEY_RETURN);
     delay(100);
     Keyboard.release(KEY_RETURN);
-
   }else{
     const char* str = s.c_str();
     uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
@@ -357,29 +349,6 @@ void settingsApp(){
 
   if(settingsDoc.containsKey("waitSeconds")){
     waitNextSeconds = settingsDoc["waitSeconds"].as<int>();
-  }
-}
-
-void settingsApp_(DynamicJsonDocument doc){
-
-
-  if(doc.containsKey("key")){
-    keyStr = doc["key"].as<String>();
-    existsKeyStr = 1;
-  }else if(doc.containsKey("keys")){
-    keyArray = doc["keys"];
-    arraySize = keyArray.size();
-    if(arraySize > arraySizeMax){
-      arraySize = arraySizeMax;
-    }
-  }
-
-  if(doc.containsKey("color")){
-    ledColor = doc["color"].as<String>();
-  }
-
-  if(doc.containsKey("waitSeconds")){
-    waitNextSeconds = doc["waitSeconds"].as<int>();
   }
 }
 
