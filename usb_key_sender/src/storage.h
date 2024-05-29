@@ -1,11 +1,7 @@
 #ifndef STORAGE_H
 #define STORAGE_H
 
-
 #include "USB.h"
-// #include "USBMSC.h"
-
-// #include <M5Unified.h>
 
 #define FAT_U8(v) ((v) & 0xFF)
 #define FAT_U16(v) FAT_U8(v), FAT_U8((v) >> 8)

@@ -7,9 +7,6 @@
 
 #include "json.h"
 
-// DynamicJsonDocument settingsDoc(512);
-// String fileName = "/ATOMS3U/SETTINGS.TXT";
-
 #include "storage.h"
 
 #include "file.h"

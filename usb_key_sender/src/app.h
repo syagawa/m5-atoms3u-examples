@@ -13,7 +13,6 @@ int keyIndex = 0;
 int waitNextSeconds = 5;
 String ledColor = "red";
 
-
 #define KEY_LEFT_CTRL   0x80
 #define KEY_LEFT_SHIFT  0x81
 #define KEY_LEFT_ALT    0x82
@@ -105,8 +104,6 @@ int splitString(String data, char delimiter, String parts[], int maxParts) {
 
   return partCount;
 }
-
-
 
 void keyboardWrite(String s){
   const char* str = s.c_str();
