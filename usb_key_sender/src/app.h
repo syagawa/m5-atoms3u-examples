@@ -349,9 +349,11 @@ void settingsApp(){
   }
 }
 
-void loopApp(bool pressed){
-  
-  if (pressed) {
+void loopApp(bool pressed, bool longpressed){
+
+  if(longpressed){
+    liteLed("green", brightness);
+  }else if (pressed) {
 
     offLed();
     delay(10);

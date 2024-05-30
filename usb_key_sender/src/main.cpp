@@ -40,8 +40,6 @@ static int32_t onRead(uint32_t lba, uint32_t offset, void* buffer, uint32_t bufs
   return bufsize;
 }
 
-
-
 String setLedStr = "";
 
 static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data){
@@ -66,14 +64,12 @@ static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t eve
   }
 }
 
-
 void resetAndRestart(){
   removeAllFiles();
   delay(100);
   delay(100);
   ESP.restart();
 }
-
 
 // bootmode
 // 0: Regular Mode
@@ -88,20 +84,15 @@ int requiresResetInSettingsMode = 0;
 
 //// regular code in setup
 void setupInRegularMode(){
-
   settingsApp();
-
   Keyboard.begin();
   USB.begin();
 }
 
 
-
 //// write regular code in loop
 void loopInRegularMode(){
-
-  loopApp(M5.BtnA.wasPressed());
-
+  loopApp(M5.BtnA.wasPressed(), M5.BtnA.pressedFor(1000));
 }
 
 
@@ -120,7 +111,6 @@ void setupInSettingsMode(){
     MSC.begin(DISK_SECTOR_COUNT, DISK_SECTOR_SIZE);
 
     USB.begin();
-    
 }
 
 void loopInSettingsMode(){
@@ -148,7 +138,6 @@ void loopInSettingsMode(){
     setLedStr = "";
   }
 
-
   if(readFlg != 1 && writeFlg != 1 && M5.BtnA.wasPressed()){
     // If you press the button five times within 5 seconds, it will delete the files in the ROM area and restart. The configuration JSON will be reset to its initial state.
     if(pressAndCheckBtnPressedXTimesWithinYSedonds(5, 5)){
@@ -162,7 +151,6 @@ void loopInSettingsMode(){
   }
 
 }
-
 
 
 void setup() {
