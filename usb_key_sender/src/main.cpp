@@ -79,7 +79,7 @@ int bootmode = 0;
 // regular mode settings >>
 
 //// initial settings
-char * initialContents = R"({"color": "red", "keys": ["abc"]})";
+char * initialContents = R"({"color": "red", "keys": ["abc"], "waitSeconds": 3})";
 int requiresResetInSettingsMode = 0;
 
 //// regular code in setup
