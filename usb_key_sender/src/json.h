@@ -23,7 +23,7 @@ class Exception
 DynamicJsonDocument getJsonDocumentFromFile(String fileName){
   DynamicJsonDocument doc(512);
   try{
-    File file = SPIFFS.open(fileName, "r");
+    File file = SPIFFS.open(fileName, FILE_READ);
     DeserializationError error = deserializeJson(doc, file);
     file.close();
     if(error){

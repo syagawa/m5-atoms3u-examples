@@ -6,13 +6,13 @@
 String fileName = "/ATOMS3U/SETTINGS.TXT";
 
 void writeToFile(String str){
-  File file = SPIFFS.open(fileName, "w");
+  File file = SPIFFS.open(fileName, FILE_WRITE);
   file.print(str);
   file.close();
 }
 
 void listAllFiles(){
-  File root = SPIFFS.open("/");
+  File root = SPIFFS.open("/", FILE_READ);
   File file = root.openNextFile();
   while(file){
     file = root.openNextFile();
@@ -20,7 +20,7 @@ void listAllFiles(){
 }
 
 void removeAllFiles(){
-  File root = SPIFFS.open("/");
+  File root = SPIFFS.open("/", FILE_READ);
   File file = root.openNextFile();
   while(file){
       SPIFFS.remove(file.path());
@@ -40,11 +40,11 @@ File initAndGetDataFile(char * initialContents, String filename){
   File dataFile;
   if(SPIFFS.begin(true)){
     if(!SPIFFS.exists(filename)){
-      dataFile = SPIFFS.open(filename, "w");
+      dataFile = SPIFFS.open(filename, FILE_WRITE);
       dataFile.print(initialContents);
       dataFile.close();
     }
-    dataFile = SPIFFS.open(filename, "r");
+    dataFile = SPIFFS.open(filename, FILE_READ);
   }
   return dataFile;
 }
