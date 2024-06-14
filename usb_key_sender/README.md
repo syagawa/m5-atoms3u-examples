@@ -18,3 +18,8 @@
 {"color": "red", "keys": ["press:KEY_LEFT_GUI,d"], "waitSecnds":3}
 ```
 
+
+
+---
+
+This example is created with reference to https://github.com/espressif/arduino-esp32/blob/master/libraries/USB/examples/USBMSC/USBMSC.ino .
