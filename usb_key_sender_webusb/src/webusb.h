@@ -24,6 +24,9 @@ void line_state_callback(bool connected)
 
 DynamicJsonDocument settingsDoc(512);
 
+int requiresResetInSettingsMode = 0;
+char * initialContents = R"({"color": "red"})";
+
 
 String receivedString = "";
 String setMode = "";// "", "key", "value"
@@ -66,9 +69,7 @@ void echo_all(uint8_t buf[], uint32_t count)
         usb_web.println(settings_str);
       }
 
-      if(receivedString == "get mode\r" || receivedString == "get mode\n"){
-        usb_web.println(settings_mode);
-      }else if(receivedString == "get initial\r" || receivedString == "get initial\n"){
+      if(receivedString == "get initial\r" || receivedString == "get initial\n"){
         usb_web.println(initialContents);
       }else if(receivedString == "get settings\r" || receivedString == "get settings\n"){
         String settings_str = getJsonString(settingsDoc);
