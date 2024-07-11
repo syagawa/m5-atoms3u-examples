@@ -15,6 +15,7 @@
 USBMSC MSC;
 
 #include "app.h"
+#include "webusb.h"
 
 
 int writeFlg = 0;
@@ -98,57 +99,29 @@ void loopInRegularMode(){
 
 // regular mode settings <<
 
-void setupInSettingsMode(){
-    // storage
-    USB.onEvent(usbEventCallback);
-    MSC.vendorID("M5AtomS3U");//max 8 chars
-    MSC.productID("USB_MSC");//max 16 chars
-    MSC.productRevision("1.0");//max 4 chars
-    MSC.onStartStop(onStartStop);
-    MSC.onRead(onRead);
-    MSC.onWrite(onWrite);
-    MSC.mediaPresent(true);
-    MSC.begin(DISK_SECTOR_COUNT, DISK_SECTOR_SIZE);
-
-    USB.begin();
-}
 
 void loopInSettingsMode(){
-  
-  if(writeFlg == 1){
-    int targetSize = sizeof(msc_disk[3]);
-    String str = (char *) msc_disk[3];
-    int strsize = str.length();
-    delay(100);
 
-    writeToFile(str);
-    delay(100);
-
-    writeFlg = 0;
-  }
-  if(readFlg == 1){
-    readFlg = 0;
+  uint8_t buf[64];
+  uint32_t count;
+  if (Serial.available()){
+    count = Serial.read(buf, 64);
+    flickLed(2, "red");
+    echo_all(buf, count);
   }
 
-  if(setLedStr != ""){
-    char result[10];
-    setLedStr.toCharArray(result, 10);
-
-    liteLed(setLedStr);
-    setLedStr = "";
-  }
-
-  if(readFlg != 1 && writeFlg != 1 && M5.BtnA.wasPressed()){
-    // If you press the button five times within 5 seconds, it will delete the files in the ROM area and restart. The configuration JSON will be reset to its initial state.
-    if(pressAndCheckBtnPressedXTimesWithinYSedonds(5, 5)){
-      requiresResetInSettingsMode = 1;
-    }
+  // from WebUSB to both Serial & webUSB
+  if (usb_web.available()){
+    flickLed(2, "green");
+    count = usb_web.read(buf, 64);
+    echo_all(buf, count);
   }
   
 
   if(requiresResetInSettingsMode == 1){
     resetAndRestart();
   }
+
 
 }
 

@@ -5,6 +5,7 @@
 #include "Adafruit_TinyUSB.h"
 #include "led.h"
 #include "json.h"
+#include "file.h"
 
 
 Adafruit_USBD_WebUSB usb_web;
@@ -22,17 +23,14 @@ void line_state_callback(bool connected)
   }
 }
 
-DynamicJsonDocument settingsDoc(512);
-
-int requiresResetInSettingsMode = 0;
-char * initialContents = R"({"color": "red"})";
+// char * initialContents = R"({"color": "red"})";
 
 
 String receivedString = "";
 String setMode = "";// "", "key", "value"
 String setKey = "";
 String setValue = "";
-void echo_all(uint8_t buf[], uint32_t count)
+void echo_all(uint8_t buf[], uint32_t count, DynamicJsonDocument settingsDoc, int requiresResetInSettingsMode, char * initialContents)
 {
   flickLed(2, "yellow");
 
@@ -120,56 +118,7 @@ void setupInSettingsMode(){
 }
 
 
-void loopInSettingsMode(){
 
-  
-  uint8_t buf[64];
-  uint32_t count;
-  if (Serial.available())
-  {
-    count = Serial.read(buf, 64);
-    flickLed(2, "red");
-    echo_all(buf, count);
-  }
-
-  // from WebUSB to both Serial & webUSB
-  if (usb_web.available())
-  {
-    flickLed(2, "green");
-    count = usb_web.read(buf, 64);
-    echo_all(buf, count);
-  }
-  
-
-  if(requiresResetInSettingsMode == 1){
-    resetAndRestart();
-  }
-  
-
-  if(usbStartedStr != ""){
-    // addLog("usbStartedStr", millis());
-    usbStartedStr = "";
-  }
-  if(usbStoppedStr != ""){
-    // addLog("usbStoppedStr", millis());
-    usbStoppedStr = "";
-  }
-  if(usbSuspendStr != ""){
-    // addLog("usbSuspendStr", millis());
-    usbSuspendStr = "";
-  }
-  if(usbResumeStr != ""){
-    // addLog("usbResumeStr", millis());
-    usbResumeStr = "";
-  }
-  
-  if(defaultEventStr != ""){
-    // addLog("defaultEventStr", millis());
-    defaultEventStr = "";
-  }
-
-
-}
 
 
 
