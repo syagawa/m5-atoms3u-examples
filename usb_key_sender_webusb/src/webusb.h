@@ -1,8 +1,8 @@
 #ifndef WEBUSB_H
 #define WEBUSB_H
 
-#include "USB.h"
-#include "Adafruit_TinyUSB.h"
+// #include "USB.h"
+// #include "Adafruit_TinyUSB.h"
 #include "led.h"
 #include "json.h"
 #include "file.h"
@@ -30,7 +30,7 @@ String receivedString = "";
 String setMode = "";// "", "key", "value"
 String setKey = "";
 String setValue = "";
-void echo_all(uint8_t buf[], uint32_t count, DynamicJsonDocument settingsDoc, int requiresResetInSettingsMode, char * initialContents)
+void echo_all(uint8_t buf[], uint32_t count, DynamicJsonDocument settingsDoc, int requiresResetInSettingsMode, char* initialContents)
 {
   flickLed(2, "yellow");
 

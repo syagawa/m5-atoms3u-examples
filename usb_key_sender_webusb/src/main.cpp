@@ -7,7 +7,7 @@
 
 #include "json.h"
 
-#include "storage.h"
+// #include "storage.h"
 
 #include "file.h"
 #include "button.h"
@@ -27,19 +27,6 @@ static bool onStartStop(uint8_t power_condition, bool start, bool load_eject){
   return true;
 }
 
-static int32_t onWrite(uint32_t lba, uint32_t offset, uint8_t* buffer, uint32_t bufsize){
-  memcpy(msc_disk[lba] + offset, buffer, bufsize);
-  flickLed(2, "red");
-  writeFlg = 1;
-  return bufsize;
-}
-
-static int32_t onRead(uint32_t lba, uint32_t offset, void* buffer, uint32_t bufsize){
-  memcpy(buffer, msc_disk[lba] + offset, bufsize);
-  flickLed(2, "yellow");
-  readFlg = 1;
-  return bufsize;
-}
 
 String setLedStr = "";
 
@@ -107,14 +94,14 @@ void loopInSettingsMode(){
   if (Serial.available()){
     count = Serial.read(buf, 64);
     flickLed(2, "red");
-    echo_all(buf, count);
+    echo_all(buf, count, settingsDoc, requiresResetInSettingsMode, initialContents);
   }
 
   // from WebUSB to both Serial & webUSB
   if (usb_web.available()){
     flickLed(2, "green");
     count = usb_web.read(buf, 64);
-    echo_all(buf, count);
+    echo_all(buf, count, settingsDoc, requiresResetInSettingsMode, initialContents);
   }
   
 
