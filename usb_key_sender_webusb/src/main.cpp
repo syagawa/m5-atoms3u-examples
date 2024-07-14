@@ -1,6 +1,6 @@
 // # This code is created with reference to https://github.com/espressif/arduino-esp32/blob/master/libraries/USB/examples/USBMSC/USBMSC.ino . 
 #include "USB.h"
-#include "USBMSC.h"
+// #include "USBMSC.h"
 
 #include <M5Unified.h>
 #include "led.h"
@@ -12,7 +12,7 @@
 #include "file.h"
 #include "button.h"
 
-USBMSC MSC;
+// USBMSC MSC;
 
 #include "app.h"
 #include "webusb.h"
