@@ -1,8 +1,8 @@
 #ifndef WEBUSB_H
 #define WEBUSB_H
 
-// #include "USB.h"
-// #include "Adafruit_TinyUSB.h"
+#include "USB.h"
+#include "Adafruit_TinyUSB.h"
 #include "led.h"
 #include "json.h"
 #include "file.h"
@@ -97,6 +97,18 @@ void echo_all(uint8_t buf[], uint32_t count, DynamicJsonDocument settingsDoc, in
 void setupInSettingsMode(){
 
   // webserial
+  // usb_web.begin();
+  // if (!TinyUSBDevice.isInitialized()) {
+  //   TinyUSBDevice.begin(0);
+  // }
+  
+  // if (!TinyUSBDevice.ready()) {
+  //   TinyUSBDevice.begin(0);
+  // }
+
+  // if (!TinyUSBDevice.mounted()) {
+  //   TinyUSBDevice.begin(0);
+  // }
   USB.begin();
   usb_web.setLandingPage(&landingPage);
   usb_web.setLineStateCallback(line_state_callback);
@@ -104,10 +116,13 @@ void setupInSettingsMode(){
     flickLed(2, "magenta");
     delay(1);
   }
+  // usb_web.begin();
 
   // wait until device mounted
   while( !TinyUSBDevice.mounted() ){
     flickLed(2, "red");
+    // TinyUSBDevice.begin(0);
+    // usb_web.begin();
     delay(1);
   }
 

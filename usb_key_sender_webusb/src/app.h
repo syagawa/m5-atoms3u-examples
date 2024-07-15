@@ -1,8 +1,11 @@
-#include "USBHIDKeyboard.h"
+// #include "USBHIDKeyboard.h"
 #include "json.h"
 #include "led.h"
+// #include <HID.h>
+// #include <Keyboard.h>
+// USBHIDKeyboard Keyboard;
+#include <TinyUSB_Mouse_and_Keyboard.h>
 
-USBHIDKeyboard Keyboard;
 String keyStr = "";
 int existsKeyStr = 0;
 JsonArray keyArray;

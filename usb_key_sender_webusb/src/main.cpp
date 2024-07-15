@@ -1,5 +1,5 @@
 // # This code is created with reference to https://github.com/espressif/arduino-esp32/blob/master/libraries/USB/examples/USBMSC/USBMSC.ino . 
-#include "USB.h"
+// #include "USB.h"
 // #include "USBMSC.h"
 
 #include <M5Unified.h>
@@ -14,8 +14,8 @@
 
 // USBMSC MSC;
 
-#include "app.h"
 #include "webusb.h"
+#include "app.h"
 
 
 int writeFlg = 0;
@@ -28,29 +28,31 @@ static bool onStartStop(uint8_t power_condition, bool start, bool load_eject){
 }
 
 
+// Adafruit_USBD_CDC USB;
+
 String setLedStr = "";
 
-static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data){
-  if(event_base == ARDUINO_USB_EVENTS){
-    arduino_usb_event_data_t * data = (arduino_usb_event_data_t*)event_data;
-    switch (event_id){
-      case ARDUINO_USB_STARTED_EVENT:
-        setLedStr = "orange";
-        break;
-      case ARDUINO_USB_STOPPED_EVENT:
-        setLedStr = "cyan";
-        break;
-      case ARDUINO_USB_SUSPEND_EVENT:
-        setLedStr = "white";
-        break;
-      case ARDUINO_USB_RESUME_EVENT:
-        setLedStr = "darkgreen";
-        break;
-      default:
-        break;
-    }
-  }
-}
+// static void usbEventCallback(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data){
+//   if(event_base == ARDUINO_USB_EVENTS){
+//     arduino_usb_event_data_t * data = (arduino_usb_event_data_t*)event_data;
+//     switch (event_id){
+//       case ARDUINO_USB_STARTED_EVENT:
+//         setLedStr = "orange";
+//         break;
+//       case ARDUINO_USB_STOPPED_EVENT:
+//         setLedStr = "cyan";
+//         break;
+//       case ARDUINO_USB_SUSPEND_EVENT:
+//         setLedStr = "white";
+//         break;
+//       case ARDUINO_USB_RESUME_EVENT:
+//         setLedStr = "darkgreen";
+//         break;
+//       default:
+//         break;
+//     }
+//   }
+// }
 
 void resetAndRestart(){
   removeAllFiles();
@@ -74,7 +76,7 @@ int requiresResetInSettingsMode = 0;
 void setupInRegularMode(){
   settingsApp();
   Keyboard.begin();
-  USB.begin();
+  // USB.begin();
 }
 
 
