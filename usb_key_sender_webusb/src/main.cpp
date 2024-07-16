@@ -14,8 +14,8 @@
 
 // USBMSC MSC;
 
-#include "webusb.h"
 #include "app.h"
+#include "webusb.h"
 
 
 int writeFlg = 0;
@@ -130,7 +130,7 @@ void setup() {
     bootmode = 1;
   }
 
-  initRomArea(initialContents);
+  initRomArea(initialContents, settingsDoc);
 
   if(bootmode == 0){// 1. Regular Mode
     setupInRegularMode();

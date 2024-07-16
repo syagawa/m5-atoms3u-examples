@@ -49,7 +49,7 @@ File initAndGetDataFile(char * initialContents, String filename){
   return dataFile;
 }
 
-void initRomArea(char * initialContents){
+void initRomArea(char * initialContents, DynamicJsonDocument settingsDoc){
 
   File dataFile = initAndGetDataFile(initialContents, fileName);
   String readStr = dataFile.readString();
@@ -57,6 +57,7 @@ void initRomArea(char * initialContents){
   // readStr.toCharArray(Buf, DISK_SECTOR_SIZE);
   // initialContents = Buf;
   dataFile.close();
+  settingsDoc = getJsonDocumentFromFile(fileName);
 
   // overWriteContentsOnMemory(initialContents);
 

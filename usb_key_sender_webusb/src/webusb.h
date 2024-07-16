@@ -9,7 +9,10 @@
 
 
 Adafruit_USBD_WebUSB usb_web;
+
 WEBUSB_URL_DEF(landingPage, 1 /*https*/, "example.tinyusb.org/webusb-serial/index.html");
+
+
 
 void line_state_callback(bool connected)
 {
@@ -109,14 +112,21 @@ void setupInSettingsMode(){
   // if (!TinyUSBDevice.mounted()) {
   //   TinyUSBDevice.begin(0);
   // }
+
+
   USB.begin();
+  // delay(100);
+
   usb_web.setLandingPage(&landingPage);
   usb_web.setLineStateCallback(line_state_callback);
+
+  // usb_web.begin();
   while(!usb_web.begin()){
     flickLed(2, "magenta");
     delay(1);
   }
   // usb_web.begin();
+  // Serial.begin(115200);
 
   // wait until device mounted
   while( !TinyUSBDevice.mounted() ){
