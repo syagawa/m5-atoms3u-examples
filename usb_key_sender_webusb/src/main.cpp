@@ -1,5 +1,5 @@
 // # This code is created with reference to https://github.com/espressif/arduino-esp32/blob/master/libraries/USB/examples/USBMSC/USBMSC.ino . 
-// #include "USB.h"
+#include "USB.h"
 // #include "USBMSC.h"
 
 #include <M5Unified.h>
@@ -116,8 +116,8 @@ void loopInSettingsMode(){
 
 
 void setup() {
-  Serial.begin(115200);
-  Serial.setDebugOutput(true);
+  // Serial.begin(115200);
+  // Serial.setDebugOutput(true);
 
   auto cfg = M5.config();
   M5.begin(cfg);

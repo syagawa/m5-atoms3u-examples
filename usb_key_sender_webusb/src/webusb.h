@@ -1,7 +1,7 @@
 #ifndef WEBUSB_H
 #define WEBUSB_H
 
-#include "USB.h"
+// #include "USB.h"
 #include "Adafruit_TinyUSB.h"
 #include "led.h"
 #include "json.h"
@@ -114,23 +114,24 @@ void setupInSettingsMode(){
   // }
 
 
-  USB.begin();
+  // USB.begin();
   // delay(100);
 
   usb_web.setLandingPage(&landingPage);
   usb_web.setLineStateCallback(line_state_callback);
 
-  // usb_web.begin();
-  while(!usb_web.begin()){
-    flickLed(2, "magenta");
-    delay(1);
-  }
+  // TinyUSBDevice.begin(0);
+  usb_web.begin();
+  // while(!usb_web.begin()){
+  //   flickLed(2, "magenta");
+  //   delay(1);
+  // }
   // usb_web.begin();
   // Serial.begin(115200);
 
   // wait until device mounted
   while( !TinyUSBDevice.mounted() ){
-    flickLed(2, "red");
+    flickLed(2, "green");
     // TinyUSBDevice.begin(0);
     // usb_web.begin();
     delay(1);
