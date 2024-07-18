@@ -9,10 +9,13 @@
 
 
 Adafruit_USBD_WebUSB usb_web;
-
 WEBUSB_URL_DEF(landingPage, 1 /*https*/, "example.tinyusb.org/webusb-serial/index.html");
 
+// USBCDC USBSerial;
 
+Adafruit_USBD_CDC USBSerial;
+
+Adafruit_USBD_MSC MSC;
 
 void line_state_callback(bool connected)
 {
@@ -113,24 +116,34 @@ void setupInSettingsMode(){
   //   TinyUSBDevice.begin(0);
   // }
 
+  MSC.setID("M5AtomS3U", "USBD_MSC", "1.0");
+  MSC.begin();
 
-  // USB.begin();
+
+  USBSerial.begin();
+  USB.begin();
   // delay(100);
 
   usb_web.setLandingPage(&landingPage);
   usb_web.setLineStateCallback(line_state_callback);
 
   // TinyUSBDevice.begin(0);
-  usb_web.begin();
-  // while(!usb_web.begin()){
-  //   flickLed(2, "magenta");
-  //   delay(1);
-  // }
+  // usb_web.begin();
+  USBSerial.println("AAA0");
+
+  while(!usb_web.begin()){
+    USBSerial.println("ccc0");
+
+    flickLed(2, "magenta");
+    delay(1);
+  }
   // usb_web.begin();
   // Serial.begin(115200);
 
   // wait until device mounted
+  USBSerial.println("AAA1");
   while( !TinyUSBDevice.mounted() ){
+    USBSerial.println("ccc1");
     flickLed(2, "green");
     // TinyUSBDevice.begin(0);
     // usb_web.begin();

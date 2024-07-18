@@ -116,8 +116,8 @@ void loopInSettingsMode(){
 
 
 void setup() {
-  // Serial.begin(115200);
-  // Serial.setDebugOutput(true);
+  Serial.begin(115200);
+  Serial.setDebugOutput(true);
 
   auto cfg = M5.config();
   M5.begin(cfg);
