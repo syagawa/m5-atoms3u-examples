@@ -4,6 +4,7 @@
 
 #include <M5Unified.h>
 #include "led.h"
+#include "Adafruit_TinyUSB.h"
 
 #include "json.h"
 
@@ -75,7 +76,7 @@ int requiresResetInSettingsMode = 0;
 //// regular code in setup
 void setupInRegularMode(){
   settingsApp();
-  Keyboard.begin();
+  // Keyboard.begin();
   // USB.begin();
 }
 

@@ -116,11 +116,11 @@ void setupInSettingsMode(){
   //   TinyUSBDevice.begin(0);
   // }
 
-  MSC.setID("M5AtomS3U", "USBD_MSC", "1.0");
-  MSC.begin();
+  // MSC.setID("M5AtomS3U", "USBD_MSC", "1.0");
+  // MSC.begin();
 
 
-  USBSerial.begin();
+  // USBSerial.begin();
   USB.begin();
   // delay(100);
 
@@ -129,21 +129,21 @@ void setupInSettingsMode(){
 
   // TinyUSBDevice.begin(0);
   // usb_web.begin();
-  USBSerial.println("AAA0");
+  // USBSerial.println("AAA0");
 
   while(!usb_web.begin()){
-    USBSerial.println("ccc0");
+    // USBSerial.println("ccc0");
 
-    flickLed(2, "magenta");
+    flickLed(2, "red");
     delay(1);
   }
   // usb_web.begin();
   // Serial.begin(115200);
 
   // wait until device mounted
-  USBSerial.println("AAA1");
+  // USBSerial.println("AAA1");
   while( !TinyUSBDevice.mounted() ){
-    USBSerial.println("ccc1");
+    // USBSerial.println("ccc1");
     flickLed(2, "green");
     // TinyUSBDevice.begin(0);
     // usb_web.begin();
