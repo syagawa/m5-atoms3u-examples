@@ -73,9 +73,11 @@ int bootmode = 0;
 char * initialContents = R"({"color": "red", "keys": ["abc"], "waitSeconds": 3})";
 int requiresResetInSettingsMode = 0;
 
+DynamicJsonDocument settingsDocInMain(512);
+
 //// regular code in setup
 void setupInRegularMode(){
-  settingsApp();
+  settingsDocInMain = settingsApp();
   // Keyboard.begin();
   // USB.begin();
 }
@@ -97,14 +99,14 @@ void loopInSettingsMode(){
   if (Serial.available()){
     count = Serial.read(buf, 64);
     flickLed(2, "red");
-    echo_all(buf, count, settingsDoc, requiresResetInSettingsMode, initialContents);
+    echo_all(buf, count, settingsDocInMain, requiresResetInSettingsMode, initialContents);
   }
 
   // from WebUSB to both Serial & webUSB
   if (usb_web.available()){
     flickLed(2, "green");
     count = usb_web.read(buf, 64);
-    echo_all(buf, count, settingsDoc, requiresResetInSettingsMode, initialContents);
+    echo_all(buf, count, settingsDocInMain, requiresResetInSettingsMode, initialContents);
   }
   
 
@@ -131,7 +133,7 @@ void setup() {
     bootmode = 1;
   }
 
-  initRomArea(initialContents, settingsDoc);
+  initRomArea(initialContents);
 
   if(bootmode == 0){// 1. Regular Mode
     setupInRegularMode();

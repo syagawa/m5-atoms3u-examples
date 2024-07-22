@@ -327,7 +327,7 @@ bool checkWaitNextIsEnabled(int waitSeconds) {
   return true;
 }
 
-void settingsApp(){
+DynamicJsonDocument settingsApp(){
 
   settingsDoc = getJsonDocumentFromFile(fName);
 
@@ -350,6 +350,8 @@ void settingsApp(){
   if(settingsDoc.containsKey("waitSeconds")){
     waitNextSeconds = settingsDoc["waitSeconds"].as<int>();
   }
+
+  return settingsDoc;
 }
 
 void loopApp(bool pressed, bool longpressed){

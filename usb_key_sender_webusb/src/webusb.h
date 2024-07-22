@@ -36,6 +36,7 @@ String receivedString = "";
 String setMode = "";// "", "key", "value"
 String setKey = "";
 String setValue = "";
+DynamicJsonDocument settingsDocInWebusb(512);
 void echo_all(uint8_t buf[], uint32_t count, DynamicJsonDocument settingsDoc, int requiresResetInSettingsMode, char* initialContents)
 {
   flickLed(2, "yellow");
@@ -60,13 +61,13 @@ void echo_all(uint8_t buf[], uint32_t count, DynamicJsonDocument settingsDoc, in
         receivedString.remove(receivedString.length() - 1);
         setValue = receivedString;
         
-        settingsDoc = setKeyValueToJson(settingsDoc, setKey, setValue);
+        settingsDocInWebusb = setKeyValueToJson(settingsDoc, setKey, setValue);
         
         setMode = "";
         setKey = "";
         setValue = "";
 
-        String settings_str = getJsonString(settingsDoc);
+        String settings_str = getJsonString(settingsDocInWebusb);
 
         writeToFile(settings_str);
         
