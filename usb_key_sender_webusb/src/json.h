@@ -47,4 +47,9 @@ DynamicJsonDocument setKeyValueToJson(DynamicJsonDocument doc, String key, Strin
   return doc;
 }
 
+DynamicJsonDocument removeKeyValueInJson(DynamicJsonDocument doc, String key){
+  doc.remove(key);
+  return doc;
+}
+
 #endif //JSON_H

@@ -68,9 +68,19 @@ void echo_all(uint8_t buf[], uint32_t count, DynamicJsonDocument settingsDoc, in
         setValue = "";
 
         String settings_str = getJsonString(settingsDocInWebusb);
-
         writeToFile(settings_str);
-        
+        usb_web.println(settings_str);
+      }else if(setMode == "remove"){
+        receivedString.remove(receivedString.length() - 1);
+
+        settingsDocInWebusb = removeKeyValueInJson(settingsDoc, setKey);
+
+        setMode = "";
+        setKey = "";
+        setValue = "";
+
+        String settings_str = getJsonString(settingsDocInWebusb);
+        writeToFile(settings_str);
         usb_web.println(settings_str);
       }
 
@@ -82,6 +92,9 @@ void echo_all(uint8_t buf[], uint32_t count, DynamicJsonDocument settingsDoc, in
       }else if(receivedString == "set\r" || receivedString == "set\n"){
         setMode = "key";
         usb_web.println("set mode please type key");
+      }else if(receivedString == "remove\r" || receivedString == "remove\n"){
+        setMode = "remove";
+        usb_web.println("remove mode please type remove key");
       }else{
         usb_web.println(receivedString);
       }
