@@ -133,7 +133,7 @@ void setup() {
     bootmode = 1;
   }
 
-  initRomArea(initialContents);
+  settingsDocInMain = initRomArea(initialContents);
 
   if(bootmode == 0){// 1. Regular Mode
     setupInRegularMode();

@@ -5,6 +5,9 @@
 
 String fileName = "/ATOMS3U/SETTINGS.TXT";
 
+DynamicJsonDocument settingsDocInFile(512);
+
+
 void writeToFile(String str){
   File file = SPIFFS.open(fileName, FILE_WRITE);
   file.print(str);
@@ -49,7 +52,8 @@ File initAndGetDataFile(char * initialContents, String filename){
   return dataFile;
 }
 
-void initRomArea(char * initialContents){
+DynamicJsonDocument initRomArea(char * initialContents){
+// void initRomArea(char * initialContents){
 // void initRomArea(char * initialContents, DynamicJsonDocument settingsDoc){
 
   File dataFile = initAndGetDataFile(initialContents, fileName);
@@ -58,10 +62,10 @@ void initRomArea(char * initialContents){
   // readStr.toCharArray(Buf, DISK_SECTOR_SIZE);
   // initialContents = Buf;
   dataFile.close();
-  // settingsDoc = getJsonDocumentFromFile(fileName);
+  settingsDocInFile = getJsonDocumentFromFile(fileName);
 
   // overWriteContentsOnMemory(initialContents);
-
+  return settingsDocInFile;
 }
 
 #endif //FILE_H
