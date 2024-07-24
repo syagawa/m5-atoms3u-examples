@@ -26,8 +26,8 @@ void removeAllFiles(){
   File root = SPIFFS.open("/", FILE_READ);
   File file = root.openNextFile();
   while(file){
-      SPIFFS.remove(file.path());
-      file = root.openNextFile();
+    SPIFFS.remove(file.path());
+    file = root.openNextFile();
   }
 }
 
@@ -51,6 +51,7 @@ File initAndGetDataFile(char * initialContents, String filename){
   }
   return dataFile;
 }
+
 
 DynamicJsonDocument initRomArea(char * initialContents){
 // void initRomArea(char * initialContents){
