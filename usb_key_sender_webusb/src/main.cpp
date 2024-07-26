@@ -5,6 +5,7 @@
 #include <M5Unified.h>
 #include "led.h"
 #include "Adafruit_TinyUSB.h"
+#include "ArduinoJson.h";
 
 DynamicJsonDocument settingsDocInMain(512);
 
@@ -79,7 +80,7 @@ int requiresResetInSettingsMode = 0;
 
 //// regular code in setup
 void setupInRegularMode(){
-  settingsDocInMain = settingsApp();
+  settingsApp();
   // Keyboard.begin();
   // USB.begin();
 }
@@ -101,14 +102,14 @@ void loopInSettingsMode(){
   if (Serial.available()){
     count = Serial.read(buf, 64);
     flickLed(2, "red");
-    echo_all(buf, count, settingsDocInMain, requiresResetInSettingsMode, initialContents);
+    echo_all(buf, count, requiresResetInSettingsMode, initialContents);
   }
 
   // from WebUSB to both Serial & webUSB
   if (usb_web.available()){
     flickLed(2, "green");
     count = usb_web.read(buf, 64);
-    echo_all(buf, count, settingsDocInMain, requiresResetInSettingsMode, initialContents);
+    echo_all(buf, count, requiresResetInSettingsMode, initialContents);
   }
   
 
@@ -135,7 +136,7 @@ void setup() {
     bootmode = 1;
   }
 
-  settingsDocInMain = initRomArea(initialContents);
+  initRomArea(initialContents);
 
   if(bootmode == 0){// 1. Regular Mode
     setupInRegularMode();

@@ -36,8 +36,8 @@ String receivedString = "";
 String setMode = "";// "", "key", "value"
 String setKey = "";
 String setValue = "";
-DynamicJsonDocument settingsDocInWebusb(512);
-void echo_all(uint8_t buf[], uint32_t count, DynamicJsonDocument settingsDoc, int requiresResetInSettingsMode, char* initialContents)
+
+void echo_all(uint8_t buf[], uint32_t count, int requiresResetInSettingsMode, char* initialContents)
 {
   flickLed(2, "yellow");
 
@@ -61,25 +61,25 @@ void echo_all(uint8_t buf[], uint32_t count, DynamicJsonDocument settingsDoc, in
         receivedString.remove(receivedString.length() - 1);
         setValue = receivedString;
         
-        settingsDocInWebusb = setKeyValueToJson(settingsDoc, setKey, setValue);
+        settingsDocInMain = setKeyValueToJson(settingsDocInMain, setKey, setValue);
         
         setMode = "";
         setKey = "";
         setValue = "";
 
-        String settings_str = getJsonString(settingsDocInWebusb);
+        String settings_str = getJsonString(settingsDocInMain);
         writeToFile(settings_str);
         usb_web.println(settings_str);
       }else if(setMode == "remove"){
         receivedString.remove(receivedString.length() - 1);
         setKey = receivedString;
-        settingsDocInWebusb = removeKeyValueInJson(settingsDoc, setKey);
+        settingsDocInMain = removeKeyValueInJson(settingsDocInMain, setKey);
 
         setMode = "";
         setKey = "";
         setValue = "";
 
-        String settings_str = getJsonString(settingsDocInWebusb);
+        String settings_str = getJsonString(settingsDocInMain);
         writeToFile(settings_str);
         usb_web.println(settings_str);
       }
@@ -87,8 +87,8 @@ void echo_all(uint8_t buf[], uint32_t count, DynamicJsonDocument settingsDoc, in
       if(receivedString == "get initial\r" || receivedString == "get initial\n"){
         usb_web.println(initialContents);
       }else if(receivedString == "get settings\r" || receivedString == "get settings\n"){
-        settingsDocInWebusb = getJsonDocumentFromFile(fileName);
-        String settings_str = getJsonString(settingsDocInWebusb);
+        settingsDocInMain = getJsonDocumentFromFile(fileName);
+        String settings_str = getJsonString(settingsDocInMain);
         usb_web.println(settings_str);
       }else if(receivedString == "set\r" || receivedString == "set\n"){
         setMode = "key";

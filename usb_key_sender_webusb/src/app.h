@@ -77,7 +77,7 @@ String ledColor = "red";
 #define LED_COMPOSE    0x08
 #define LED_KANA       0x10
 
-DynamicJsonDocument settingsDoc(512);
+
 String fName = "/ATOMS3U/SETTINGS.TXT";
 
 
@@ -327,31 +327,30 @@ bool checkWaitNextIsEnabled(int waitSeconds) {
   return true;
 }
 
-DynamicJsonDocument settingsApp(){
+void settingsApp(){
 
-  settingsDoc = getJsonDocumentFromFile(fName);
+  settingsDocInMain = getJsonDocumentFromFile(fName);
 
 
-  if(settingsDoc.containsKey("key")){
-    keyStr = settingsDoc["key"].as<String>();
+  if(settingsDocInMain.containsKey("key")){
+    keyStr = settingsDocInMain["key"].as<String>();
     existsKeyStr = 1;
-  }else if(settingsDoc.containsKey("keys")){
-    keyArray = settingsDoc["keys"];
+  }else if(settingsDocInMain.containsKey("keys")){
+    keyArray = settingsDocInMain["keys"];
     arraySize = keyArray.size();
     if(arraySize > arraySizeMax){
       arraySize = arraySizeMax;
     }
   }
 
-  if(settingsDoc.containsKey("color")){
-    ledColor = settingsDoc["color"].as<String>();
+  if(settingsDocInMain.containsKey("color")){
+    ledColor = settingsDocInMain["color"].as<String>();
   }
 
-  if(settingsDoc.containsKey("waitSeconds")){
-    waitNextSeconds = settingsDoc["waitSeconds"].as<int>();
+  if(settingsDocInMain.containsKey("waitSeconds")){
+    waitNextSeconds = settingsDocInMain["waitSeconds"].as<int>();
   }
 
-  return settingsDoc;
 }
 
 void loopApp(bool pressed, bool longpressed){
