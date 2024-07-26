@@ -6,6 +6,8 @@
 #include "led.h"
 #include "Adafruit_TinyUSB.h"
 
+DynamicJsonDocument settingsDocInMain(512);
+
 #include "json.h"
 
 // #include "storage.h"
@@ -73,7 +75,7 @@ int bootmode = 0;
 char * initialContents = R"({"color": "red", "keys": ["abc"], "waitSeconds": 3})";
 int requiresResetInSettingsMode = 0;
 
-DynamicJsonDocument settingsDocInMain(512);
+
 
 //// regular code in setup
 void setupInRegularMode(){
