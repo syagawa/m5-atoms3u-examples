@@ -5,7 +5,7 @@
 #include <M5Unified.h>
 #include "led.h"
 #include "Adafruit_TinyUSB.h"
-#include "ArduinoJson.h";
+#include "ArduinoJson.h"
 
 DynamicJsonDocument settingsDocInMain(512);
 
