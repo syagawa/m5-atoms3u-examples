@@ -48,8 +48,18 @@ DynamicJsonDocument setKeyValueToJson(DynamicJsonDocument doc, String key, Strin
 }
 
 DynamicJsonDocument removeKeyValueInJson(DynamicJsonDocument doc, String key){
-  doc.remove(key);
-  return doc;
+  JsonObject obj = doc.as<JsonObject>();
+  obj.remove(key);
+  // doc.remove(key);
+
+
+  DynamicJsonDocument dynamicDoc(512);
+
+  for (JsonPair kv : obj) {
+    dynamicDoc[kv.key()] = kv.value();
+  }
+
+  return dynamicDoc;
 }
 
 #endif //JSON_H
