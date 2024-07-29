@@ -37,7 +37,7 @@ String setMode = "";// "", "key", "value"
 String setKey = "";
 String setValue = "";
 
-void echo_all(uint8_t buf[], uint32_t count, int requiresResetInSettingsMode, char* initialContents)
+void echo_all(uint8_t buf[], uint32_t count)
 {
   flickLed(2, "yellow");
 

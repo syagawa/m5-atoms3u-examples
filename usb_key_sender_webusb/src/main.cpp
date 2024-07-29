@@ -7,7 +7,11 @@
 #include "Adafruit_TinyUSB.h"
 #include "ArduinoJson.h"
 
+//// initial settings
 DynamicJsonDocument settingsDocInMain(512);
+char * initialContents = R"({"color": "red", "keys": ["abc"], "waitSeconds": 3})";
+int requiresResetInSettingsMode = 0;
+
 
 #include "json.h"
 
@@ -59,6 +63,7 @@ String setLedStr = "";
 // }
 
 void resetAndRestart(){
+  flickLed(3, "red");
   removeAllFiles();
   delay(100);
   delay(100);
@@ -71,10 +76,6 @@ void resetAndRestart(){
 int bootmode = 0;
 
 // regular mode settings >>
-
-//// initial settings
-char * initialContents = R"({"color": "red", "keys": ["abc"], "waitSeconds": 3})";
-int requiresResetInSettingsMode = 0;
 
 
 
@@ -102,14 +103,14 @@ void loopInSettingsMode(){
   if (Serial.available()){
     count = Serial.read(buf, 64);
     flickLed(2, "red");
-    echo_all(buf, count, requiresResetInSettingsMode, initialContents);
+    echo_all(buf, count);
   }
 
   // from WebUSB to both Serial & webUSB
   if (usb_web.available()){
     flickLed(2, "green");
     count = usb_web.read(buf, 64);
-    echo_all(buf, count, requiresResetInSettingsMode, initialContents);
+    echo_all(buf, count);
   }
   
 
