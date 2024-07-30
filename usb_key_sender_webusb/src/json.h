@@ -47,11 +47,48 @@ DynamicJsonDocument setKeyValueToJson(DynamicJsonDocument doc, String key, Strin
   return doc;
 }
 
+DynamicJsonDocument pushValueByKeyToJson(DynamicJsonDocument doc, String key, String value){
+  JsonObject obj = doc.as<JsonObject>();
+  JsonArray array;
+
+  if (obj.containsKey(key)) {
+    array = obj[key].as<JsonArray>();
+  } else {
+    array = obj.createNestedArray(key);
+  }
+
+  array.add(value);
+
+  DynamicJsonDocument dynamicDoc(512);
+  for (JsonPair kv : obj) {
+    dynamicDoc[kv.key()] = kv.value();
+  }
+  return dynamicDoc;
+}
+
+DynamicJsonDocument popValueByKeyToJson(DynamicJsonDocument doc, String key){
+  JsonObject obj = doc.as<JsonObject>();
+  JsonArray array;
+
+  if (obj.containsKey(key)) {
+    array = obj[key].as<JsonArray>();
+
+    if (!array.isNull() && array.size() > 0) {
+      array.remove(array.size() - 1);
+      obj[key] = array;
+    }
+  }
+
+  DynamicJsonDocument dynamicDoc(512);
+  for (JsonPair kv : obj) {
+    dynamicDoc[kv.key()] = kv.value();
+  }
+  return dynamicDoc;
+}
+
 DynamicJsonDocument removeKeyValueInJson(DynamicJsonDocument doc, String key){
   JsonObject obj = doc.as<JsonObject>();
   obj.remove(key);
-  // doc.remove(key);
-
 
   DynamicJsonDocument dynamicDoc(512);
 

@@ -57,15 +57,46 @@ void echo_all(uint8_t buf[], uint32_t count)
         setKey = receivedString;
         setMode = "value";
         usb_web.println("set mode please type value");
+      }else if(setMode == "push"){
+        receivedString.remove(receivedString.length() - 1);
+        setKey = receivedString;
+        setMode = "pushvalue";
+        usb_web.println("push mode please type value");
       }else if(setMode == "value"){
         receivedString.remove(receivedString.length() - 1);
         setValue = receivedString;
         
         settingsDocInMain = setKeyValueToJson(settingsDocInMain, setKey, setValue);
         
-        setMode = "";
-        setKey = "";
-        setValue = "";
+        setMode.clear();
+        setKey.clear();
+        setValue.clear();
+
+        String settings_str = getJsonString(settingsDocInMain);
+        writeToFile(settings_str);
+        usb_web.println(settings_str);
+      }else if(setMode == "pushvalue"){
+        receivedString.remove(receivedString.length() - 1);
+        setValue = receivedString;
+        
+        settingsDocInMain = pushValueByKeyToJson(settingsDocInMain, setKey, setValue);
+        
+        setMode.clear();
+        setKey.clear();
+        setValue.clear();
+
+        String settings_str = getJsonString(settingsDocInMain);
+        writeToFile(settings_str);
+        usb_web.println(settings_str);
+      }else if(setMode == "pop"){
+        receivedString.remove(receivedString.length() - 1);
+        setValue = receivedString;
+        
+        settingsDocInMain = popValueByKeyToJson(settingsDocInMain, setKey);
+        
+        setMode.clear();
+        setKey.clear();
+        setValue.clear();
 
         String settings_str = getJsonString(settingsDocInMain);
         writeToFile(settings_str);
@@ -75,9 +106,9 @@ void echo_all(uint8_t buf[], uint32_t count)
         setKey = receivedString;
         settingsDocInMain = removeKeyValueInJson(settingsDocInMain, setKey);
 
-        setMode = "";
-        setKey = "";
-        setValue = "";
+        setMode.clear();
+        setKey.clear();
+        setValue.clear();
 
         String settings_str = getJsonString(settingsDocInMain);
         writeToFile(settings_str);
@@ -93,6 +124,12 @@ void echo_all(uint8_t buf[], uint32_t count)
       }else if(receivedString == "set\r" || receivedString == "set\n"){
         setMode = "key";
         usb_web.println("set mode please type key");
+      }else if(receivedString == "push\r" || receivedString == "push\n"){
+        setMode = "push";
+        usb_web.println("push mode please type key");
+      }else if(receivedString == "pop\r" || receivedString == "pop\n"){
+        setMode = "pop";
+        usb_web.println("pop mode please type key");
       }else if(receivedString == "remove\r" || receivedString == "remove\n"){
         setMode = "remove";
         usb_web.println("remove mode please type remove key");
@@ -105,7 +142,7 @@ void echo_all(uint8_t buf[], uint32_t count)
         requiresResetInSettingsMode = 1;
       }
 
-      receivedString = "";
+      receivedString.clear();
     }
   }
 
