@@ -90,7 +90,7 @@ void echo_all(uint8_t buf[], uint32_t count)
         usb_web.println(settings_str);
       }else if(setMode == "pop"){
         receivedString.remove(receivedString.length() - 1);
-        setValue = receivedString;
+        setKey = receivedString;
         
         settingsDocInMain = popValueByKeyToJson(settingsDocInMain, setKey);
         

@@ -69,13 +69,10 @@ DynamicJsonDocument pushValueByKeyToJson(DynamicJsonDocument doc, String key, St
 DynamicJsonDocument popValueByKeyToJson(DynamicJsonDocument doc, String key){
   JsonObject obj = doc.as<JsonObject>();
   JsonArray array;
-
   if (obj.containsKey(key)) {
     array = obj[key].as<JsonArray>();
-
     if (!array.isNull() && array.size() > 0) {
       array.remove(array.size() - 1);
-      obj[key] = array;
     }
   }
 
