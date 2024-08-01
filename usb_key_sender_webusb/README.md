@@ -23,3 +23,18 @@
 ---
 
 This example is created with reference to https://github.com/espressif/arduino-esp32/blob/master/libraries/USB/examples/USBMSC/USBMSC.ino .
+
+
+---
+
+
+sudo cp 99-tinyusb.rules /etc/udev/rules.d/
+
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="00??", GROUP="plugdev", MODE="0666"
+
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+
+service udev start
+
+https://qiita.com/NWLab/items/04c02cb4dec6291e08fe
