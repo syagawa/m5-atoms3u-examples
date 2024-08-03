@@ -38,3 +38,7 @@ sudo udevadm trigger
 service udev start
 
 https://qiita.com/NWLab/items/04c02cb4dec6291e08fe
+
+---
+
+If M5AtomS3U is not properly recognized as WebUSB when connected to a PC, remove M5AtomS3U from Device Manager and also remove M5AtomS3U from Chrome's WebUSB settings.
