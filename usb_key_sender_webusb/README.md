@@ -30,10 +30,14 @@ This example is created with reference to https://github.com/espressif/arduino-e
 
 sudo cp 99-tinyusb.rules /etc/udev/rules.d/
 
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="00??", GROUP="plugdev", MODE="0666"
+##SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", GROUP="plugdev", MODE="0666"
+#SUBSYSTEMS=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", GROUP="plugdev", MODE="0666"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", GROUP="plugdev", MODE="0666", TAG+="uaccess"
 
 sudo udevadm control --reload-rules
 sudo udevadm trigger
+
+sudo usermod -aG plugdev $USER
 
 service udev start
 
