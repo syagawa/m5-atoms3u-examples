@@ -39,9 +39,12 @@ sudo udevadm trigger
 
 sudo usermod -aG plugdev $USER
 
+ls -la /dev/ttyACM0
+
 service udev start
 
 https://qiita.com/NWLab/items/04c02cb4dec6291e08fe
+https://qiita.com/frameair/items/596724fc2f3438ea7925
 
 ---
 
