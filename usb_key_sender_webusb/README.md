@@ -48,4 +48,20 @@ https://qiita.com/frameair/items/596724fc2f3438ea7925
 
 ---
 
+start chromium-browser as root
+
+```
+
+sudo cp ~/.Xauthority /root/
+sudo su -
+mkdir /run/user/0
+xhost +SI:localuser:root
+sudo -i
+export DISPLAY=:0
+chromium-browser --no-sandbox
+
+
+```
+
+
 If M5AtomS3U is not properly recognized as WebUSB when connected to a PC, remove M5AtomS3U from Device Manager and also remove M5AtomS3U from Chrome's WebUSB settings.
