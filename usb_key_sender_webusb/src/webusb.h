@@ -15,7 +15,7 @@ WEBUSB_URL_DEF(landingPage, 1 /*https*/, "example.tinyusb.org/webusb-serial/inde
 
 Adafruit_USBD_CDC USBSerial;
 
-Adafruit_USBD_MSC MSC;
+// Adafruit_USBD_MSC MSC;
 
 void line_state_callback(bool connected)
 {
