@@ -173,8 +173,11 @@ void setupInSettingsMode(){
 
 
   // USBSerial.begin();
+  USB.productName("M5AtomS3U USB Key Sender");
+  USB.manufacturerName("M5Stack");
   USB.begin();
   // delay(100);
+
 
   usb_web.setLandingPage(&landingPage);
   usb_web.setLineStateCallback(line_state_callback);
