@@ -3,8 +3,13 @@
 #include "led.h"
 // #include <HID.h>
 // #include <Keyboard.h>
-// USBHIDKeyboard Keyboard;
 // #include <TinyUSB_Mouse_and_Keyboard.h>
+// USBHIDKeyboard Keyboard;
+
+// Adafruit_USBD_HID usb_hid;
+
+Adafruit_USBD_HID *usb_hid;
+
 
 String keyStr = "";
 int existsKeyStr = 0;
@@ -113,6 +118,8 @@ void keyboardWrite(String s){
   uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
   size_t len = strlen(str);
   // Keyboard.write(buf, len);
+  usb_hid->keyboardReport(0, 0, buf);
+
 }
 
 void keyboardPress(String s){
@@ -236,10 +243,12 @@ void keyboardPress(String s){
     char firstChar = s.charAt(0);
     uint8_t firstCharAsUint8 = (uint8_t)firstChar; 
     // Keyboard.press(firstCharAsUint8);
+    usb_hid->keyboardPress(0, firstCharAsUint8);
   }
 }
 void keyboardReleaseAll(){
   // Keyboard.releaseAll();
+  usb_hid->keyboardRelease(0);
 }
 
 void sendKeyboard(String s){
@@ -278,24 +287,34 @@ void sendKeyboard(String s){
 
   }else if(str == "release"){
     // Keyboard.releaseAll();
+    usb_hid->keyboardRelease(0);
   }else if(str == "open"){
     // Keyboard.press(KEY_LEFT_GUI);
     // Keyboard.press('r');
+    usb_hid->keyboardPress(0, KEY_LEFT_GUI);
+    usb_hid->keyboardPress(0, 'r');
+
     delay(100);
     // Keyboard.releaseAll();
+    usb_hid->keyboardRelease(0);
+
     const char* str = parts1[1].c_str();
     uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
     size_t len = strlen(str);
     // Keyboard.write(buf, len);
+    usb_hid->keyboardReport(0, 0, buf);
     delay(100);
     // Keyboard.press(KEY_RETURN);
+    usb_hid->keyboardPress(0, KEY_RETURN);
     delay(100);
     // Keyboard.release(KEY_RETURN);
+    usb_hid->keyboardRelease(0);
   }else{
     const char* str = s.c_str();
     uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
     size_t len = strlen(str);
     // Keyboard.write(buf, len);
+    usb_hid->keyboardReport(0, 0, buf);
   }
 
 }
@@ -327,7 +346,39 @@ bool checkWaitNextIsEnabled(int waitSeconds) {
   return true;
 }
 
+uint8_t const desc_hid_report[] = {
+    TUD_HID_REPORT_DESC_KEYBOARD()
+};
+
+void hid_report_callback(uint8_t report_id, hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize) {
+  (void) report_id;
+  (void) bufsize;
+
+  // LED indicator is output report with only 1 byte length
+  if (report_type != HID_REPORT_TYPE_OUTPUT) return;
+
+  // The LED bit map is as follows: (also defined by KEYBOARD_LED_* )
+  // Kana (4) | Compose (3) | ScrollLock (2) | CapsLock (1) | Numlock (0)
+  uint8_t ledIndicator = buffer[0];
+
+  // turn on LED if capslock is set
+  // digitalWrite(LED_BUILTIN, ledIndicator & KEYBOARD_LED_CAPSLOCK);
+}
+
 void settingsApp(){
+
+  static Adafruit_USBD_HID usb_hid2;
+  usb_hid = &usb_hid2;
+  usb_hid->begin();
+
+  usb_hid->setBootProtocol(HID_ITF_PROTOCOL_KEYBOARD);
+  usb_hid->setPollInterval(2);
+  usb_hid->setReportDescriptor(desc_hid_report, sizeof(desc_hid_report));
+  usb_hid->setStringDescriptor("TinyUSB Keyboard");
+
+  usb_hid->setReportCallback(NULL, hid_report_callback);
+
+  usb_hid->begin();
 
   settingsDocInMain = getJsonDocumentFromFile(fName);
 
