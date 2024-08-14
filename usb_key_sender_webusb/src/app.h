@@ -6,9 +6,9 @@
 // #include <TinyUSB_Mouse_and_Keyboard.h>
 // USBHIDKeyboard Keyboard;
 
-// Adafruit_USBD_HID usb_hid;
+Adafruit_USBD_HID usb_hid;
 
-Adafruit_USBD_HID *usb_hid;
+// Adafruit_USBD_HID *usb_hid;
 
 
 String keyStr = "";
@@ -118,7 +118,7 @@ void keyboardWrite(String s){
   uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
   size_t len = strlen(str);
   // Keyboard.write(buf, len);
-  usb_hid->keyboardReport(0, 0, buf);
+  usb_hid.keyboardReport(0, 0, buf);
 
 }
 
@@ -243,12 +243,12 @@ void keyboardPress(String s){
     char firstChar = s.charAt(0);
     uint8_t firstCharAsUint8 = (uint8_t)firstChar; 
     // Keyboard.press(firstCharAsUint8);
-    usb_hid->keyboardPress(0, firstCharAsUint8);
+    usb_hid.keyboardPress(0, firstCharAsUint8);
   }
 }
 void keyboardReleaseAll(){
   // Keyboard.releaseAll();
-  usb_hid->keyboardRelease(0);
+  usb_hid.keyboardRelease(0);
 }
 
 void sendKeyboard(String s){
@@ -287,34 +287,34 @@ void sendKeyboard(String s){
 
   }else if(str == "release"){
     // Keyboard.releaseAll();
-    usb_hid->keyboardRelease(0);
+    usb_hid.keyboardRelease(0);
   }else if(str == "open"){
     // Keyboard.press(KEY_LEFT_GUI);
     // Keyboard.press('r');
-    usb_hid->keyboardPress(0, KEY_LEFT_GUI);
-    usb_hid->keyboardPress(0, 'r');
+    usb_hid.keyboardPress(0, KEY_LEFT_GUI);
+    usb_hid.keyboardPress(0, 'r');
 
     delay(100);
     // Keyboard.releaseAll();
-    usb_hid->keyboardRelease(0);
+    usb_hid.keyboardRelease(0);
 
     const char* str = parts1[1].c_str();
     uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
     size_t len = strlen(str);
     // Keyboard.write(buf, len);
-    usb_hid->keyboardReport(0, 0, buf);
+    usb_hid.keyboardReport(0, 0, buf);
     delay(100);
     // Keyboard.press(KEY_RETURN);
-    usb_hid->keyboardPress(0, KEY_RETURN);
+    usb_hid.keyboardPress(0, KEY_RETURN);
     delay(100);
     // Keyboard.release(KEY_RETURN);
-    usb_hid->keyboardRelease(0);
+    usb_hid.keyboardRelease(0);
   }else{
     const char* str = s.c_str();
     uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
     size_t len = strlen(str);
     // Keyboard.write(buf, len);
-    usb_hid->keyboardReport(0, 0, buf);
+    usb_hid.keyboardReport(0, 0, buf);
   }
 
 }
@@ -367,18 +367,18 @@ void hid_report_callback(uint8_t report_id, hid_report_type_t report_type, uint8
 
 void settingsApp(){
 
-  static Adafruit_USBD_HID usb_hid2;
-  usb_hid = &usb_hid2;
-  usb_hid->begin();
+  // static Adafruit_USBD_HID usb_hid2;
+  // usb_hid = &usb_hid2;
+  usb_hid.begin();
 
-  usb_hid->setBootProtocol(HID_ITF_PROTOCOL_KEYBOARD);
-  usb_hid->setPollInterval(2);
-  usb_hid->setReportDescriptor(desc_hid_report, sizeof(desc_hid_report));
-  usb_hid->setStringDescriptor("TinyUSB Keyboard");
+  usb_hid.setBootProtocol(HID_ITF_PROTOCOL_KEYBOARD);
+  usb_hid.setPollInterval(2);
+  usb_hid.setReportDescriptor(desc_hid_report, sizeof(desc_hid_report));
+  usb_hid.setStringDescriptor("TinyUSB Keyboard");
 
-  usb_hid->setReportCallback(NULL, hid_report_callback);
+  usb_hid.setReportCallback(NULL, hid_report_callback);
 
-  usb_hid->begin();
+  usb_hid.begin();
 
   settingsDocInMain = getJsonDocumentFromFile(fName);
 
