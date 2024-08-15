@@ -1,4 +1,6 @@
-# USB key sender
+This example does not work, or only partially works.
+
+# USB key sender WebUSB
 
 ## settings examples
 
