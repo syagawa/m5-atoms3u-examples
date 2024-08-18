@@ -37,10 +37,10 @@ void removeAllFiles(){
 //   }
 // }
 
-File initAndGetDataFile(char * initialContents, String filename){
+File initAndGetDataFile(char * initialContents, String filename, bool force){
   File dataFile;
   if(SPIFFS.begin(true)){
-    if(!SPIFFS.exists(filename)){
+    if(!SPIFFS.exists(filename) || force){
       dataFile = SPIFFS.open(filename, FILE_WRITE);
       dataFile.print(initialContents);
       dataFile.close();
@@ -51,9 +51,9 @@ File initAndGetDataFile(char * initialContents, String filename){
 }
 
 
-void initRomArea(char * initialContents){
+void initRomArea(char * initialContents, bool force){
 
-  File dataFile = initAndGetDataFile(initialContents, fileName);
+  File dataFile = initAndGetDataFile(initialContents, fileName, force);
   String readStr = dataFile.readString();
   // char Buf[DISK_SECTOR_SIZE];
   // readStr.toCharArray(Buf, DISK_SECTOR_SIZE);

@@ -9,7 +9,6 @@
 //// initial settings
 DynamicJsonDocument settingsDocInMain(512);
 char * initialContents = R"({"color": "red", "colors": ["blue", "yellow"]})";
-int requiresResetInSettingsMode = 0;
 
 
 #include "json.h"
@@ -86,11 +85,6 @@ void loopInSettingsMode(){
   }
   
 
-  if(requiresResetInSettingsMode == 1){
-    resetAndRestart();
-  }
-
-
 }
 
 
@@ -109,7 +103,7 @@ void setup() {
     bootmode = 1;
   }
 
-  initRomArea(initialContents);
+  initRomArea(initialContents, false);
 
   if(bootmode == 0){// 1. Regular Mode
     setupInRegularMode();

@@ -125,14 +125,15 @@ void echo_all(uint8_t buf[], uint32_t count)
       }else if(receivedString == "remove\r" || receivedString == "remove\n"){
         setMode = "remove";
         usb_web.println("remove mode please type remove key");
+      }else if(receivedString == "reset\r" || receivedString == "reset\n"){
+        initRomArea(initialContents, true);
+        String settings_str = getJsonString(settingsDocInMain);
+        usb_web.println(settings_str);
       }else{
         usb_web.println(receivedString);
       }
       usb_web.flush();
 
-      if(receivedString == "reset\r" || receivedString == "reset\n"){
-        requiresResetInSettingsMode = 1;
-      }
 
       receivedString.clear();
     }
