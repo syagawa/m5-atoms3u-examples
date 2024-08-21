@@ -371,9 +371,18 @@ void loopApp(bool pressed, bool longpressed){
     Serial.printf("analog %u \n", a);
     Serial.printf("digital %u \n ", d);
 
-    // offLed();
-    // delay(10);
-    // liteLed(ledColor, brightness);
+    offLed();
+    delay(10);
+    liteLed(ledColor, brightness);
+
+    String a_s = String(a);
+    String d_s = String(d);
+    keyboardWrite(a_s);
+    keyboardWrite("\n");
+    keyboardWrite(d_s);
+    keyboardWrite("\n");
+
+
     // if(existsKeyStr == 1){
     //   keyboardWrite(keyStr);
     //   stopWaitNext();
