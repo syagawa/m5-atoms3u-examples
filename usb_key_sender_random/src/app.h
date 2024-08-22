@@ -352,8 +352,9 @@ void settingsApp(){
   }
 
 
-  M5.Speaker.end();
-  // M5.Mic.begin();
+  // M5.Speaker.end();
+  pinMode(PDM_DAT_PIN, ANALOG);
+  // pinMode(PDM_DAT_PIN, INPUT);
 
 
 }
@@ -368,8 +369,15 @@ void loopApp(bool pressed, bool longpressed){
     uint8_t a = analogRead(PDM_DAT_PIN);
     uint8_t d = digitalRead(PDM_DAT_PIN);
 
+
     Serial.printf("analog %u \n", a);
     Serial.printf("digital %u \n ", d);
+
+    auto a2 = analogRead(PDM_DAT_PIN);
+    auto d2 = digitalRead(PDM_DAT_PIN);
+    
+
+
 
     offLed();
     delay(10);
@@ -377,9 +385,18 @@ void loopApp(bool pressed, bool longpressed){
 
     String a_s = String(a);
     String d_s = String(d);
+
+    String a_s2 = String(a2);
+    String d_s2 = String(d2);
+
     keyboardWrite(a_s);
     keyboardWrite("\n");
     keyboardWrite(d_s);
+    keyboardWrite("\n");
+
+    keyboardWrite(a_s2);
+    keyboardWrite("\n");
+    keyboardWrite(d_s2);
     keyboardWrite("\n");
 
 
