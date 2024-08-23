@@ -353,14 +353,15 @@ void settingsApp(){
 
 
   // M5.Speaker.end();
-  pinMode(PDM_DAT_PIN, ANALOG);
-  // pinMode(PDM_DAT_PIN, INPUT);
+  pinMode(PDM_CLK_PIN, OUTPUT);
+  // pinMode(PDM_DAT_PIN, ANALOG);
+  pinMode(PDM_DAT_PIN, INPUT);
 
-  M5.Speaker.setVolume(255);
+  // M5.Speaker.setVolume(255);
 
   /// Since the microphone and speaker cannot be used at the same time, turn off the speaker here.
-  M5.Speaker.end();
-  M5.Mic.begin();
+  // M5.Speaker.end();
+  // M5.Mic.begin();
 
 
 }
@@ -372,7 +373,7 @@ void loopApp(bool pressed, bool longpressed){
   }else if (pressed) {
 
 
-    uint8_t a = analogRead(PDM_DAT_PIN);
+    int a = analogRead(PDM_DAT_PIN);
     uint8_t d = digitalRead(PDM_DAT_PIN);
 
     bool enabled = M5.Mic.isEnabled();
@@ -399,15 +400,16 @@ void loopApp(bool pressed, bool longpressed){
 
     String enabled_s = String(enabled);
 
+    keyboardWrite("enabled\n");
     keyboardWrite(enabled_s);
-    keyboardWrite("\n");
+    keyboardWrite("\n analog\n");
     keyboardWrite(a_s);
-    keyboardWrite("\n");
+    keyboardWrite("\n digital\n");
     keyboardWrite(d_s);
-    keyboardWrite("\n");
 
+    keyboardWrite("\n analog\n");
     keyboardWrite(a_s2);
-    keyboardWrite("\n");
+    keyboardWrite("\n digital\n");
     keyboardWrite(d_s2);
     keyboardWrite("\n");
 
