@@ -356,6 +356,12 @@ void settingsApp(){
   pinMode(PDM_DAT_PIN, ANALOG);
   // pinMode(PDM_DAT_PIN, INPUT);
 
+  M5.Speaker.setVolume(255);
+
+  /// Since the microphone and speaker cannot be used at the same time, turn off the speaker here.
+  M5.Speaker.end();
+  M5.Mic.begin();
+
 
 }
 
@@ -368,6 +374,8 @@ void loopApp(bool pressed, bool longpressed){
 
     uint8_t a = analogRead(PDM_DAT_PIN);
     uint8_t d = digitalRead(PDM_DAT_PIN);
+
+    bool enabled = M5.Mic.isEnabled();
 
 
     Serial.printf("analog %u \n", a);
@@ -389,6 +397,10 @@ void loopApp(bool pressed, bool longpressed){
     String a_s2 = String(a2);
     String d_s2 = String(d2);
 
+    String enabled_s = String(enabled);
+
+    keyboardWrite(enabled_s);
+    keyboardWrite("\n");
     keyboardWrite(a_s);
     keyboardWrite("\n");
     keyboardWrite(d_s);
