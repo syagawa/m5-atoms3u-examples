@@ -361,9 +361,11 @@ void settingsApp(){
 
   /// Since the microphone and speaker cannot be used at the same time, turn off the speaker here.
   M5.Speaker.end();
-  M5.Mic.begin();
+  // M5.Mic.begin();
 
-  
+  auto cfg = M5.Mic.config();
+  M5.Mic.config(cfg);
+  M5.Mic.begin();
 
 }
 
@@ -375,16 +377,17 @@ void loopApp(bool pressed, bool longpressed){
 
 
     int a = analogRead(PDM_DAT_PIN);
-    // uint8_t d = digitalRead(PDM_DAT_PIN);
+    uint8_t d = digitalRead(PDM_DAT_PIN);
 
     bool enabled = M5.Mic.isEnabled();
 
+    
 
     Serial.printf("analog %u \n", a);
     Serial.printf("digital %u \n ", d);
 
     auto a2 = analogRead(PDM_DAT_PIN);
-    // auto d2 = digitalRead(PDM_DAT_PIN);
+    auto d2 = digitalRead(PDM_DAT_PIN);
 
     auto a3 = analogReadRaw(PDM_DAT_PIN);
 
@@ -409,14 +412,40 @@ void loopApp(bool pressed, bool longpressed){
     keyboardWrite("\n digital\n");
     keyboardWrite(d_s);
 
-    keyboardWrite("\n analog\n");
-    keyboardWrite(a_s2);
-    keyboardWrite("\n digital\n");
-    keyboardWrite(d_s2);
-    keyboardWrite("\n analog\n");
-    keyboardWrite(a_s3);
+    unsigned long startMillis = millis(); // サンプルの開始時間
+    int sampleWindow = 50;
+    int peakToPeak = 0;   // 振幅の最大値と最小値の差
+    int signalMax = 0;
+    int signalMin = 4095;
 
-    keyboardWrite("\n");
+    while (millis() - startMillis < sampleWindow) {
+      int sample = analogRead(PDM_DAT_PIN);
+      if (sample > signalMax) {
+        signalMax = sample;  // 最大値を更新
+      } else if (sample < signalMin) {
+        signalMin = sample;  // 最小値を更新
+      }
+    }
+    peakToPeak = signalMax - signalMin;  // ピークツーピーク振幅
+    double volts = (peakToPeak * 3.3) / 4095.0;  // ボルト換算
+
+    // Serial.println(volts);
+
+    String sMax = String(signalMax);
+    String sMin = String(signalMin);
+    String sp2p = String(peakToPeak);
+    String svolts = String(volts);
+
+    keyboardWrite("\nsMax\n");
+    keyboardWrite(sMax);
+    keyboardWrite("\nsMin\n");
+    keyboardWrite(sMin);
+    keyboardWrite("\nsp2p\n");
+    keyboardWrite(sp2p);
+    keyboardWrite("\nsvolts\n");
+    keyboardWrite(svolts);
+
+    
 
 
     // if(existsKeyStr == 1){
