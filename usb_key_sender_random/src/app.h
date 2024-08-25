@@ -324,8 +324,6 @@ bool checkWaitNextIsEnabled(int waitSeconds) {
   return true;
 }
 
-uint8_t PDM_DAT_PIN = 38;
-uint8_t PDM_CLK_PIN = 39;
 
 void settingsApp(){
 
@@ -351,22 +349,6 @@ void settingsApp(){
     waitNextSeconds = settingsDoc["waitSeconds"].as<int>();
   }
 
-
-  // M5.Speaker.end();
-  // pinMode(PDM_CLK_PIN, OUTPUT);
-  // pinMode(PDM_DAT_PIN, ANALOG);
-  // pinMode(PDM_DAT_PIN, INPUT);
-
-  M5.Speaker.setVolume(255);
-
-  /// Since the microphone and speaker cannot be used at the same time, turn off the speaker here.
-  M5.Speaker.end();
-  // M5.Mic.begin();
-
-  auto cfg = M5.Mic.config();
-  M5.Mic.config(cfg);
-  M5.Mic.begin();
-
 }
 
 void loopApp(bool pressed, bool longpressed){
@@ -376,92 +358,39 @@ void loopApp(bool pressed, bool longpressed){
   }else if (pressed) {
 
 
-    int a = analogRead(PDM_DAT_PIN);
-    uint8_t d = digitalRead(PDM_DAT_PIN);
-
-    bool enabled = M5.Mic.isEnabled();
-
-    
-
-    Serial.printf("analog %u \n", a);
-    Serial.printf("digital %u \n ", d);
-
-    auto a2 = analogRead(PDM_DAT_PIN);
-    auto d2 = digitalRead(PDM_DAT_PIN);
-
-    auto a3 = analogReadRaw(PDM_DAT_PIN);
 
     offLed();
     delay(10);
     liteLed(ledColor, brightness);
 
-    String a_s = String(a);
-    String d_s = String(d);
-
-    String a_s2 = String(a2);
-    String d_s2 = String(d2);
-
-    String enabled_s = String(enabled);
-
-    String a_s3 = String(a3);
-
-    keyboardWrite("enabled\n");
-    keyboardWrite(enabled_s);
-    keyboardWrite("\n analog\n");
-    keyboardWrite(a_s);
-    keyboardWrite("\n digital\n");
-    keyboardWrite(d_s);
-
-    unsigned long startMillis = millis(); // サンプルの開始時間
-    int sampleWindow = 50;
-    int peakToPeak = 0;   // 振幅の最大値と最小値の差
-    int signalMax = 0;
-    int signalMin = 4095;
-
-    while (millis() - startMillis < sampleWindow) {
-      int sample = analogRead(PDM_DAT_PIN);
-      if (sample > signalMax) {
-        signalMax = sample;  // 最大値を更新
-      } else if (sample < signalMin) {
-        signalMin = sample;  // 最小値を更新
-      }
-    }
-    peakToPeak = signalMax - signalMin;  // ピークツーピーク振幅
-    double volts = (peakToPeak * 3.3) / 4095.0;  // ボルト換算
-
-    // Serial.println(volts);
-
-    String sMax = String(signalMax);
-    String sMin = String(signalMin);
-    String sp2p = String(peakToPeak);
-    String svolts = String(volts);
-
-    keyboardWrite("\nsMax\n");
-    keyboardWrite(sMax);
-    keyboardWrite("\nsMin\n");
-    keyboardWrite(sMin);
-    keyboardWrite("\nsp2p\n");
-    keyboardWrite(sp2p);
-    keyboardWrite("\nsvolts\n");
-    keyboardWrite(svolts);
-
-    
+    uint8_t a14 = analogRead(14);
+    randomSeed(a14);
+    String s_a14 = String(a14);
+    int random14 = random(0, 100);
+    String s_random14 = String(random14);
+    // keyboardWrite("\na14\n");
+    // keyboardWrite(s_a14);
+    keyboardWrite("\nrandom14\n");
+    keyboardWrite(s_random14);
 
 
-    // if(existsKeyStr == 1){
-    //   keyboardWrite(keyStr);
-    //   stopWaitNext();
-    // }else if(arraySize > 0){
-    //   String s = keyArray[keyIndex];
-    //   sendKeyboard(s);
-    //   keyIndex = keyIndex + 1;
-    //   if(keyIndex >= arraySize){
-    //     keyIndex = 0;
-    //     stopWaitNext();
-    //   }else{
-    //     startWaitNext();
-    //   }
-    // }
+    uint8_t a17 = analogRead(17);
+    randomSeed(a17);
+    String s_a17 = String(a17);
+    int random17 = random(0, 100);
+    String s_random17 = String(random17);
+
+    // keyboardWrite("\na17\n");
+    // keyboardWrite(s_a17);
+    keyboardWrite("\nrandom17\n");
+    keyboardWrite(s_random17);
+
+
+
+    keyboardWrite("\n\n");
+
+
+
   }
 
   waitNext = checkWaitNextIsEnabled(waitNextSeconds);
