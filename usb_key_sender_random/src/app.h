@@ -1,6 +1,7 @@
 #include "USBHIDKeyboard.h"
 #include "json.h"
 #include "led.h"
+#include "UUID.h"
 
 USBHIDKeyboard Keyboard;
 String keyStr = "";
@@ -13,66 +14,8 @@ int keyIndex = 0;
 int waitNextSeconds = 5;
 String ledColor = "red";
 
-#define KEY_LEFT_CTRL   0x80
-#define KEY_LEFT_SHIFT  0x81
-#define KEY_LEFT_ALT    0x82
-#define KEY_LEFT_GUI    0x83
-#define KEY_RIGHT_CTRL  0x84
-#define KEY_RIGHT_SHIFT 0x85
-#define KEY_RIGHT_ALT   0x86
-#define KEY_RIGHT_GUI   0x87
+String randomMode = "uuid";
 
-#define KEY_UP_ARROW     0xDA
-#define KEY_DOWN_ARROW   0xD9
-#define KEY_LEFT_ARROW   0xD8
-#define KEY_RIGHT_ARROW  0xD7
-#define KEY_MENU         0xFE
-#define KEY_SPACE        0x20
-#define KEY_BACKSPACE    0xB2
-#define KEY_TAB          0xB3
-#define KEY_RETURN       0xB0
-#define KEY_ESC          0xB1
-#define KEY_INSERT       0xD1
-#define KEY_DELETE       0xD4
-#define KEY_PAGE_UP      0xD3
-#define KEY_PAGE_DOWN    0xD6
-#define KEY_HOME         0xD2
-#define KEY_END          0xD5
-#define KEY_NUM_LOCK     0xDB
-#define KEY_CAPS_LOCK    0xC1
-#define KEY_F1           0xC2
-#define KEY_F2           0xC3
-#define KEY_F3           0xC4
-#define KEY_F4           0xC5
-#define KEY_F5           0xC6
-#define KEY_F6           0xC7
-#define KEY_F7           0xC8
-#define KEY_F8           0xC9
-#define KEY_F9           0xCA
-#define KEY_F10          0xCB
-#define KEY_F11          0xCC
-#define KEY_F12          0xCD
-#define KEY_F13          0xF0
-#define KEY_F14          0xF1
-#define KEY_F15          0xF2
-#define KEY_F16          0xF3
-#define KEY_F17          0xF4
-#define KEY_F18          0xF5
-#define KEY_F19          0xF6
-#define KEY_F20          0xF7
-#define KEY_F21          0xF8
-#define KEY_F22          0xF9
-#define KEY_F23          0xFA
-#define KEY_F24          0xFB
-#define KEY_PRINT_SCREEN 0xCE
-#define KEY_SCROLL_LOCK  0xCF
-#define KEY_PAUSE        0xD0
-
-#define LED_NUMLOCK    0x01
-#define LED_CAPSLOCK   0x02
-#define LED_SCROLLLOCK 0x04
-#define LED_COMPOSE    0x08
-#define LED_KANA       0x10
 
 DynamicJsonDocument settingsDoc(512);
 String fName = "/ATOMS3U/SETTINGS.TXT";
@@ -113,127 +56,10 @@ void keyboardWrite(String s){
 }
 
 void keyboardPress(String s){
-  if(s == "KEY_LEFT_CTRL"){
-    Keyboard.press(KEY_LEFT_CTRL);
-  }else if(s == "KEY_LEFT_SHIFT"){
-    Keyboard.press(KEY_LEFT_SHIFT);
-  }else if(s == "KEY_LEFT_ALT"){
-    Keyboard.press(KEY_LEFT_ALT);
-  }else if(s == "KEY_LEFT_GUI"){
-    Keyboard.press(KEY_LEFT_GUI);
-  }else if(s == "KEY_RIGHT_CTRL"){
-    Keyboard.press(KEY_RIGHT_CTRL);
-  }else if(s == "KEY_RIGHT_SHIFT"){
-    Keyboard.press(KEY_RIGHT_SHIFT);
-  }else if(s == "KEY_RIGHT_ALT"){
-    Keyboard.press(KEY_RIGHT_ALT);
-  }else if(s == "KEY_RIGHT_GUI"){
-    Keyboard.press(KEY_RIGHT_GUI);
-  }else if(s == "KEY_UP_ARROW"){
-    Keyboard.press(KEY_UP_ARROW);
-  }else if(s == "KEY_DOWN_ARROW"){
-    Keyboard.press(KEY_DOWN_ARROW);
-  }else if(s == "KEY_LEFT_ARROW"){
-    Keyboard.press(KEY_LEFT_ARROW);
-  }else if(s == "KEY_RIGHT_ARROW"){
-    Keyboard.press(KEY_RIGHT_ARROW);
-  }else if(s == "KEY_MENU"){
-    Keyboard.press(KEY_MENU);
-  }else if(s == "KEY_SPACE"){
-    Keyboard.press(KEY_SPACE);
-  }else if(s == "KEY_BACKSPACE"){
-    Keyboard.press(KEY_BACKSPACE);
-  }else if(s == "KEY_TAB"){
-    Keyboard.press(KEY_TAB);
-  }else if(s == "KEY_RETURN"){
-    Keyboard.press(KEY_RETURN);
-  }else if(s == "KEY_ESC"){
-    Keyboard.press(KEY_ESC);
-  }else if(s == "KEY_INSERT"){
-    Keyboard.press(KEY_INSERT);
-  }else if(s == "KEY_DELETE"){
-    Keyboard.press(KEY_DELETE);
-  }else if(s == "KEY_PAGE_UP"){
-    Keyboard.press(KEY_PAGE_UP);
-  }else if(s == "KEY_PAGE_DOWN"){
-    Keyboard.press(KEY_PAGE_DOWN);
-  }else if(s == "KEY_HOME"){
-    Keyboard.press(KEY_HOME);
-  }else if(s == "KEY_END"){
-    Keyboard.press(KEY_END);
-  }else if(s == "KEY_NUM_LOCK"){
-    Keyboard.press(KEY_NUM_LOCK);
-  }else if(s == "KEY_CAPS_LOCK"){
-    Keyboard.press(KEY_CAPS_LOCK);
-  }else if(s == "KEY_F1"){
-    Keyboard.press(KEY_F1);
-  }else if(s == "KEY_F2"){
-    Keyboard.press(KEY_F2);
-  }else if(s == "KEY_F3"){
-    Keyboard.press(KEY_F3);
-  }else if(s == "KEY_F4"){
-    Keyboard.press(KEY_F4);
-  }else if(s == "KEY_F5"){
-    Keyboard.press(KEY_F5);
-  }else if(s == "KEY_F6"){
-    Keyboard.press(KEY_F6);
-  }else if(s == "KEY_F7"){
-    Keyboard.press(KEY_F7);
-  }else if(s == "KEY_F8"){
-    Keyboard.press(KEY_F8);
-  }else if(s == "KEY_F9"){
-    Keyboard.press(KEY_F9);
-  }else if(s == "KEY_F10"){
-    Keyboard.press(KEY_F10);
-  }else if(s == "KEY_F11"){
-    Keyboard.press(KEY_F11);
-  }else if(s == "KEY_F12"){
-    Keyboard.press(KEY_F12);
-  }else if(s == "KEY_F13"){
-    Keyboard.press(KEY_F13);
-  }else if(s == "KEY_F14"){
-    Keyboard.press(KEY_F14);
-  }else if(s == "KEY_F15"){
-    Keyboard.press(KEY_F15);
-  }else if(s == "KEY_F16"){
-    Keyboard.press(KEY_F16);
-  }else if(s == "KEY_F17"){
-    Keyboard.press(KEY_F17);
-  }else if(s == "KEY_F18"){
-    Keyboard.press(KEY_F18);
-  }else if(s == "KEY_F19"){
-    Keyboard.press(KEY_F19);
-  }else if(s == "KEY_F20"){
-    Keyboard.press(KEY_F20);
-  }else if(s == "KEY_F21"){
-    Keyboard.press(KEY_F21);
-  }else if(s == "KEY_F22"){
-    Keyboard.press(KEY_F22);
-  }else if(s == "KEY_F23"){
-    Keyboard.press(KEY_F23);
-  }else if(s == "KEY_F24"){
-    Keyboard.press(KEY_F24);
-  }else if(s == "KEY_PRINT_SCREEN"){
-    Keyboard.press(KEY_PRINT_SCREEN);
-  }else if(s == "KEY_SCROLL_LOCK"){
-    Keyboard.press(KEY_SCROLL_LOCK);
-  }else if(s == "KEY_PAUSE"){
-    Keyboard.press(KEY_PAUSE);
-  }else if(s == "LED_NUMLOCK"){
-    Keyboard.press(LED_NUMLOCK);
-  }else if(s == "LED_CAPSLOCK"){
-    Keyboard.press(LED_CAPSLOCK);
-  }else if(s == "LED_SCROLLLOCK"){
-    Keyboard.press(LED_SCROLLLOCK);
-  }else if(s == "LED_COMPOSE"){
-    Keyboard.press(LED_COMPOSE);
-  }else if(s == "LED_KANA"){
-    Keyboard.press(LED_KANA);
-  }else{
-    char firstChar = s.charAt(0);
-    uint8_t firstCharAsUint8 = (uint8_t)firstChar; 
-    Keyboard.press(firstCharAsUint8);
-  }
+  char firstChar = s.charAt(0);
+  uint8_t firstCharAsUint8 = (uint8_t)firstChar; 
+  Keyboard.press(firstCharAsUint8);
+  
 }
 void keyboardReleaseAll(){
   Keyboard.releaseAll();
@@ -324,6 +150,7 @@ bool checkWaitNextIsEnabled(int waitSeconds) {
   return true;
 }
 
+UUID uuid;
 
 void settingsApp(){
 
@@ -349,6 +176,10 @@ void settingsApp(){
     waitNextSeconds = settingsDoc["waitSeconds"].as<int>();
   }
 
+  if(settingsDoc.containsKey("randomMode")){
+    randomMode = settingsDoc["randomMode"].as<String>();
+  }
+
 }
 
 void loopApp(bool pressed, bool longpressed){
@@ -363,27 +194,39 @@ void loopApp(bool pressed, bool longpressed){
     delay(10);
     liteLed(ledColor, brightness);
 
-    uint8_t a14 = analogRead(14);
-    randomSeed(a14);
-    String s_a14 = String(a14);
-    int random14 = random(0, 100);
-    String s_random14 = String(random14);
-    // keyboardWrite("\na14\n");
-    // keyboardWrite(s_a14);
-    keyboardWrite("\nrandom14\n");
-    keyboardWrite(s_random14);
+    if(randomMode == "uuid"){
+      uint8_t a14 = analogRead(14);
+      // randomSeed(a14);
+      uuid.seed(a14);
+      uuid.generate();
+
+      String s_uuid =  String(uuid.toCharArray());
+      keyboardWrite("\nuuid\:\s");
+      keyboardWrite(s_uuid);
 
 
-    uint8_t a17 = analogRead(17);
-    randomSeed(a17);
-    String s_a17 = String(a17);
-    int random17 = random(0, 100);
-    String s_random17 = String(random17);
+    }else{
+      uint8_t a14 = analogRead(14);
+      randomSeed(a14);
+      String s_a14 = String(a14);
+      int random14 = random(0, 100);
+      String s_random14 = String(random14);
+      // keyboardWrite("\na14\n");
+      // keyboardWrite(s_a14);
+      keyboardWrite("\nrandom14\n");
+      keyboardWrite(s_random14);
 
-    // keyboardWrite("\na17\n");
-    // keyboardWrite(s_a17);
-    keyboardWrite("\nrandom17\n");
-    keyboardWrite(s_random17);
+
+      uint8_t a17 = analogRead(17);
+      randomSeed(a17);
+      String s_a17 = String(a17);
+      int random17 = random(0, 100);
+      String s_random17 = String(random17);
+
+      keyboardWrite("\nrandom17\n");
+      keyboardWrite(s_random17);
+
+    }
 
 
 
