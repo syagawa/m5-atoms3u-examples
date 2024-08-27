@@ -24,10 +24,12 @@ bool waitNext = false;
 long startMillisForWaitNext = 0;
 int brightness = 100;
 
-String randomMode = "uuid";
+String randomMode = "";
 long randomMin = 0;
 long randomMax = 100;
 int seedPort = 14; //14,17
+String prefix = "";
+String suffix = "";
 
 int splitString(String data, char delimiter, String parts[], int maxParts) {
   int partCount = 0;
@@ -72,12 +74,10 @@ void sendKeyboard(String s){
   char delimiter1 = ':';
   String parts1[2];
   splitString(s, delimiter1, parts1, 4);
-  String str = parts1[0];
-  const char* str = s.c_str();
-  uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
-  size_t len = strlen(str);
+  const char* str2 = s.c_str();
+  uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str2));
+  size_t len = strlen(str2);
   Keyboard.write(buf, len);
-
 }
 
 void startWaitNext(){
@@ -145,6 +145,21 @@ void settingsApp(){
     randomMax = settingsDoc["randomMax"].as<long>();
   }
 
+  if(settingsDoc.containsKey("seedPort")){
+    seedPort = settingsDoc["seedPort"].as<int>();
+  }
+
+  if(settingsDoc.containsKey("prefix")){
+    prefix = settingsDoc["prefix"].as<String>();
+  }
+
+  if(settingsDoc.containsKey("suffix")){
+    suffix = settingsDoc["suffix"].as<String>();
+  }
+
+
+
+
 }
 
 
@@ -161,25 +176,42 @@ void loopApp(bool pressed, bool longpressed){
     delay(10);
     liteLed(ledColor, brightness);
 
+    String write_s = "";
+
     if(randomMode == "uuid"){
       uint8_t a_read = analogRead(seedPort);
       uuid.seed(a_read);
       uuid.generate();
 
-      String s_uuid =  String(uuid.toCharArray());
-      keyboardWrite("\nuuid\:\s");
-      keyboardWrite(s_uuid);
+      write_s =  String(uuid.toCharArray());
+      // keyboardWrite("\nuuid\:\s");
+      // keyboardWrite(s_uuid);
 
     }else{
       uint8_t a_read = analogRead(seedPort);
       randomSeed(a_read);
       int rand = random(randomMin, randomMax);
-      String s_random = String(rand);
-      keyboardWrite(s_random);
+      write_s = String(rand);
+      // keyboardWrite(s_random);
 
     }
 
-    keyboardWrite("\n");
+    if(write_s.length() > 0){
+
+      if(prefix.length() > 0){
+        keyboardWrite(prefix);
+      }
+
+      keyboardWrite(write_s);
+
+      if(suffix.length() > 0){
+        keyboardWrite(suffix);
+      }
+
+
+      keyboardWrite("\n");
+    }
+
 
   }
 
