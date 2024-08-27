@@ -4,6 +4,7 @@
 #include "UUID.h"
 
 USBHIDKeyboard Keyboard;
+UUID uuid;
 String keyStr = "";
 int existsKeyStr = 0;
 JsonArray keyArray;
@@ -14,8 +15,6 @@ int keyIndex = 0;
 int waitNextSeconds = 5;
 String ledColor = "red";
 
-String randomMode = "uuid";
-
 
 DynamicJsonDocument settingsDoc(512);
 String fName = "/ATOMS3U/SETTINGS.TXT";
@@ -23,8 +22,12 @@ String fName = "/ATOMS3U/SETTINGS.TXT";
 
 bool waitNext = false;
 long startMillisForWaitNext = 0;
-
 int brightness = 100;
+
+String randomMode = "uuid";
+long randomMin = 0;
+long randomMax = 100;
+int seedPort = 14; //14,17
 
 int splitString(String data, char delimiter, String parts[], int maxParts) {
   int partCount = 0;
@@ -69,57 +72,11 @@ void sendKeyboard(String s){
   char delimiter1 = ':';
   String parts1[2];
   splitString(s, delimiter1, parts1, 4);
-
   String str = parts1[0];
-
-  if(str == "press"){
-    String parts2[4];
-    char delimiter2 = ',';
-    splitString(parts1[1], delimiter2, parts2, 4);
-    String s1 = parts2[0];
-    String s2 = parts2[1];
-    String s3 = parts2[2];
-    String s4 = parts2[3];
-
-    if(s1.length() > 0){
-      keyboardPress(s1);
-    }
-    delay(50);
-    if(s2.length() > 0){
-      keyboardPress(s2);
-    }
-    delay(50);
-    if(s3.length() > 0){
-      keyboardPress(s3);
-    }
-    delay(50);
-    if(s4.length() > 0){
-      keyboardPress(s4);
-    }
-    delay(50);
-    keyboardReleaseAll();
-
-  }else if(str == "release"){
-    Keyboard.releaseAll();
-  }else if(str == "open"){
-    Keyboard.press(KEY_LEFT_GUI);
-    Keyboard.press('r');
-    delay(100);
-    Keyboard.releaseAll();
-    const char* str = parts1[1].c_str();
-    uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
-    size_t len = strlen(str);
-    Keyboard.write(buf, len);
-    delay(100);
-    Keyboard.press(KEY_RETURN);
-    delay(100);
-    Keyboard.release(KEY_RETURN);
-  }else{
-    const char* str = s.c_str();
-    uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
-    size_t len = strlen(str);
-    Keyboard.write(buf, len);
-  }
+  const char* str = s.c_str();
+  uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
+  size_t len = strlen(str);
+  Keyboard.write(buf, len);
 
 }
 
@@ -150,7 +107,7 @@ bool checkWaitNextIsEnabled(int waitSeconds) {
   return true;
 }
 
-UUID uuid;
+
 
 void settingsApp(){
 
@@ -179,8 +136,18 @@ void settingsApp(){
   if(settingsDoc.containsKey("randomMode")){
     randomMode = settingsDoc["randomMode"].as<String>();
   }
+  
+  if(settingsDoc.containsKey("randomMin")){
+    randomMin = settingsDoc["randomMin"].as<long>();
+  }
+
+  if(settingsDoc.containsKey("randomMax")){
+    randomMax = settingsDoc["randomMax"].as<long>();
+  }
 
 }
+
+
 
 void loopApp(bool pressed, bool longpressed){
 
@@ -195,44 +162,24 @@ void loopApp(bool pressed, bool longpressed){
     liteLed(ledColor, brightness);
 
     if(randomMode == "uuid"){
-      uint8_t a14 = analogRead(14);
-      // randomSeed(a14);
-      uuid.seed(a14);
+      uint8_t a_read = analogRead(seedPort);
+      uuid.seed(a_read);
       uuid.generate();
 
       String s_uuid =  String(uuid.toCharArray());
       keyboardWrite("\nuuid\:\s");
       keyboardWrite(s_uuid);
 
-
     }else{
-      uint8_t a14 = analogRead(14);
-      randomSeed(a14);
-      String s_a14 = String(a14);
-      int random14 = random(0, 100);
-      String s_random14 = String(random14);
-      // keyboardWrite("\na14\n");
-      // keyboardWrite(s_a14);
-      keyboardWrite("\nrandom14\n");
-      keyboardWrite(s_random14);
-
-
-      uint8_t a17 = analogRead(17);
-      randomSeed(a17);
-      String s_a17 = String(a17);
-      int random17 = random(0, 100);
-      String s_random17 = String(random17);
-
-      keyboardWrite("\nrandom17\n");
-      keyboardWrite(s_random17);
+      uint8_t a_read = analogRead(seedPort);
+      randomSeed(a_read);
+      int rand = random(randomMin, randomMax);
+      String s_random = String(rand);
+      keyboardWrite(s_random);
 
     }
 
-
-
-    keyboardWrite("\n\n");
-
-
+    keyboardWrite("\n");
 
   }
 
