@@ -15,10 +15,10 @@ int keyIndex = 0;
 int waitNextSeconds = 5;
 String ledColor = "red";
 
-
 DynamicJsonDocument settingsDoc(512);
 String fName = "/ATOMS3U/SETTINGS.TXT";
 
+#define KEY_LEFT_SHIFT  0x81
 
 bool waitNext = false;
 long startMillisForWaitNext = 0;
@@ -60,9 +60,31 @@ void keyboardWrite(String s){
   Keyboard.write(buf, len);
 }
 
+void keyboardPressSerial(String s){
+  int length = s.length();
+  for(int i = 0; i < length; i++){
+    char c = s.charAt(i);
+    if(c == ':'){
+      // Keyboard.press(KEY_LEFT_SHIFT);
+      int hexValue1 = 0x3A;
+      char colon1 = (char)hexValue1;
+      int hexValue2 = 0x2a;
+      char colon2 = (char)hexValue2;
+      Keyboard.press(colon1);
+      Keyboard.press('a');
+      Keyboard.press(colon2);
+    }else{
+      uint8_t firstCharAsUint8 = (uint8_t)c;
+      Keyboard.press(firstCharAsUint8);
+    }
+    delay(100);
+    Keyboard.releaseAll();
+  }
+}
+
 void keyboardPress(String s){
   char firstChar = s.charAt(0);
-  uint8_t firstCharAsUint8 = (uint8_t)firstChar; 
+  uint8_t firstCharAsUint8 = (uint8_t)firstChar;
   Keyboard.press(firstCharAsUint8);
   
 }
@@ -199,13 +221,13 @@ void loopApp(bool pressed, bool longpressed){
     if(write_s.length() > 0){
 
       if(prefix.length() > 0){
-        keyboardWrite(prefix);
+        keyboardPressSerial(prefix);
       }
 
       keyboardWrite(write_s);
 
       if(suffix.length() > 0){
-        keyboardWrite(suffix);
+        keyboardPressSerial(suffix);
       }
 
 
