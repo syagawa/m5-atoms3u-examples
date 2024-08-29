@@ -70,14 +70,27 @@ void keyboardPressSerial(String s){
       char colon1 = (char)hexValue1;
       int hexValue2 = 0x2a;
       char colon2 = (char)hexValue2;
-      Keyboard.press(colon1);
-      Keyboard.press('a');
-      Keyboard.press(colon2);
+      int hexValue3 = 0x33;
+      char colon3 = (char)hexValue3;
+
+      Keyboard.press(KEY_LEFT_SHIFT);
+      Keyboard.press(hexValue1);
+      Keyboard.press(hexValue2);
+      Keyboard.press(hexValue3);
+
+      // Keyboard.press(colon1);
+      // Keyboard.press('a');
+      // Keyboard.press(colon2);
+
+      // Keyboard.pressRaw(colon1);
+      // Keyboard.pressRaw(colon2);
+      // Keyboard.press(0x33);
+      // Keyboard.pressRaw(0x33);
+
     }else{
       uint8_t firstCharAsUint8 = (uint8_t)c;
       Keyboard.press(firstCharAsUint8);
     }
-    delay(100);
     Keyboard.releaseAll();
   }
 }
@@ -178,9 +191,6 @@ void settingsApp(){
   if(settingsDoc.containsKey("suffix")){
     suffix = settingsDoc["suffix"].as<String>();
   }
-
-
-
 
 }
 
