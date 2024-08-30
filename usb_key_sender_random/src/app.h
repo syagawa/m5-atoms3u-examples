@@ -66,17 +66,18 @@ void keyboardPressSerial(String s){
     char c = s.charAt(i);
     if(c == ':'){
       // Keyboard.press(KEY_LEFT_SHIFT);
-      int hexValue1 = 0x3A;
-      char colon1 = (char)hexValue1;
-      int hexValue2 = 0x2a;
-      char colon2 = (char)hexValue2;
-      int hexValue3 = 0x33;
-      char colon3 = (char)hexValue3;
+      // int hexValue1 = 0x3A;
+      // char colon1 = (char)hexValue1;
+      // int hexValue2 = 0x2a;
+      // char colon2 = (char)hexValue2;
+      // int hexValue3 = 0x33;
+      // char colon3 = (char)hexValue3;
 
-      Keyboard.press(KEY_LEFT_SHIFT);
-      Keyboard.press(hexValue1);
-      Keyboard.press(hexValue2);
-      Keyboard.press(hexValue3);
+      // Keyboard.press(KEY_LEFT_SHIFT);
+      // Keyboard.pressRaw(hexValue1);
+
+      // Keyboard.pressRaw(hexValue2);
+      // Keyboard.pressRaw(hexValue3);
 
       // Keyboard.press(colon1);
       // Keyboard.press('a');
@@ -91,6 +92,7 @@ void keyboardPressSerial(String s){
       uint8_t firstCharAsUint8 = (uint8_t)c;
       Keyboard.press(firstCharAsUint8);
     }
+    // Keyboard.pressRaw(i + 58);
     Keyboard.releaseAll();
   }
 }
@@ -229,6 +231,16 @@ void loopApp(bool pressed, bool longpressed){
     }
 
     if(write_s.length() > 0){
+
+      Keyboard.releaseAll();
+      Keyboard.press(KEY_LEFT_SHIFT);
+      Keyboard.pressRaw(58);
+      Keyboard.releaseAll();
+      for(int test_i = 0; test_i < 20; test_i++){
+        Keyboard.press(test_i + 58);
+        Keyboard.releaseAll();
+      }
+
 
       if(prefix.length() > 0){
         keyboardPressSerial(prefix);
