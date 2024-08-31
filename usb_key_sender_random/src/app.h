@@ -60,6 +60,7 @@ void keyboardWrite(String s){
   Keyboard.write(buf, len);
 }
 
+
 void keyboardPressSerial(String s){
   int length = s.length();
   for(int i = 0; i < length; i++){
@@ -230,19 +231,39 @@ void loopApp(bool pressed, bool longpressed){
 
     }
 
+
+
+// 32 space?      "0x2c           ' '"
+// 33 !           "0x1e | SHIFT  !"
+// 34 *           "0x34 | SHIFT  doublequote"
+// 35 #           "0x20 | SHIFT  #"
+// 36 $           "0x21 | SHIFT  $"
+// 37 %           "0x22 | SHIFT  %"
+// 38 '           "0x24 | SHIFT  &"
+// 39 :           "0x34          singlequote"
+// 40 )           "0x26 | SHIFT  ("
+// 41 null?       "0x27 | SHIFT  )"
+// 42 (           "0x25 | SHIFT  *"
+// 43 ~           "0x2e | SHIFT  +"
+// 44 ,           "0x36          "
+// 45 -           "0x2d          -"
+// 46 .           "0x37          ."
+// 47 /           "0x38          /"
+// 48 0           "0x27          0"
+
+
+    Keyboard.releaseAll();
+    for(int test_i = 32; test_i < 128; test_i++){
+      String s = String(test_i);
+      keyboardWrite(s);
+      Keyboard.press(test_i);
+      Keyboard.releaseAll();
+    }
+
+
     if(write_s.length() > 0){
 
-      Keyboard.releaseAll();
-      Keyboard.press(KEY_LEFT_SHIFT);
-      Keyboard.pressRaw(58);
-      Keyboard.releaseAll();
-      for(int test_i = 0; test_i < 20; test_i++){
-        Keyboard.press(test_i + 58);
-        Keyboard.releaseAll();
-      }
-
-
-      if(prefix.length() > 0){
+       if(prefix.length() > 0){
         keyboardPressSerial(prefix);
       }
 
