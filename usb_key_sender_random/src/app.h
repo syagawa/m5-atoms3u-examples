@@ -65,30 +65,44 @@ void keyboardPressSerial(String s){
   int length = s.length();
   for(int i = 0; i < length; i++){
     char c = s.charAt(i);
-    if(c == ':'){
-      // Keyboard.press(KEY_LEFT_SHIFT);
-      // int hexValue1 = 0x3A;
-      // char colon1 = (char)hexValue1;
-      // int hexValue2 = 0x2a;
-      // char colon2 = (char)hexValue2;
-      // int hexValue3 = 0x33;
-      // char colon3 = (char)hexValue3;
-
-      // Keyboard.press(KEY_LEFT_SHIFT);
-      // Keyboard.pressRaw(hexValue1);
-
-      // Keyboard.pressRaw(hexValue2);
-      // Keyboard.pressRaw(hexValue3);
-
-      // Keyboard.press(colon1);
-      // Keyboard.press('a');
-      // Keyboard.press(colon2);
-
-      // Keyboard.pressRaw(colon1);
-      // Keyboard.pressRaw(colon2);
-      // Keyboard.press(0x33);
-      // Keyboard.pressRaw(0x33);
-
+    if(c == '*'){
+      Keyboard.press(34);
+    }else if(c == '\''){
+      Keyboard.press(38);
+    }else if(c ==':'){
+      Keyboard.press(39);
+    }else if(c ==')'){
+      Keyboard.press(40);
+    }else if(c =='('){
+      Keyboard.press(42);
+    }else if(c =='~'){
+      Keyboard.press(43);
+    }else if(c ==','){
+      Keyboard.press(44);
+    }else if(c =='+'){
+      Keyboard.press(58);
+    }else if(c =='^'){
+      Keyboard.press(61);
+    }else if(c == '"'){
+      Keyboard.press(64);
+    }else if(c == '@'){
+      Keyboard.press(91);
+    }else if(c == ']'){
+      Keyboard.press(92);
+    }else if(c == '['){
+      Keyboard.press(93);
+    }else if(c == '&'){
+      Keyboard.press(94);
+    }else if(c == '='){
+      Keyboard.press(95);
+    // }else if(c == '全/半'){
+    //   Keyboard.press(96);
+    }else if(c == '`'){
+      Keyboard.press(123);
+    }else if(c == '}'){
+      Keyboard.press(124);
+    }else if(c =='{'){
+      Keyboard.press(125);
     }else{
       uint8_t firstCharAsUint8 = (uint8_t)c;
       Keyboard.press(firstCharAsUint8);
@@ -219,8 +233,6 @@ void loopApp(bool pressed, bool longpressed){
       uuid.generate();
 
       write_s =  String(uuid.toCharArray());
-      // keyboardWrite("\nuuid\:\s");
-      // keyboardWrite(s_uuid);
 
     }else{
       uint8_t a_read = analogRead(seedPort);
@@ -235,30 +247,39 @@ void loopApp(bool pressed, bool longpressed){
 
 // 32 space?      "0x2c           ' '"
 // 33 !           "0x1e | SHIFT  !"
-// 34 *           "0x34 | SHIFT  doublequote"
+// 34 *           "0x34 | SHIFT  doublequote" ooo *
 // 35 #           "0x20 | SHIFT  #"
 // 36 $           "0x21 | SHIFT  $"
 // 37 %           "0x22 | SHIFT  %"
-// 38 '           "0x24 | SHIFT  &"
-// 39 :           "0x34          singlequote"
-// 40 )           "0x26 | SHIFT  ("
+// 38 '           "0x24 | SHIFT  &"           ooo '
+// 39 :           "0x34          singlequote" ooo :
+// 40 )           "0x26 | SHIFT  ("           ooo )
 // 41 null?       "0x27 | SHIFT  )"
-// 42 (           "0x25 | SHIFT  *"
-// 43 ~           "0x2e | SHIFT  +"
-// 44 ,           "0x36          "
+// 42 (           "0x25 | SHIFT  *"           ooo (
+// 43 ~           "0x2e | SHIFT  +"           ooo ~
+// 44 ,           "0x36          "            ooo ,
 // 45 -           "0x2d          -"
 // 46 .           "0x37          ."
 // 47 /           "0x38          /"
-// 48 0           "0x27          0"
+// 58 +           "0x33 | SHIFT  :"           ooo +
+// 59 ;           "0x33          ;"
+// 60 <           "0x36 | SHIFT  <"
+// 61 ^           "0x2e          ="           ooo ^
+// 62 >           "0x37 | SHIFT  >"
+// 63 ?           "0x38 | SHIFT  ?"
+// 64 "           "0x1f | SHIFT  @"           ooo "
+// 91 @            "0x2f          ["          ooo @
+// 92 ]            "0x31          bslash"     ooo ]
+// 93 [            "0x30          ]"          ooo [
+// 94 &            "0x23 | SHIFT  ^"          ooo &
+// 95 =            "0x2d | SHIFT  _"          ooo =
+// 96 半/全        "0x35          `"          ooo 半/全
+// 123 `           "0x2f | SHIFT  {"          ooo `
+// 124 }           "0x31 | SHIFT  |"          ooo }
+// 125 {           "0x30 | SHIFT  }"          ooo {
+// 126             "0x35 | SHIFT  ~"
+// 127             "0              DEL"
 
-
-    Keyboard.releaseAll();
-    for(int test_i = 32; test_i < 128; test_i++){
-      String s = String(test_i);
-      keyboardWrite(s);
-      Keyboard.press(test_i);
-      Keyboard.releaseAll();
-    }
 
 
     if(write_s.length() > 0){
