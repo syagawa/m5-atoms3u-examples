@@ -30,6 +30,7 @@ long randomMax = 100;
 int seedPort = 14; //14,17
 String prefix = "";
 String suffix = "";
+String keyboardLayout = "";
 
 int splitString(String data, char delimiter, String parts[], int maxParts) {
   int partCount = 0;
@@ -60,12 +61,62 @@ void keyboardWrite(String s){
   Keyboard.write(buf, len);
 }
 
+DynamicJsonDocument keyMapDoc(256);
 
-void keyboardPressSerial(String s){
+DynamicJsonDocument setKeyMapDoc(String keyboardLayout, DynamicJsonDocument keyMapDoc){
+  DynamicJsonDocument doc(512);
+  if(keyboardLayout == "ja"){
+    keyMapDoc["*"] = 34;
+    keyMapDoc["'"] = 38;
+    keyMapDoc[":"] = 39;
+    keyMapDoc[")"] = 40;
+    keyMapDoc["("] = 42;
+    keyMapDoc["~"] = 43;
+    keyMapDoc[","] = 44;
+    keyMapDoc["+"] = 58;
+    keyMapDoc["^"] = 61;
+    keyMapDoc["\""] = 64;
+    keyMapDoc["@"] = 91;
+    keyMapDoc["]"] = 92;
+    keyMapDoc["["] = 93;
+    keyMapDoc["&"] = 94;
+    keyMapDoc["="] = 95;
+    keyMapDoc["`"] = 123;
+    keyMapDoc["}"] = 124;
+    keyMapDoc["{"] = 125;
+    // doc['*'] = 34;
+    // doc['\''] = 38;
+    // doc[':'] = 39;
+    // doc[')'] = 40;
+    // doc['('] = 42;
+    // doc['~'] = 43;
+    // doc[','] = 44;
+    // doc['+'] = 58;
+    // doc['^'] = 61;
+    // doc['"'] = 64;
+    // doc['@'] = 91;
+    // doc[']'] = 92;
+    // doc['['] = 93;
+    // doc['&'] = 94;
+    // doc['='] = 95;
+    // doc['`'] = 123;
+    // doc['}'] = 124;
+    // doc['{'] = 125;
+  }
+  return doc;
+}
+
+
+
+void keyboardPressSerial(String s, DynamicJsonDocument keyMapDoc){
   int length = s.length();
   for(int i = 0; i < length; i++){
     char c = s.charAt(i);
-    if(c == '*'){
+    String c_s = String(c);
+    if(keyMapDoc.containsKey(c_s)){
+      int keyInt = keyMapDoc[c].as<int>();
+      Keyboard.press(keyInt);
+    }else if(c == '*'){
       Keyboard.press(34);
     }else if(c == '\''){
       Keyboard.press(38);
@@ -103,6 +154,7 @@ void keyboardPressSerial(String s){
       Keyboard.press(124);
     }else if(c =='{'){
       Keyboard.press(125);
+
     }else{
       uint8_t firstCharAsUint8 = (uint8_t)c;
       Keyboard.press(firstCharAsUint8);
@@ -209,6 +261,11 @@ void settingsApp(){
     suffix = settingsDoc["suffix"].as<String>();
   }
 
+  if(settingsDoc.containsKey("keyboardLayout")){
+    keyboardLayout = settingsDoc["keyboardLayout"].as<String>();
+  }
+
+  keyMapDoc = setKeyMapDoc(keyboardLayout, keyMapDoc);
 }
 
 
@@ -218,7 +275,6 @@ void loopApp(bool pressed, bool longpressed){
   if(longpressed){
     liteLed("green", brightness);
   }else if (pressed) {
-
 
 
     offLed();
@@ -282,16 +338,18 @@ void loopApp(bool pressed, bool longpressed){
 
 
 
+    keyboardWrite(keyboardLayout);
+
     if(write_s.length() > 0){
 
        if(prefix.length() > 0){
-        keyboardPressSerial(prefix);
+        keyboardPressSerial(prefix, keyMapDoc);
       }
 
       keyboardWrite(write_s);
 
       if(suffix.length() > 0){
-        keyboardPressSerial(suffix);
+        keyboardPressSerial(suffix, keyMapDoc);
       }
 
 
