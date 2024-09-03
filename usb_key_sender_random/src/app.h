@@ -61,105 +61,54 @@ void keyboardWrite(String s){
   Keyboard.write(buf, len);
 }
 
-DynamicJsonDocument keyMapDoc(256);
-
-DynamicJsonDocument setKeyMapDoc(String keyboardLayout, DynamicJsonDocument keyMapDoc){
-  DynamicJsonDocument doc(512);
-  if(keyboardLayout == "ja"){
-    keyMapDoc["*"] = 34;
-    keyMapDoc["'"] = 38;
-    keyMapDoc[":"] = 39;
-    keyMapDoc[")"] = 40;
-    keyMapDoc["("] = 42;
-    keyMapDoc["~"] = 43;
-    keyMapDoc[","] = 44;
-    keyMapDoc["+"] = 58;
-    keyMapDoc["^"] = 61;
-    keyMapDoc["\""] = 64;
-    keyMapDoc["@"] = 91;
-    keyMapDoc["]"] = 92;
-    keyMapDoc["["] = 93;
-    keyMapDoc["&"] = 94;
-    keyMapDoc["="] = 95;
-    keyMapDoc["`"] = 123;
-    keyMapDoc["}"] = 124;
-    keyMapDoc["{"] = 125;
-    // doc['*'] = 34;
-    // doc['\''] = 38;
-    // doc[':'] = 39;
-    // doc[')'] = 40;
-    // doc['('] = 42;
-    // doc['~'] = 43;
-    // doc[','] = 44;
-    // doc['+'] = 58;
-    // doc['^'] = 61;
-    // doc['"'] = 64;
-    // doc['@'] = 91;
-    // doc[']'] = 92;
-    // doc['['] = 93;
-    // doc['&'] = 94;
-    // doc['='] = 95;
-    // doc['`'] = 123;
-    // doc['}'] = 124;
-    // doc['{'] = 125;
-  }
-  return doc;
-}
-
-
 
 void keyboardPressSerial(String s, DynamicJsonDocument keyMapDoc){
   int length = s.length();
   for(int i = 0; i < length; i++){
     char c = s.charAt(i);
-    String c_s = String(c);
-    if(keyMapDoc.containsKey(c_s)){
-      int keyInt = keyMapDoc[c].as<int>();
-      Keyboard.press(keyInt);
-    }else if(c == '*'){
-      Keyboard.press(34);
-    }else if(c == '\''){
-      Keyboard.press(38);
-    }else if(c ==':'){
-      Keyboard.press(39);
-    }else if(c ==')'){
-      Keyboard.press(40);
-    }else if(c =='('){
-      Keyboard.press(42);
-    }else if(c =='~'){
-      Keyboard.press(43);
-    }else if(c ==','){
-      Keyboard.press(44);
-    }else if(c =='+'){
-      Keyboard.press(58);
-    }else if(c =='^'){
-      Keyboard.press(61);
-    }else if(c == '"'){
-      Keyboard.press(64);
-    }else if(c == '@'){
-      Keyboard.press(91);
-    }else if(c == ']'){
-      Keyboard.press(92);
-    }else if(c == '['){
-      Keyboard.press(93);
-    }else if(c == '&'){
-      Keyboard.press(94);
-    }else if(c == '='){
-      Keyboard.press(95);
-    // }else if(c == '全/半'){
-    //   Keyboard.press(96);
-    }else if(c == '`'){
-      Keyboard.press(123);
-    }else if(c == '}'){
-      Keyboard.press(124);
-    }else if(c =='{'){
-      Keyboard.press(125);
-
-    }else{
-      uint8_t firstCharAsUint8 = (uint8_t)c;
-      Keyboard.press(firstCharAsUint8);
+    uint8_t c_int = (uint8_t)c;
+    if(keyboardLayout == "ja"){
+      if(c == '*'){
+        c_int = 34;
+      }else if(c == '\''){
+        c_int = 38;
+      }else if(c ==':'){
+        c_int = 39;
+      }else if(c ==')'){
+        c_int = 40;
+      }else if(c =='('){
+        c_int = 42;
+      }else if(c =='~'){
+        c_int = 43;
+      }else if(c ==','){
+        c_int = 44;
+      }else if(c =='+'){
+        c_int = 58;
+      }else if(c =='^'){
+        c_int = 61;
+      }else if(c == '"'){
+        c_int = 64;
+      }else if(c == '@'){
+        c_int = 91;
+      }else if(c == ']'){
+        c_int = 92;
+      }else if(c == '['){
+        c_int = 93;
+      }else if(c == '&'){
+        c_int = 94;
+      }else if(c == '='){
+        c_int = 95;
+      // }else if(c == '全/半'){
+      //   c_int = 96;
+      }else if(c == '`'){
+        c_int = 123;
+      }else if(c == '}'){
+        c_int = 124;
+      }else if(c =='{'){
+        c_int = 125;
+      }
     }
-    // Keyboard.pressRaw(i + 58);
+    Keyboard.press(c_int);
     Keyboard.releaseAll();
   }
 }
@@ -264,8 +213,6 @@ void settingsApp(){
   if(settingsDoc.containsKey("keyboardLayout")){
     keyboardLayout = settingsDoc["keyboardLayout"].as<String>();
   }
-
-  keyMapDoc = setKeyMapDoc(keyboardLayout, keyMapDoc);
 }
 
 
