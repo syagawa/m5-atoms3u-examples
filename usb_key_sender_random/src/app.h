@@ -46,7 +46,6 @@ int splitString(String data, char delimiter, String parts[], int maxParts) {
     }
   }
 
-  // 最後の部分を追加します
   if (startIndex < data.length() && partCount < maxParts) {
     parts[partCount++] = data.substring(startIndex);
   }
@@ -62,7 +61,7 @@ void keyboardWrite(String s){
 }
 
 
-void keyboardPressSerial(String s, DynamicJsonDocument keyMapDoc){
+void keyboardPressSerial(String s){
   int length = s.length();
   for(int i = 0; i < length; i++){
     char c = s.charAt(i);
@@ -242,63 +241,21 @@ void loopApp(bool pressed, bool longpressed){
       randomSeed(a_read);
       int rand = random(randomMin, randomMax);
       write_s = String(rand);
-      // keyboardWrite(s_random);
 
     }
 
 
-
-// 32 space?      "0x2c           ' '"
-// 33 !           "0x1e | SHIFT  !"
-// 34 *           "0x34 | SHIFT  doublequote" ooo *
-// 35 #           "0x20 | SHIFT  #"
-// 36 $           "0x21 | SHIFT  $"
-// 37 %           "0x22 | SHIFT  %"
-// 38 '           "0x24 | SHIFT  &"           ooo '
-// 39 :           "0x34          singlequote" ooo :
-// 40 )           "0x26 | SHIFT  ("           ooo )
-// 41 null?       "0x27 | SHIFT  )"
-// 42 (           "0x25 | SHIFT  *"           ooo (
-// 43 ~           "0x2e | SHIFT  +"           ooo ~
-// 44 ,           "0x36          "            ooo ,
-// 45 -           "0x2d          -"
-// 46 .           "0x37          ."
-// 47 /           "0x38          /"
-// 58 +           "0x33 | SHIFT  :"           ooo +
-// 59 ;           "0x33          ;"
-// 60 <           "0x36 | SHIFT  <"
-// 61 ^           "0x2e          ="           ooo ^
-// 62 >           "0x37 | SHIFT  >"
-// 63 ?           "0x38 | SHIFT  ?"
-// 64 "           "0x1f | SHIFT  @"           ooo "
-// 91 @            "0x2f          ["          ooo @
-// 92 ]            "0x31          bslash"     ooo ]
-// 93 [            "0x30          ]"          ooo [
-// 94 &            "0x23 | SHIFT  ^"          ooo &
-// 95 =            "0x2d | SHIFT  _"          ooo =
-// 96 半/全        "0x35          `"          ooo 半/全
-// 123 `           "0x2f | SHIFT  {"          ooo `
-// 124 }           "0x31 | SHIFT  |"          ooo }
-// 125 {           "0x30 | SHIFT  }"          ooo {
-// 126             "0x35 | SHIFT  ~"
-// 127             "0              DEL"
-
-
-
-    keyboardWrite(keyboardLayout);
-
     if(write_s.length() > 0){
 
-       if(prefix.length() > 0){
-        keyboardPressSerial(prefix, keyMapDoc);
+      if(prefix.length() > 0){
+        keyboardPressSerial(prefix);
       }
 
       keyboardWrite(write_s);
 
       if(suffix.length() > 0){
-        keyboardPressSerial(suffix, keyMapDoc);
+        keyboardPressSerial(suffix);
       }
-
 
       keyboardWrite("\n");
     }
