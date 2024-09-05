@@ -5,12 +5,12 @@
 
 * Output random number 0-100
 ```json
-{"color":"red","waitSeconds":3, "randomMode":"", "randomMin":0,"randomMax":100,"seedPort":14}
+{"color":"red", "randomMode":"", "randomMin":0, "randomMax":100, "seedPort":14}
 
 ```
 * Output uuid and prefix and suffix
 ```json
-{"color":"red","waitSeconds":3,"keyboardLayout":"ja","randomMode":"uuid","randomMin":0,"randomMax":100,"prefix":"{\"uuid\":\"","suffix":"\"}","seedPort":14}
+{"color":"red", "keyboardLayout":"ja", "randomMode":"uuid", "randomMin":0, "randomMax":100, "prefix":"{\"uuid\":\"","suffix":"\"}", "seedPort":14}
 ```
 
 
