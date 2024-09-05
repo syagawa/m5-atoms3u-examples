@@ -5,14 +5,7 @@
 
 USBHIDKeyboard Keyboard;
 UUID uuid;
-String keyStr = "";
-int existsKeyStr = 0;
-JsonArray keyArray;
-int existsKeyArray = 0;
-int arraySize = 0;
-int arraySizeMax = 10;
-int keyIndex = 0;
-int waitNextSeconds = 5;
+
 String ledColor = "red";
 
 DynamicJsonDocument settingsDoc(512);
@@ -20,8 +13,6 @@ String fName = "/ATOMS3U/SETTINGS.TXT";
 
 #define KEY_LEFT_SHIFT  0x81
 
-bool waitNext = false;
-long startMillisForWaitNext = 0;
 int brightness = 100;
 
 String randomMode = "";
@@ -132,57 +123,14 @@ void sendKeyboard(String s){
   Keyboard.write(buf, len);
 }
 
-void startWaitNext(){
-  waitNext = true;
-  float current = millis();
-  startMillisForWaitNext = current;
-}
-void stopWaitNext(){
-  waitNext = false;
-}
-
-bool checkWaitNextIsEnabled(int waitSeconds) {
-  if(!waitNext){
-    return false;
-  }
-
-  long waitMillis = waitSeconds * 1000;
-  float current = millis();
-
-  float elapsedMillis = current - startMillisForWaitNext;
-  float leftMillis = waitMillis - elapsedMillis;
-  float leftSeconds = leftMillis / 1000;
-
-  if(leftSeconds < 0){
-    return false;
-  }
-  return true;
-}
-
-
 
 void settingsApp(){
 
   settingsDoc = getJsonDocumentFromFile(fName);
 
 
-  if(settingsDoc.containsKey("key")){
-    keyStr = settingsDoc["key"].as<String>();
-    existsKeyStr = 1;
-  }else if(settingsDoc.containsKey("keys")){
-    keyArray = settingsDoc["keys"];
-    arraySize = keyArray.size();
-    if(arraySize > arraySizeMax){
-      arraySize = arraySizeMax;
-    }
-  }
-
   if(settingsDoc.containsKey("color")){
     ledColor = settingsDoc["color"].as<String>();
-  }
-
-  if(settingsDoc.containsKey("waitSeconds")){
-    waitNextSeconds = settingsDoc["waitSeconds"].as<int>();
   }
 
   if(settingsDoc.containsKey("randomMode")){
@@ -263,12 +211,8 @@ void loopApp(bool pressed, bool longpressed){
 
   }
 
-  waitNext = checkWaitNextIsEnabled(waitNextSeconds);
-
-  if(!waitNext){
-    delay(10);
-    offLed();
-    keyIndex = 0;
-  }
+  delay(10);
+  offLed();
+  
 
 }

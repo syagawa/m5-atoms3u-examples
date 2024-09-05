@@ -79,7 +79,7 @@ int bootmode = 0;
 // regular mode settings >>
 
 //// initial settings
-char * initialContents = R"({"color":"red","waitSeconds":3,"keyboardLayout":"ja","randomMode":"uuid","randomMin":0,"randomMax":100,"prefix":"{\"uuid\":\"","suffix":"\"}","seedPort":14})";
+char * initialContents = R"({"color":"red","keyboardLayout":"ja","randomMode":"uuid","randomMin":0,"randomMax":100,"prefix":"{\"uuid\":\"","suffix":"\"}","seedPort":14})";
 int requiresResetInSettingsMode = 0;
 
 //// regular code in setup
