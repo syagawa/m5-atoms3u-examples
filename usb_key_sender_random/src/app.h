@@ -189,9 +189,7 @@ void loopApp(bool pressed, bool longpressed){
       randomSeed(a_read);
       int rand = random(randomMin, randomMax);
       write_s = String(rand);
-
     }
-
 
     if(write_s.length() > 0){
 

@@ -2,12 +2,11 @@
 
 ## settings examples
 
-
 * Output random number 0-100
 ```json
 {"color":"red", "randomMode":"", "randomMin":0, "randomMax":100, "seedPort":14}
-
 ```
+
 * Output uuid and prefix and suffix
 ```json
 {"color":"red", "keyboardLayout":"ja", "randomMode":"uuid", "randomMin":0, "randomMax":100, "prefix":"{\"uuid\":\"","suffix":"\"}", "seedPort":14}

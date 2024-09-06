@@ -4,18 +4,14 @@
 
 #include <M5Unified.h>
 #include "led.h"
-
 #include "json.h"
-
 #include "storage.h"
-
 #include "file.h"
 #include "button.h"
 
 USBMSC MSC;
 
 #include "app.h"
-
 
 int writeFlg = 0;
 int readFlg = 0;
