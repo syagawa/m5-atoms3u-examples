@@ -12,6 +12,7 @@ int arraySizeMax = 10;
 int keyIndex = 0;
 int waitNextSeconds = 5;
 String ledColor = "red";
+String keyboardLayout = "";
 
 #define KEY_LEFT_CTRL   0x80
 #define KEY_LEFT_SHIFT  0x81
@@ -235,9 +236,13 @@ void keyboardPress(String s){
     Keyboard.press(firstCharAsUint8);
   }
 }
+
+
 void keyboardReleaseAll(){
   Keyboard.releaseAll();
 }
+
+
 
 void sendKeyboard(String s){
   char delimiter1 = ':';
@@ -297,6 +302,58 @@ void sendKeyboard(String s){
 
 }
 
+void keyboardPressSerial(String s){
+  int length = s.length();
+  for(int i = 0; i < length; i++){
+    char c = s.charAt(i);
+    uint8_t c_int = (uint8_t)c;
+    if(keyboardLayout == "ja"){
+      if(c == '*'){
+        c_int = 34;
+      }else if(c == '\''){
+        c_int = 38;
+      }else if(c ==':'){
+        c_int = 39;
+      }else if(c ==')'){
+        c_int = 40;
+      }else if(c =='('){
+        c_int = 42;
+      }else if(c =='~'){
+        c_int = 43;
+      }else if(c ==','){
+        c_int = 44;
+      }else if(c =='+'){
+        c_int = 58;
+      }else if(c =='^'){
+        c_int = 61;
+      }else if(c == '"'){
+        c_int = 64;
+      }else if(c == '@'){
+        c_int = 91;
+      }else if(c == ']'){
+        c_int = 92;
+      }else if(c == '['){
+        c_int = 93;
+      }else if(c == '&'){
+        c_int = 94;
+      }else if(c == '='){
+        c_int = 95;
+      // }else if(c == '全/半'){
+      //   c_int = 96;
+      }else if(c == '`'){
+        c_int = 123;
+      }else if(c == '}'){
+        c_int = 124;
+      }else if(c =='{'){
+        c_int = 125;
+      }
+    }
+    Keyboard.press(c_int);
+    Keyboard.releaseAll();
+  }
+}
+
+
 void startWaitNext(){
   waitNext = true;
   float current = millis();
@@ -347,6 +404,12 @@ void settingsApp(){
   if(settingsDoc.containsKey("waitSeconds")){
     waitNextSeconds = settingsDoc["waitSeconds"].as<int>();
   }
+
+  if(settingsDoc.containsKey("keyboardLayout")){
+    keyboardLayout = settingsDoc["keyboardLayout"].as<String>();
+  }
+
+
 }
 
 void loopApp(bool pressed, bool longpressed){
@@ -363,7 +426,8 @@ void loopApp(bool pressed, bool longpressed){
       stopWaitNext();
     }else if(arraySize > 0){
       String s = keyArray[keyIndex];
-      sendKeyboard(s);
+      // sendKeyboard(s);
+      keyboardPressSerial(s);
       keyIndex = keyIndex + 1;
       if(keyIndex >= arraySize){
         keyIndex = 0;
