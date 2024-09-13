@@ -414,8 +414,16 @@ void settingsApp(){
 
 void loopApp(bool pressed, bool longpressed){
 
+  delay(100);
+
+  int longpressed_ = 0;
+  if(M5.BtnA.wasPressed()){
+    liteLed("yellow", brightness);
+    delay(100);
+  }
+
   if(longpressed){
-    liteLed("green", brightness);
+    liteLed("purple", brightness);
   }else if (pressed) {
 
     offLed();
