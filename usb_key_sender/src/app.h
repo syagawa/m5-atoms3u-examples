@@ -416,10 +416,10 @@ void loopApp(bool pressed, bool longpressed){
 
   delay(100);
 
-  int longpressed_ = 0;
-  if(M5.BtnA.wasPressed()){
+  // int longpressed_ = 0;
+  if(M5.BtnA.isHolding()){
     liteLed("yellow", brightness);
-    delay(100);
+    delay(500);
   }
 
   if(longpressed){
