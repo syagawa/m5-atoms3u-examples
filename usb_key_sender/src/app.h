@@ -412,19 +412,22 @@ void settingsApp(){
 
 }
 
-void loopApp(bool pressed, bool longpressed){
+void loopApp(){
 
-  delay(100);
+  // if(M5.BtnA.wasSingleClicked()){
+  //   liteLed("yellow", brightness);
+  // }else if(M5.BtnA.wasDoubleClicked()){
+  //   liteLed("red", brightness);
+  // }else if(M5.BtnA.isHolding()){
+  //   liteLed("green", brightness);
+  // }
 
-  // int longpressed_ = 0;
+
+  // return;
+
   if(M5.BtnA.isHolding()){
-    liteLed("yellow", brightness);
-    delay(500);
-  }
-
-  if(longpressed){
     liteLed("purple", brightness);
-  }else if (pressed) {
+  }else if (M5.BtnA.wasSingleClicked()) {
 
     offLed();
     delay(10);

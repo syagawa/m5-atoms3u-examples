@@ -92,7 +92,7 @@ void setupInRegularMode(){
 
 //// write regular code in loop
 void loopInRegularMode(){
-  loopApp(M5.BtnA.wasPressed(), M5.BtnA.pressedFor(1000));
+  loopApp();
 }
 
 
