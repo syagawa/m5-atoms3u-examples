@@ -84,6 +84,8 @@ long startMillisForWaitNext = 0;
 
 int brightness = 100;
 
+String colors[] = {"BLUE","RED","GREEN","MAGENTA","YELLOW","PINK","BROWN","SKYBLUE","PURPLE","SILVER"};
+
 int splitString(String data, char delimiter, String parts[], int maxParts) {
   int partCount = 0;
   int startIndex = 0;
@@ -431,12 +433,13 @@ void loopApp(){
 
     offLed();
     delay(10);
-    liteLed(ledColor, brightness);
     if(existsKeyStr == 1){
+      liteLed(ledColor, brightness);
       keyboardWrite(keyStr);
       stopWaitNext();
     }else if(arraySize > 0){
       String s = keyArray[keyIndex];
+      liteLed(colors[keyIndex], brightness);
       // sendKeyboard(s);
       keyboardPressSerial(s);
       keyIndex = keyIndex + 1;
