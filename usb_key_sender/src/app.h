@@ -84,7 +84,7 @@ long startMillisForWaitNext = 0;
 
 int brightness = 100;
 
-String colors[] = {"BLUE","RED","GREEN","MAGENTA","YELLOW","PINK","BROWN","SKYBLUE","PURPLE","SILVER"};
+String colors[] = {"BLUE","RED","GREEN","MAGENTA","YELLOW","PINK","BROWN","SKYBLUE","PURPLE"};
 
 int splitString(String data, char delimiter, String parts[], int maxParts) {
   int partCount = 0;
