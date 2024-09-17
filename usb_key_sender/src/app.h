@@ -86,6 +86,30 @@ int brightness = 100;
 
 String colors[] = {"BLUE","RED","GREEN","MAGENTA","YELLOW","PINK","BROWN","SKYBLUE","PURPLE"};
 
+long startMillisInApp = 0;
+bool isLongPressedEnable = false;
+bool isLongPressed(int waitSeconds) {
+  long waitMillis = waitSeconds * 1000;
+  float current = millis();
+
+  if(!isLongPressedEnable){
+    isLongPressedEnable = true;
+    startMillisInApp = current;
+  }
+  
+
+  float elapsedMillis = current - startMillisInApp;
+  float leftMillis = waitMillis - elapsedMillis;
+  float leftSeconds = leftMillis / 1000;
+
+  if(leftSeconds < 0){
+    isLongPressedEnable = false;
+    return true;
+  }
+  return false;
+}
+
+
 int splitString(String data, char delimiter, String parts[], int maxParts) {
   int partCount = 0;
   int startIndex = 0;
@@ -429,6 +453,10 @@ void loopApp(){
 
   if(M5.BtnA.isHolding()){
     liteLed("purple", brightness);
+    if(isLongPressed(5)){
+      liteLed("yellow", brightness);
+      delay(1000);
+    }
   }else if (M5.BtnA.wasSingleClicked()) {
 
     offLed();
