@@ -86,6 +86,9 @@ int brightness = 100;
 
 String colors[] = {"BLUE","RED","GREEN","MAGENTA","YELLOW","PINK","BROWN","SKYBLUE","PURPLE"};
 
+bool isLongPressedMode = false;
+long startMillisInLongPressedMode = 0;
+long waitMillisForNextIndex = 1000 * 4;
 long startMillisInApp = 0;
 bool isLongPressedEnable = false;
 bool isLongPressed(int waitSeconds) {
@@ -453,10 +456,18 @@ void loopApp(){
 
   if(M5.BtnA.isHolding()){
     liteLed("purple", brightness);
-    if(isLongPressed(5)){
+    if(!isLongPressedMode && isLongPressed(3)){
       liteLed("yellow", brightness);
+      isLongPressedMode = true;
+      startMillisInLongPressedMode = millis();
       delay(1000);
+    }else if(startMillisInLongPressedMode > 0){
+      long currentMillis = millis();
+      if(waitMillisForNextIndex > currentMillis){
+        
+      }
     }
+    
   }else if (M5.BtnA.wasSingleClicked()) {
 
     offLed();
