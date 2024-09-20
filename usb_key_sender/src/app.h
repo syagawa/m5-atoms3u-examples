@@ -462,9 +462,12 @@ void loopApp(){
       startMillisInLongPressedMode = millis();
       delay(1000);
     }else if(startMillisInLongPressedMode > 0){
-      long currentMillis = millis();
-      if(waitMillisForNextIndex > currentMillis){
-        
+      long passedMillis = startMillisInLongPressedMode - millis();
+      if(waitMillisForNextIndex > passedMillis){
+        keyIndex = keyIndex + 1;
+        if(keyIndex >= arraySize){
+          keyIndex = 0;
+        }
       }
     }
     
