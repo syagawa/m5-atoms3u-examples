@@ -461,12 +461,15 @@ void loopApp(){
       isLongPressedMode = true;
       startMillisInLongPressedMode = millis();
       delay(1000);
-    }else if(startMillisInLongPressedMode > 0){
+    }else if(isLongPressedMode){
       long passedMillis = startMillisInLongPressedMode - millis();
       if(waitMillisForNextIndex > passedMillis){
         keyIndex = keyIndex + 1;
         if(keyIndex >= arraySize){
           keyIndex = 0;
+          isLongPressedMode = false;
+          startMillisInLongPressedMode = 0;
+ 
         }
       }
     }
