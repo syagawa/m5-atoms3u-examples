@@ -469,7 +469,9 @@ void loopApp(){
           keyIndex = 0;
           isLongPressedMode = false;
           startMillisInLongPressedMode = 0;
- 
+        }else{
+          String s = keyArray[keyIndex];
+          keyboardPressSerial(s);
         }
       }
     }
