@@ -463,12 +463,12 @@ void loopApp(){
       delay(1000);
     }else if(isLongPressedMode){
       long passedMillis = startMillisInLongPressedMode - millis();
-      if(waitMillisForNextIndex > passedMillis){
+      if(waitMillisForNextIndex < passedMillis){
         keyIndex = keyIndex + 1;
         if(keyIndex >= arraySize){
           keyIndex = 0;
           isLongPressedMode = false;
-          startMillisInLongPressedMode = 0;
+          startMillisInLongPressedMode = millis();
         }else{
           String s = keyArray[keyIndex];
           keyboardPressSerial(s);
