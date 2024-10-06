@@ -471,6 +471,7 @@ void loopApp(){
           startMillisInLongPressedMode = millis();
         }else{
           String s = keyArray[keyIndex];
+          liteLed(colors[keyIndex], brightness);
           keyboardPressSerial(s);
         }
       }
