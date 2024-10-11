@@ -478,7 +478,7 @@ void loopApp(){
     }
     
   }else if (M5.BtnA.wasSingleClicked()) {
-
+    isLongPressedMode = false;
     offLed();
     delay(10);
     if(existsKeyStr == 1){
