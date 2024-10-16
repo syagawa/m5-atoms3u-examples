@@ -455,13 +455,13 @@ void loopApp(){
   // return;
 
   if(M5.BtnA.isHolding()){
-    liteLed("purple", brightness);
+    // liteLed("purple", brightness);
     if(!isLongPressedMode && isLongPressed(3)){
-      liteLed(colors[keyIndex], brightness);
       isLongPressedMode = true;
       startMillisInLongPressedMode = millis();
       delay(1000);
     }else if(isLongPressedMode){
+      liteLed(colors[keyIndex], brightness);
       long passedMillis = startMillisInLongPressedMode - millis();
       if(waitMillisForNextIndex < passedMillis){
         keyIndex = keyIndex + 1;
