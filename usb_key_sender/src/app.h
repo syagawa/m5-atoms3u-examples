@@ -468,12 +468,14 @@ void loopApp(){
         if(keyIndex >= arraySize){
           keyIndex = 0;
           isLongPressedMode = false;
-          startMillisInLongPressedMode = millis();
+          offLed();
         }else{
           String s = keyArray[keyIndex];
           liteLed(colors[keyIndex], brightness);
           keyboardPressSerial(s);
         }
+        startMillisInLongPressedMode = millis();
+        delay(10);
       }
     }
     
