@@ -462,7 +462,7 @@ void loopApp(){
       delay(1000);
     }else if(isLongPressedMode){
       liteLed(colors[keyIndex], brightness);
-      long passedMillis = startMillisInLongPressedMode - millis();
+      long passedMillis = millis() - startMillisInLongPressedMode;
       if(waitMillisForNextIndex < passedMillis){
         keyIndex = keyIndex + 1;
         if(keyIndex >= arraySize){
