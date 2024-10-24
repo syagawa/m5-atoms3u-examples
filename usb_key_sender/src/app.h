@@ -86,7 +86,7 @@ int brightness = 100;
 
 String colors[] = {"BLUE","RED","GREEN","MAGENTA","YELLOW","PINK","BROWN","SKYBLUE","PURPLE"};
 
-bool isLongPressedMode = false;
+int longPressedStep = 0;
 long startMillisInLongPressedMode = 0;
 long waitMillisForNextIndex = 1000 * 4;
 long startMillisInApp = 0;
@@ -456,18 +456,18 @@ void loopApp(){
 
   if(M5.BtnA.isHolding()){
     // liteLed("purple", brightness);
-    if(!isLongPressedMode && isLongPressed(3)){
-      isLongPressedMode = true;
+    if(longPressedStep == 0 && isLongPressed(3)){
+      longPressedStep = 1;
       startMillisInLongPressedMode = millis();
       delay(1000);
-    }else if(isLongPressedMode){
+    }else if(longPressedStep == 1){
       liteLed(colors[keyIndex], brightness);
       long passedMillis = millis() - startMillisInLongPressedMode;
       if(waitMillisForNextIndex < passedMillis){
         keyIndex = keyIndex + 1;
         if(keyIndex >= arraySize){
           keyIndex = 0;
-          isLongPressedMode = false;
+          longPressedStep = 0;
           offLed();
         }else{
           String s = keyArray[keyIndex];
@@ -475,12 +475,16 @@ void loopApp(){
           keyboardPressSerial(s);
         }
         startMillisInLongPressedMode = millis();
+        longPressedStep = 2;
         delay(10);
       }
+    }else if(longPressedStep == 2){
+      startMillisInLongPressedMode = millis();
+
     }
     
   }else if (M5.BtnA.wasSingleClicked()) {
-    isLongPressedMode = false;
+    longPressedStep = 0;
     offLed();
     delay(10);
     if(existsKeyStr == 1){
