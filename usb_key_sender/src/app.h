@@ -459,12 +459,12 @@ void loopApp(){
     if(longPressedStep == 0 && isLongPressed(3)){
       longPressedStep = 1;
       startMillisInLongPressedMode = millis();
-      delay(1000);
+      // delay(1000);
     }else if(longPressedStep == 1){
-      liteLed(colors[keyIndex], brightness);
       long passedMillis = millis() - startMillisInLongPressedMode;
       if(waitMillisForNextIndex < passedMillis){
         keyIndex = keyIndex + 1;
+        liteLed(colors[keyIndex], brightness);
         if(keyIndex >= arraySize){
           keyIndex = 0;
           longPressedStep = 0;
@@ -473,14 +473,11 @@ void loopApp(){
           String s = keyArray[keyIndex];
           liteLed(colors[keyIndex], brightness);
           keyboardPressSerial(s);
+          longPressedStep = 1;
+          startMillisInLongPressedMode = millis();
         }
-        startMillisInLongPressedMode = millis();
-        longPressedStep = 2;
         delay(10);
       }
-    }else if(longPressedStep == 2){
-      startMillisInLongPressedMode = millis();
-
     }
     
   }else if (M5.BtnA.wasSingleClicked()) {
