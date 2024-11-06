@@ -464,7 +464,7 @@ void loopApp(){
       long passedMillis = millis() - startMillisInLongPressedMode;
       if(waitMillisForNextIndex < passedMillis){
         keyIndex = keyIndex + 1;
-        // liteLed(colors[keyIndex], brightness);
+        liteLed(colors[keyIndex], brightness);
         if(keyIndex >= arraySize){
           keyIndex = 0;
           longPressedStep = 0;
@@ -501,14 +501,14 @@ void loopApp(){
         startWaitNext();
       }
     }
+    waitNext = checkWaitNextIsEnabled(waitNextSeconds);
+
+    if(!waitNext){
+      delay(10);
+      offLed();
+      keyIndex = 0;
+    }
   }
 
-  waitNext = checkWaitNextIsEnabled(waitNextSeconds);
-
-  if(!waitNext){
-    delay(10);
-    offLed();
-    keyIndex = 0;
-  }
 
 }
