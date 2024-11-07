@@ -462,7 +462,10 @@ void loopApp(){
       // delay(1000);
     }else if(longPressedStep == 1){
       long passedMillis = millis() - startMillisInLongPressedMode;
+      liteLed(colors[keyIndex], brightness);
+      sendKeyboard("YYY\n");
       if(waitMillisForNextIndex < passedMillis){
+        sendKeyboard("ZZZ\n");
         keyIndex = keyIndex + 1;
         liteLed(colors[keyIndex], brightness);
         if(keyIndex >= arraySize){
