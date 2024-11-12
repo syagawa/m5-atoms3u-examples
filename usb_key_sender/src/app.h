@@ -463,9 +463,19 @@ void loopApp(){
     }else if(longPressedStep == 1){
       long passedMillis = millis() - startMillisInLongPressedMode;
       liteLed(colors[keyIndex], brightness);
-      sendKeyboard("YYY\n");
+      // sendKeyboard("YYY\n");
+      String s1 = String(passedMillis);
+      String s2 = String(waitMillisForNextIndex);
+      String s3 = String(startMillisInLongPressedMode);
+      sendKeyboard(s1);
+      sendKeyboard("Y");
+      sendKeyboard(s2);
+      sendKeyboard("Y");
+      sendKeyboard(s3);
+      sendKeyboard("Z\n");
+
       if(waitMillisForNextIndex < passedMillis){
-        sendKeyboard("ZZZ\n");
+        sendKeyboard("XXX\n");
         keyIndex = keyIndex + 1;
         liteLed(colors[keyIndex], brightness);
         if(keyIndex >= arraySize){
