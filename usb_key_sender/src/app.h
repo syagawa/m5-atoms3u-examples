@@ -107,6 +107,7 @@ bool isLongPressed(int waitSeconds) {
 
   if(leftSeconds < 0){
     isLongPressedEnable = false;
+    startMillisInApp = 0;
     return true;
   }
   return false;
@@ -455,27 +456,11 @@ void loopApp(){
   // return;
 
   if(M5.BtnA.isHolding()){
-    // liteLed("purple", brightness);
     if(longPressedStep == 0 && isLongPressed(3)){
       longPressedStep = 1;
-      startMillisInLongPressedMode = millis();
-      // delay(1000);
     }else if(longPressedStep == 1){
-      long passedMillis = millis() - startMillisInLongPressedMode;
       liteLed(colors[keyIndex], brightness);
-      // sendKeyboard("YYY\n");
-      String s1 = String(passedMillis);
-      String s2 = String(waitMillisForNextIndex);
-      String s3 = String(startMillisInLongPressedMode);
-      sendKeyboard(s1);
-      sendKeyboard("Y");
-      sendKeyboard(s2);
-      sendKeyboard("Y");
-      sendKeyboard(s3);
-      sendKeyboard("Z\n");
-
-      if(waitMillisForNextIndex < passedMillis){
-        sendKeyboard("XXX\n");
+      if(isLongPressed(4)){
         keyIndex = keyIndex + 1;
         liteLed(colors[keyIndex], brightness);
         if(keyIndex >= arraySize){
@@ -487,7 +472,6 @@ void loopApp(){
           liteLed(colors[keyIndex], brightness);
           keyboardPressSerial(s);
           longPressedStep = 1;
-          startMillisInLongPressedMode = millis();
         }
         delay(10);
       }
