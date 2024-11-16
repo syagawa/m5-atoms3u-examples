@@ -468,9 +468,9 @@ void loopApp(){
           longPressedStep = 0;
           offLed();
         }else{
-          String s = keyArray[keyIndex];
+          // String s = keyArray[keyIndex];
           liteLed(colors[keyIndex], brightness);
-          keyboardPressSerial(s);
+          // keyboardPressSerial(s);
           longPressedStep = 1;
         }
         delay(10);
