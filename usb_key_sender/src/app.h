@@ -455,22 +455,30 @@ void loopApp(){
 
   // return;
 
+  // A 
+  // B blue
+  // c red
+  // d green
+  // E magenta
+  // F yellow
+
+
   if(M5.BtnA.isHolding()){
+    if(existsKeyStr == 1){
+      return;
+    }
     if(longPressedStep == 0 && isLongPressed(3)){
       longPressedStep = 1;
     }else if(longPressedStep == 1){
       liteLed(colors[keyIndex], brightness);
       if(isLongPressed(4)){
-        keyIndex = keyIndex + 1;
         liteLed(colors[keyIndex], brightness);
+        keyIndex = keyIndex + 1;
         if(keyIndex >= arraySize){
           keyIndex = 0;
           longPressedStep = 0;
           offLed();
         }else{
-          // String s = keyArray[keyIndex];
-          liteLed(colors[keyIndex], brightness);
-          // keyboardPressSerial(s);
           longPressedStep = 1;
         }
         delay(10);
