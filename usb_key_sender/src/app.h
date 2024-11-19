@@ -455,12 +455,24 @@ void loopApp(){
 
   // return;
 
-  // A 
-  // B blue
-  // c red
-  // d green
-  // E magenta
-  // F yellow
+  // off
+  // click
+  // A
+  // blue
+  // click
+  // B
+  // red
+  // click
+  // c
+  // green
+  // click
+  // d
+  // magenta
+  // click
+  // E
+  // yellow
+  // click
+  // F
 
 
   if(M5.BtnA.isHolding()){
