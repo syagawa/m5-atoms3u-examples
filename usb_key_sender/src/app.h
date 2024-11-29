@@ -479,11 +479,11 @@ void loopApp(){
     if(existsKeyStr == 1){
       return;
     }
-    if(longPressedStep == 0 && isLongPressed(2)){
+    if(longPressedStep == 0 && isLongPressed(1)){
       longPressedStep = 1;
     }else if(longPressedStep == 1){
       // liteLed(colors[keyIndex], brightness);
-      if(isLongPressed(2)){
+      if(isLongPressed(1)){
         liteLed(colors[keyIndex], brightness);
         keyIndex = keyIndex + 1;
         if(keyIndex >= arraySize){
