@@ -10,7 +10,8 @@ int existsKeyArray = 0;
 int arraySize = 0;
 int arraySizeMax = 10;
 int keyIndex = 0;
-int waitNextSeconds = 5;
+int waitNextSecondsForClick = 5;
+int waitNextSecondsForHolding = 1;
 String ledColor = "red";
 String keyboardLayout = "";
 
@@ -432,7 +433,7 @@ void settingsApp(){
   }
 
   if(settingsDoc.containsKey("waitSeconds")){
-    waitNextSeconds = settingsDoc["waitSeconds"].as<int>();
+    waitNextSecondsForClick = settingsDoc["waitSeconds"].as<int>();
   }
 
   if(settingsDoc.containsKey("keyboardLayout")){
@@ -444,46 +445,15 @@ void settingsApp(){
 
 void loopApp(){
 
-  // if(M5.BtnA.wasSingleClicked()){
-  //   liteLed("yellow", brightness);
-  // }else if(M5.BtnA.wasDoubleClicked()){
-  //   liteLed("red", brightness);
-  // }else if(M5.BtnA.isHolding()){
-  //   liteLed("green", brightness);
-  // }
-
-
-  // return;
-
-  // off
-  // click
-  // A
-  // blue
-  // click
-  // B
-  // red
-  // click
-  // c
-  // green
-  // click
-  // d
-  // magenta
-  // click
-  // E
-  // yellow
-  // click
-  // F
-
 
   if(M5.BtnA.isHolding()){
     if(existsKeyStr == 1){
       return;
     }
-    if(longPressedStep == 0 && isLongPressed(1)){
+    if(longPressedStep == 0 && isLongPressed(waitNextSecondsForHolding)){
       longPressedStep = 1;
     }else if(longPressedStep == 1){
-      // liteLed(colors[keyIndex], brightness);
-      if(isLongPressed(1)){
+      if(isLongPressed(waitNextSecondsForHolding)){
         liteLed(colors[keyIndex], brightness);
         keyIndex = keyIndex + 1;
         if(keyIndex >= arraySize){
@@ -508,7 +478,6 @@ void loopApp(){
     }else if(arraySize > 0){
       String s = keyArray[keyIndex];
       liteLed(colors[keyIndex], brightness);
-      // sendKeyboard(s);
       keyboardPressSerial(s);
       keyIndex = keyIndex + 1;
       if(keyIndex >= arraySize){
@@ -518,7 +487,7 @@ void loopApp(){
         startWaitNext();
       }
     }
-    waitNext = checkWaitNextIsEnabled(waitNextSeconds);
+    waitNext = checkWaitNextIsEnabled(waitNextSecondsForClick);
 
     if(!waitNext){
       delay(10);
