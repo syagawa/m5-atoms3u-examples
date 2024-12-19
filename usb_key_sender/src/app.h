@@ -14,6 +14,7 @@ int waitNextSecondsForClick = 5;
 int waitNextSecondsForHolding = 1;
 String ledColor = "red";
 String keyboardLayout = "";
+String inputMode = "commands";
 
 #define KEY_LEFT_CTRL   0x80
 #define KEY_LEFT_SHIFT  0x81
@@ -85,7 +86,7 @@ long startMillisForWaitNext = 0;
 
 int brightness = 100;
 
-String colors[] = {"BLUE","RED","GREEN","MAGENTA","YELLOW","PINK","BROWN","SKYBLUE","PURPLE"};
+String colors[] = {"RED","BLUE","MAGENTA","GREEN","PINK","YELLOW","SKYBLUE","BROWN","PURPLE"};
 
 int longPressedStep = 0;
 long startMillisInLongPressedMode = 0;
@@ -100,7 +101,6 @@ bool isLongPressed(int waitSeconds) {
     isLongPressedEnable = true;
     startMillisInApp = current;
   }
-  
 
   float elapsedMillis = current - startMillisInApp;
   float leftMillis = waitMillis - elapsedMillis;
@@ -273,8 +273,6 @@ void keyboardReleaseAll(){
   Keyboard.releaseAll();
 }
 
-
-
 void sendKeyboard(String s){
   char delimiter1 = ':';
   String parts1[2];
@@ -440,6 +438,9 @@ void settingsApp(){
     keyboardLayout = settingsDoc["keyboardLayout"].as<String>();
   }
 
+  if(settingsDoc.containsKey("inputMode")){
+    inputMode = settingsDoc["inputMode"].as<String>();
+  }
 
 }
 
@@ -478,7 +479,11 @@ void loopApp(){
     }else if(arraySize > 0){
       String s = keyArray[keyIndex];
       liteLed(colors[keyIndex], brightness);
-      keyboardPressSerial(s);
+      if(inputMode == "command"){
+        sendKeyboard(s);
+      }else{
+        keyboardPressSerial(s);
+      }
       keyIndex = keyIndex + 1;
       if(keyIndex >= arraySize){
         keyIndex = 0;
