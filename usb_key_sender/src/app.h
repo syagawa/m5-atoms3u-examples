@@ -14,7 +14,7 @@ int waitNextSecondsForClick = 5;
 int waitNextSecondsForHolding = 1;
 String ledColor = "red";
 String keyboardLayout = "";
-String inputMode = "commands";
+String keyboardMethod = "";
 
 #define KEY_LEFT_CTRL   0x80
 #define KEY_LEFT_SHIFT  0x81
@@ -438,8 +438,8 @@ void settingsApp(){
     keyboardLayout = settingsDoc["keyboardLayout"].as<String>();
   }
 
-  if(settingsDoc.containsKey("inputMode")){
-    inputMode = settingsDoc["inputMode"].as<String>();
+  if(settingsDoc.containsKey("keyboardMethod")){
+    keyboardMethod = settingsDoc["keyboardMethod"].as<String>();
   }
 
 }
@@ -479,10 +479,10 @@ void loopApp(){
     }else if(arraySize > 0){
       String s = keyArray[keyIndex];
       liteLed(colors[keyIndex], brightness);
-      if(inputMode == "commands"){
-        sendKeyboard(s);
-      }else{
+      if(keyboardMethod == "keyboardPressSerial"){
         keyboardPressSerial(s);
+      }else{
+        sendKeyboard(s);
       }
       keyIndex = keyIndex + 1;
       if(keyIndex >= arraySize){
