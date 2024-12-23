@@ -479,7 +479,7 @@ void loopApp(){
     }else if(arraySize > 0){
       String s = keyArray[keyIndex];
       liteLed(colors[keyIndex], brightness);
-      if(inputMode == "command"){
+      if(inputMode == "commands"){
         sendKeyboard(s);
       }else{
         keyboardPressSerial(s);
