@@ -14,7 +14,6 @@ int waitNextSecondsForClick = 5;
 int waitNextSecondsForHolding = 1;
 String ledColor = "red";
 String keyboardLayout = "";
-String keyboardMethod = "";
 
 #define KEY_LEFT_CTRL   0x80
 #define KEY_LEFT_SHIFT  0x81
@@ -273,64 +272,6 @@ void keyboardReleaseAll(){
   Keyboard.releaseAll();
 }
 
-void sendKeyboard(String s){
-  char delimiter1 = ':';
-  String parts1[2];
-  splitString(s, delimiter1, parts1, 4);
-
-  String str = parts1[0];
-
-  if(str == "press"){
-    String parts2[4];
-    char delimiter2 = ',';
-    splitString(parts1[1], delimiter2, parts2, 4);
-    String s1 = parts2[0];
-    String s2 = parts2[1];
-    String s3 = parts2[2];
-    String s4 = parts2[3];
-
-    if(s1.length() > 0){
-      keyboardPress(s1);
-    }
-    delay(50);
-    if(s2.length() > 0){
-      keyboardPress(s2);
-    }
-    delay(50);
-    if(s3.length() > 0){
-      keyboardPress(s3);
-    }
-    delay(50);
-    if(s4.length() > 0){
-      keyboardPress(s4);
-    }
-    delay(50);
-    keyboardReleaseAll();
-
-  }else if(str == "release"){
-    Keyboard.releaseAll();
-  }else if(str == "open"){
-    Keyboard.press(KEY_LEFT_GUI);
-    Keyboard.press('r');
-    delay(100);
-    Keyboard.releaseAll();
-    const char* str = parts1[1].c_str();
-    uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
-    size_t len = strlen(str);
-    Keyboard.write(buf, len);
-    delay(100);
-    Keyboard.press(KEY_RETURN);
-    delay(100);
-    Keyboard.release(KEY_RETURN);
-  }else{
-    const char* str = s.c_str();
-    uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
-    size_t len = strlen(str);
-    Keyboard.write(buf, len);
-  }
-
-}
-
 void keyboardPressSerial(String s){
   int length = s.length();
   for(int i = 0; i < length; i++){
@@ -381,6 +322,68 @@ void keyboardPressSerial(String s){
     Keyboard.releaseAll();
   }
 }
+
+void sendKeyboard(String s){
+  char delimiter1 = ':';
+  String parts1[2];
+  splitString(s, delimiter1, parts1, 4);
+
+  String str = parts1[0];
+
+  if(str == "press"){
+    String parts2[4];
+    char delimiter2 = ',';
+    splitString(parts1[1], delimiter2, parts2, 4);
+    String s1 = parts2[0];
+    String s2 = parts2[1];
+    String s3 = parts2[2];
+    String s4 = parts2[3];
+
+    if(s1.length() > 0){
+      keyboardPress(s1);
+    }
+    delay(50);
+    if(s2.length() > 0){
+      keyboardPress(s2);
+    }
+    delay(50);
+    if(s3.length() > 0){
+      keyboardPress(s3);
+    }
+    delay(50);
+    if(s4.length() > 0){
+      keyboardPress(s4);
+    }
+    delay(50);
+    keyboardReleaseAll();
+
+  }else if(str == "release"){
+    Keyboard.releaseAll();
+  }else if(str == "open"){
+    Keyboard.press(KEY_LEFT_GUI);
+    Keyboard.press('r');
+    delay(100);
+    Keyboard.releaseAll();
+    const char* str = parts1[1].c_str();
+    uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
+    size_t len = strlen(str);
+    Keyboard.write(buf, len);
+    delay(100);
+    Keyboard.press(KEY_RETURN);
+    delay(100);
+    Keyboard.release(KEY_RETURN);
+  }else{
+    // const char* str = s.c_str();
+    // uint8_t * buf = reinterpret_cast<uint8_t*>(const_cast<char*>(str));
+    // size_t len = strlen(str);
+    // Keyboard.write(buf, len);
+    const char* str = s.c_str();
+    keyboardPressSerial(str);
+  }
+
+}
+
+
 
 
 void startWaitNext(){
@@ -438,9 +441,6 @@ void settingsApp(){
     keyboardLayout = settingsDoc["keyboardLayout"].as<String>();
   }
 
-  if(settingsDoc.containsKey("keyboardMethod")){
-    keyboardMethod = settingsDoc["keyboardMethod"].as<String>();
-  }
 
 }
 
@@ -479,11 +479,7 @@ void loopApp(){
     }else if(arraySize > 0){
       String s = keyArray[keyIndex];
       liteLed(colors[keyIndex], brightness);
-      if(keyboardMethod == "keyboardPressSerial"){
-        keyboardPressSerial(s);
-      }else{
-        sendKeyboard(s);
-      }
+      sendKeyboard(s);
       keyIndex = keyIndex + 1;
       if(keyIndex >= arraySize){
         keyIndex = 0;
