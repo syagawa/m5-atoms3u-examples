@@ -10,7 +10,7 @@ int existsKeyArray = 0;
 int arraySize = 0;
 int arraySizeMax = 10;
 int keyIndex = 0;
-int waitNextSecondsForClick = 5;
+int waitNextSeconds = 5;
 int waitNextSecondsForHolding = 1;
 String ledColor = "red";
 String keyboardLayout = "";
@@ -434,7 +434,7 @@ void settingsApp(){
   }
 
   if(settingsDoc.containsKey("waitSeconds")){
-    waitNextSecondsForClick = settingsDoc["waitSeconds"].as<int>();
+    waitNextSeconds = settingsDoc["waitSeconds"].as<int>();
   }
 
   if(settingsDoc.containsKey("keyboardLayout")){
@@ -461,8 +461,10 @@ void loopApp(){
           keyIndex = 0;
           longPressedStep = 0;
           offLed();
+          stopWaitNext();
         }else{
           longPressedStep = 1;
+          startWaitNext();
         }
         delay(10);
       }
@@ -488,13 +490,13 @@ void loopApp(){
         startWaitNext();
       }
     }
-    waitNext = checkWaitNextIsEnabled(waitNextSecondsForClick);
+  }
+  waitNext = checkWaitNextIsEnabled(waitNextSeconds);
 
-    if(!waitNext){
-      delay(10);
-      offLed();
-      keyIndex = 0;
-    }
+  if(!waitNext){
+    delay(10);
+    offLed();
+    keyIndex = 0;
   }
 
 
