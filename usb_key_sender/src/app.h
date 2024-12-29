@@ -480,9 +480,9 @@ void loopApp(){
       stopWaitNext();
     }else if(arraySize > 0){
       String s = keyArray[keyIndex];
-      liteLed(colors[keyIndex], brightness);
       sendKeyboard(s);
       keyIndex = keyIndex + 1;
+      liteLed(colors[keyIndex - 1], brightness);
       if(keyIndex >= arraySize){
         keyIndex = 0;
         stopWaitNext();
