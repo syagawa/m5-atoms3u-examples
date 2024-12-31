@@ -482,11 +482,11 @@ void loopApp(){
       String s = keyArray[keyIndex];
       sendKeyboard(s);
       keyIndex = keyIndex + 1;
-      liteLed(colors[keyIndex - 1], brightness);
       if(keyIndex >= arraySize){
         keyIndex = 0;
         stopWaitNext();
       }else{
+        liteLed(colors[keyIndex - 1], brightness);
         startWaitNext();
       }
     }
